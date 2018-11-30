@@ -22,7 +22,6 @@ function Controller() {
         // console.log({img});
         // console.log({modalImg});
         preProcess();
-        console.log(self.data);
         // enableZoom(self.zoomRate);
         
         
@@ -51,7 +50,7 @@ function Controller() {
     }
 
     self.zoomByMouseToggle = function () {
-        console.log({'self.zoomer.isZoomHoverEnable':self.zoomer.isZoomHoverEnable()});
+        // console.log({'self.zoomer.isZoomHoverEnable':self.zoomer.isZoomHoverEnable()});
         if (!self.zoomer.isZoomHoverEnable()) {
             //zoom hover
             self.zoomer.enableZoom();
@@ -148,7 +147,7 @@ function Controller() {
         let zoomRate = 1;
 
         background.style.backgroundImage = `url('${self.fullImgLink}')`;
-        console.log({'self.fullIMGLinkd': self.fullImgLink});
+        // console.log({'self.fullIMGLinkd': self.fullImgLink});
         function enableZoom() {
             background.onmousemove = function (e) {
                 const zoomer = e.currentTarget;
@@ -238,7 +237,8 @@ app.component(componentName, {
         smallImgLink: '<',
         downloadLink: '<',
         fullImgLink: '<',
-        data: '<'
+        data: '<', 
+        title: '<'
     }
 });
 

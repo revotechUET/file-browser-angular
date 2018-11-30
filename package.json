@@ -1,0 +1,29 @@
+{
+  "name": "file-explorer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "css-loader": "^1.0.1",
+    "file-loader": "^2.0.0",
+    "html-loader": "^0.5.5",
+    "jquery": "^3.3.1",
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
+    "pdfjs-dist": "^2.0.943",
+    "popper.js": "^1.14.5",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.26.1"
+  }
+}

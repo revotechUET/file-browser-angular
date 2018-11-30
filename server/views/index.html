@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
+
+    <title>File Explorer</title>
+</head>
+
+<body>
+    <h1>File Explorer</h1>
+    <hr>
+    <file-explorer root-folder="public" url="/api/tree?path="></file-explorer>
+
+    <script src="vendor/js/jquery.min.js"></script>
+    <script src="vendor/js/angular.min.js"></script>
+    <script src="bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="vendor/js/angular-modal-service.min.js"></script>
+    <script src="app.js"></script>
+    <script src="file-explorer-module.js"></script>
+</body>
+
+</html>

@@ -3,8 +3,8 @@ let webpack = require('webpack');
 let OUTPUT = path.join(__dirname, 'public');
 
 module.exports = {
-    // mode: 'development',
-    mode: 'production',
+    mode: 'development',
+    // mode: 'production',
     devtool: 'inline-sourcemap',
     entry: [
         './client/components/file-explorer/file-explorer.js'

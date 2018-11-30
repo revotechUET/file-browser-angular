@@ -47059,7 +47059,7 @@ exports.MessageHandler = MessageHandler;
 /******/ ]);
 });
 //# sourceMappingURL=pdf.worker.js.map
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../../../../../../usr/lib/node_modules/webpack/node_modules/buffer/index.js */ "../../../../usr/lib/node_modules/webpack/node_modules/buffer/index.js").Buffer, __webpack_require__(/*! ./../../../../../../../usr/lib/node_modules/webpack/buildin/global.js */ "../../../../usr/lib/node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../../../../../../../usr/lib/node_modules/webpack/node_modules/process/browser.js */ "../../../../usr/lib/node_modules/webpack/node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../buffer/index.js */ "./node_modules/buffer/index.js").Buffer, __webpack_require__(/*! ./../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../../process/browser.js */ "./node_modules/process/browser.js")))
 
 /***/ })
 

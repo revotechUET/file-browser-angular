@@ -6,6 +6,7 @@ const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
+const imgPreview = require('../img-preview/img-preview').name
 
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
@@ -76,7 +77,7 @@ function Controller($scope, $http, ModalService) {
     // }
 }
 
-let app = angular.module(moduleName, [textViewer, pdfViewer]);
+let app = angular.module(moduleName, [textViewer, pdfViewer, imgPreview]);
 
 app.component(componentName, {
     template: require('./file-explorer.html'),

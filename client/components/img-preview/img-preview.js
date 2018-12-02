@@ -8,7 +8,7 @@ function Controller() {
 
     self.$onInit = function () {
 
-        
+
 
         // console.log('inside');
         // const modal = $element.find('modal');
@@ -22,9 +22,10 @@ function Controller() {
         // console.log({img});
         // console.log({modalImg});
         preProcess();
+        console.log(self.data);
         // enableZoom(self.zoomRate);
-        
-        
+
+
     }
 
     self.imgOnclick = function () {
@@ -37,14 +38,15 @@ function Controller() {
 
 
         //create zoomer
-        if(!self.zoomer) self.zoomer = creatZoomer();
-        
+        if (!self.zoomer) self.zoomer = creatZoomer();
+
     }
 
     self.closeOnClick = function () {
         const modal = document.getElementById(self._modal);
 
-        modal.style.display = 'none';
+        // modal.style.display = 'none';
+        self.parentElem.style.display = 'none';
         // console.log('img click');
         // console.log({modal});
     }
@@ -57,9 +59,9 @@ function Controller() {
         } else {
             self.zoomer.disableZoom();
         }
-    }    
+    }
 
-    self.getImgByBase64 = function() {
+    self.getImgByBase64 = function () {
         return `data:image/png;base64, ${self.dataBase64}`
     }
 
@@ -170,7 +172,7 @@ function Controller() {
                 zoomer.style.backgroundPosition = x + '% ' + y + '%';
             }
 
-            background.onmouseout = function(e) {
+            background.onmouseout = function (e) {
                 insideImg.style.opacity = 1;
             }
         }
@@ -237,8 +239,8 @@ app.component(componentName, {
         smallImgLink: '<',
         downloadLink: '<',
         fullImgLink: '<',
-        data: '<', 
-        title: '<'
+        data: '<',
+        parentElem: '<'
     }
 });
 

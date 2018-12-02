@@ -42,7 +42,7 @@ router.get('/api/resource', (req, res) => {
     let filePath = req.query.path;
     let type = path.extname(filePath);
     switch (true) {
-        case /.pdf/.test(type):
+        case /\.(pdf|png|jpg)$/.test(type):
             res.send(fs.readFileSync(filePath, 'base64'));
             break;
         default:

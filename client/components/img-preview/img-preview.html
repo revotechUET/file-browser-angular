@@ -34,16 +34,16 @@
     ng-click="imgPreview.imgOnclick()"
   > -->
 
-  <a href="" class="thumbnail text-center" title="{{imgPreview.title}}" ng-dblclick="imgPreview.imgOnclick()">
+  <!-- <a href="" class="thumbnail text-center" title="{{imgPreview.title}}" ng-dblclick="imgPreview.imgOnclick()">
     <div class="item-icon">
       <i class="glyphicon glyphicon-file" data-ext="img" ng-class="{'item-extension': true}"></i>
     </div>
     {{imgPreview.title}}
-  </a>
+  </a> -->
 
 
   <!-- The Modal -->
-  <div id="{{imgPreview._modal}}" class="modal">
+  <div ng-if="imgPreview.data" id="{{imgPreview._modal}}" class="modal">
     <span class="close" ng-click="imgPreview.closeOnClick()">&times;</span>
     <!-- <span class="close" style="right: 70px" ng-click="imgPreview.downloadOnClick()">
       <i style="font-size: 31px" class="material-icons large">cloud_download</i>

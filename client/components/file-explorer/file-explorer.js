@@ -1,7 +1,7 @@
 // Load css
 require('./file-explorer.less');
 
-const crypto = require('crypto');
+// const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
@@ -14,11 +14,12 @@ const componentName = 'fileExplorer';
 // let algorithm = 'aes-256-cbc';
 // let password = 'myPass';
 
-Controller.$inject = ['$scope', '$http', 'ModalService'];
-function Controller($scope, $http, ModalService) {
+Controller.$inject = ['$scope', '$element', '$http', 'ModalService'];
+function Controller($scope, $element, $http, ModalService) {
     let self = this;
 
     this.$onInit = function () {
+        self.imgResource = {};
         self.currentPath = [];
         self.url = self.url || '/api/tree?path=';
         self.rawDataUrl = self.rawDataUrl || '/api/resource?path='
@@ -51,8 +52,15 @@ function Controller($scope, $http, ModalService) {
                     _d = JSON.stringify(_d, undefined, 2);
                 data.fileContent = _d;
                 switch (true) {
-                    case /.pdf/.test(item.ext):
+                    case /\.pdf$/.test(item.ext):
                         pdfViewerDialog(ModalService, data);
+                        break;
+                    case /\.(jpg|png)$/.test(item.ext):
+                        self.imgResource.title = item.title;
+                        self.imgResource.fileContent = _d;
+                        let imgCtnElm = document.getElementById('img-container');
+                        self.imgResource.parentElem = imgCtnElm;
+                        imgCtnElm.style.display = 'block';
                         break;
                     default:
                         textViewerDialog(ModalService, data);

@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/', routes);
 
-app.set('port', 3000);
+app.set('port', 3001);
 
 const server = app.listen(app.get('port'), () => {
     console.log(`Listening on port ${server.address().port}`);

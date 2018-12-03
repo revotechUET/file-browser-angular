@@ -22,7 +22,6 @@ function Controller() {
         // console.log({img});
         // console.log({modalImg});
         preProcess();
-        console.log(self.data);
         // enableZoom(self.zoomRate);
 
 

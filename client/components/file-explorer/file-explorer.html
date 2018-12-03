@@ -27,14 +27,14 @@
 <div class="iconset noselect">
     <div class="item-list clearfix">
         <div class="col-120" ng-repeat="item in self.nodeSelected">
-            <a href="" class="thumbnail text-center" title="{{item.title}}" ng-click="self.clickNode(item, $event)"
+            <a href="" class="thumbnail text-center" title="{{item.rootName}}" ng-click="self.clickNode(item, $event)"
                 ng-dblclick="self.dblClickNode(item)">
                 <div class="item-icon">
-                    <i class="glyphicon glyphicon-folder-open" ng-show="item.isDir"></i>
-                    <i class="glyphicon glyphicon-file" data-ext="{{item.ext | fileExtension }}" ng-show="!item.isDir"
+                    <i class="glyphicon glyphicon-folder-open" ng-if="!item.rootIsFile"></i>
+                    <i class="glyphicon glyphicon-file" data-ext="{{ self.getExtFile(item) | fileExtension }}" ng-if="item.rootIsFile"
                         ng-class="{'item-extension': true}"></i>
                 </div>
-                {{item.title | strLimit : 11}}
+                {{item.rootName | strLimit : 11}}
             </a>
         </div>
     </div>

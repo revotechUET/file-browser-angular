@@ -25,9 +25,10 @@ function Controller($scope, $element, $http, ModalService) {
         self.rawDataUrl = self.rawDataUrl || '/api/resource?path='
         self.rootFolder = self.rootFolder || 'public';
 
-        $http.get(self.url + encodeURIComponent(self.rootFolder)).then(result => {
+        self.httpGet(self.url + encodeURIComponent(self.rootFolder), result => {
             if (result) {
-                self.nodeSelected = result.data;
+                let data = result.data.data;
+                self.nodeSelected = [...data.files, ...data.folders];
             } else {
                 console.log('No dir');
             }
@@ -39,30 +40,31 @@ function Controller($scope, $element, $http, ModalService) {
     }
 
     this.dblClickNode = function (item) {
-        if (item.isDir) {
-            $http.get(self.url + item.path).then(result => {
-                self.nodeSelected = result.data;
-                self.currentPath.push(item.title);
+        if (!item.rootIsFile) {
+            self.httpGet(self.url + encodeURIComponent(item.path), result => {
+                let data = result.data.data;
+                self.nodeSelected = [...data.files, ...data.folders];
+                self.currentPath.push(item.rootName);
             })
         } else {
-            let data = { title: item.title };
-            $http.get(self.rawDataUrl + item.path).then(result => {
-                let _d = result.data;
-                if (typeof _d == 'object')
-                    _d = JSON.stringify(_d, undefined, 2);
-                data.fileContent = _d;
+            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
+                let data = { title: item.rootName };
+                let resource = result.data.data;
+                data.fileContent = resource;
                 switch (true) {
-                    case /\.pdf$/.test(item.ext):
+                    case /\.pdf$/.test(self.getExtFile(item)):
+                        data.fileContent = resource.base64;
                         pdfViewerDialog(ModalService, data);
                         break;
-                    case /\.(jpg|png)$/.test(item.ext):
-                        self.imgResource.title = item.title;
-                        self.imgResource.fileContent = _d;
+                    case /\.(jpg|png)$/.test(self.getExtFile(item)):
+                        self.imgResource.title = item.rootName;
+                        self.imgResource.fileContent = resource.base64;
                         let imgCtnElm = document.getElementById('img-container');
                         self.imgResource.parentElem = imgCtnElm;
                         imgCtnElm.style.display = 'block';
                         break;
                     default:
+                        data.fileContent = resource.utf8;
                         textViewerDialog(ModalService, data);
                 }
             })
@@ -72,9 +74,32 @@ function Controller($scope, $element, $http, ModalService) {
     this.goTo = function (index) {
         self.currentPath = self.currentPath.slice(0, index + 1);
         let newPath = self.rootFolder + '/' + self.currentPath.join('/');
-        $http.get(self.url + encrypt(newPath)).then(result => {
-            self.nodeSelected = result.data;
+        self.httpGet(self.url + encodeURIComponent(newPath), result => {
+            let data = result.data.data;
+            self.nodeSelected = [...data.files, ...data.folders];
         })
+    }
+
+    this.getExtFile = function (item) {
+        if (!item.rootIsFile)
+            return '';
+        let arr = item.rootName.split('.');
+        return '.' + arr[arr.length - 1];
+    }
+
+    this.httpGet = function (url, cb) {
+        let reqOptions = {
+            method: 'GET',
+            url: url,
+            headers: {
+                'Content-Type': 'application/json',
+                'Referrer-Policy': 'no-referrer',
+                'Authorization': `hoangk'stoken`,
+            }
+        }
+        $http(reqOptions).then(result => {
+            cb(result);
+        });
     }
 
     // function encrypt(text) {

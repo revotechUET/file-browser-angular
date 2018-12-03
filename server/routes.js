@@ -41,21 +41,28 @@ router.get('/api/resource', (req, res) => {
     // let filePath = decrypt(req.query.path);
     let filePath = req.query.path;
     let type = path.extname(filePath);
+    let resp = {};
+    resp.data = {};
     switch (true) {
         case /\.(pdf|png|jpg)$/.test(type):
-            res.send(fs.readFileSync(filePath, 'base64'));
+            resp.data.base64 = fs.readFileSync(filePath, 'base64');
+            res.send(resp);
             break;
         default:
+            resp.data.base64 = fs.readFileSync(filePath, 'UTF-8');
             res.send(fs.readFileSync(filePath, 'UTF-8'));
     }
 })
 
 function processReq(servingDir, res) {
-    let resp = [];
+    let resp = {};
+    resp.data = {};
     fs.readdir(servingDir, (err, list) => {
         if (list) {
+            resp.data.files = [];
+            resp.data.folders = [];
             for (let i = list.length - 1; i >= 0; i--) {
-                resp.push(processNode(servingDir, list[i]));
+                resp.data.files.push(processNode(servingDir, list[i]));
             }
             res.json(resp);
         } else if (err) {
@@ -69,8 +76,8 @@ function processNode(servingDir, file) {
     return {
         // "path": encrypt(path.join(servingDir, file)),
         "path": path.join(servingDir, file),
-        "title": file,
-        "isDir": serve.isDirectory(),
+        "rootName": file,
+        "rootIsFile": !serve.isDirectory(),
         "ext": path.extname(file)
         // "id": path.join(servingDir, file),:
         // "text": file,

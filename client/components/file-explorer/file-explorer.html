@@ -5,8 +5,8 @@
                 <ol class="breadcrumb">
                     <li>
                         <a ng-show="self.currentPath.length > 0" href="" ng-click="self.goTo(-1)">{{
-                            'Root Folder' | strLimit : 8}}</a>
-                        <span style="color: #fff;" ng-show="self.currentPath.length < 1">{{ 'Root Folder' }}</span>
+                            'Root' | strLimit : 8}}</a>
+                        <span style="color: #fff;" ng-show="self.currentPath.length < 1">{{ 'Root' }}</span>
                     </li>
                     <li ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}" class="animated fast fadeIn">
                         <a href="" ng-show="!$last" ng-click="self.goTo(key)">
@@ -61,8 +61,18 @@
         <tr>
             <th>
                 <a href="" ng-click="order('model.name')">
-                    name
+                    Name
                     <span class="sortorder" ng-class="{reverse:reverse}"></span>
+                </a>
+            </th>
+            <th class="hidden-xs">
+                <a href="" ng-click="order('model.size')">
+                    Size
+                </a>
+            </th>
+            <th class="hidden-sm hidden-xs">
+                <a href="" ng-click="order('model.date')">
+                    Date
                 </a>
             </th>
         </tr>
@@ -81,8 +91,18 @@
                 <a href="" title="{{item.rootName}}">
                     <i class="glyphicon glyphicon-folder-close" ng-show="!item.rootIsFile"></i>
                     <i class="glyphicon glyphicon-file" ng-show="item.rootIsFile"></i>
-                    {{item.rootName | strLimit : 64}}
+                    {{item.rootName | strLimit : 30}}
                 </a>
+            </td>
+            <td class="hidden-xs">
+                <span>
+                    {{item.size | humanReadableFileSize}}
+                </span>
+            </td>
+            <td class="hidden-sm hidden-xs">
+                <span>
+                    {{item.date}}
+                </span>
             </td>
         </tr>
     </tbody>

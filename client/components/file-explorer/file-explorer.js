@@ -191,6 +191,32 @@ app.filter('fileExtension', ['$filter', function ($filter) {
     };
 }]);
 
+app.filter('formatDate', ['$filter', function () {
+    return function (input) {
+        return input instanceof Date ?
+            input.toISOString().substring(0, 19).replace('T', ' ') :
+            (input.toLocaleString || input.toString).apply(input);
+    };
+}]);
+
+app.filter('humanReadableFileSize', ['$filter', function ($filter) {
+    let decimalByteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    let binaryByteUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+    return function (input) {
+        let i = -1;
+        let fileSizeInBytes = input;
+
+        do {
+            fileSizeInBytes = fileSizeInBytes / 1024;
+            i++;
+        } while (fileSizeInBytes > 1024);
+
+        let result = false ? binaryByteUnits[i] : decimalByteUnits[i];
+        return Math.max(fileSizeInBytes, 0.1).toFixed(1) + ' ' + result;
+    };
+}]);
+
 module.exports.name = moduleName;
 
 // // Load js

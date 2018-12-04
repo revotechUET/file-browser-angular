@@ -1,12 +1,16 @@
 // Load css
 require('./file-explorer.less');
 
+// Load js
+require('../../vendor/js/ng-file-upload.min.js');
+
 // const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
+const imgPreview = require('../img-preview/img-preview').name
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
-const imgPreview = require('../img-preview/img-preview').name
+const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
 
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
@@ -14,40 +18,83 @@ const componentName = 'fileExplorer';
 // let algorithm = 'aes-256-cbc';
 // let password = 'myPass';
 
-Controller.$inject = ['$scope', '$element', '$http', 'ModalService'];
-function Controller($scope, $element, $http, ModalService) {
+Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
+function Controller($scope, $element, $http, ModalService, Upload) {
     let self = this;
 
     this.$onInit = function () {
         self.imgResource = {};
         self.currentPath = [];
-        self.url = self.url || '/api/tree?path=';
-        self.rawDataUrl = self.rawDataUrl || '/api/resource?path='
-        self.rootFolder = self.rootFolder || 'public';
+        self.selectedList = [];
+        self.requesting = false;
+        self.rawDataUrl = self.url + '/read-file?file_path=';
+        self.exploreUrl = self.url + '/file-explorer/shallow?dir=';
+        self.rootFolder = self.rootFolder || '/';
 
-        self.httpGet(self.url + encodeURIComponent(self.rootFolder), result => {
+        self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
             if (result) {
                 let data = result.data.data;
-                self.nodeSelected = [...data.files, ...data.folders];
+                self.fileList = [...data.files, ...data.folders];
             } else {
                 console.log('No dir');
             }
         })
     }
 
+    this.isSelected = function (item) {
+        return self.selectedList.indexOf(item) !== -1;
+    };
+
     this.clickNode = function (item, $event) {
-        // console.log(item);
+        let indexInSelectedList = self.selectedList.indexOf(item);
+
+        console.log($event);
+        // if ($event && $event.target.hasAttribute('prevent')) {
+        //     self.selectedList = [];
+        //     return;
+        // }
+        if ($event && $event.shiftKey) {
+            let list = self.fileList;
+            let indexInList = list.indexOf(item);
+            let lastSelected = self.selectedList[0];
+            let i = list.indexOf(lastSelected);
+            let current = undefined;
+            if (lastSelected && list.indexOf(lastSelected) < indexInList) {
+                self.selectedList = [];
+                while (i <= indexInList) {
+                    current = list[i];
+                    !self.isSelected(current) && self.selectedList.push(current);
+                    i++;
+                }
+                return;
+            }
+            if (lastSelected && list.indexOf(lastSelected) > indexInList) {
+                $scope.temps = [];
+                while (i >= indexInList) {
+                    current = list[i];
+                    !self.isSelected(current) && self.selectedList.push(current);
+                    i--;
+                }
+                return;
+            }
+        }
+        if ($event && $event.ctrlKey) {
+            self.isSelected(item) ? self.selectedList.splice(indexInSelectedList, 1) : self.selectedList.push(item);
+            return;
+        }
+        self.selectedList = [item];
     }
 
     this.dblClickNode = function (item) {
+        console.log(self.exploreUrl + encodeURIComponent(item.path));
         if (!item.rootIsFile) {
-            self.httpGet(self.url + encodeURIComponent(item.path), result => {
+            self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
                 let data = result.data.data;
-                self.nodeSelected = [...data.files, ...data.folders];
+                self.fileList = [...data.files, ...data.folders];
                 self.currentPath.push(item.rootName);
             })
         } else {
-            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
+            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path.substring(1)), result => {
                 let data = { title: item.rootName };
                 let resource = result.data.data;
                 data.fileContent = resource;
@@ -73,10 +120,10 @@ function Controller($scope, $element, $http, ModalService) {
 
     this.goTo = function (index) {
         self.currentPath = self.currentPath.slice(0, index + 1);
-        let newPath = self.rootFolder + '/' + self.currentPath.join('/');
-        self.httpGet(self.url + encodeURIComponent(newPath), result => {
+        let newPath = self.rootFolder + self.currentPath.join('/');
+        self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
             let data = result.data.data;
-            self.nodeSelected = [...data.files, ...data.folders];
+            self.fileList = [...data.files, ...data.folders];
         })
     }
 
@@ -87,7 +134,12 @@ function Controller($scope, $element, $http, ModalService) {
         return '.' + arr[arr.length - 1];
     }
 
+    this.uploadFiles = function () {
+        uploadFileDialog(ModalService, Upload);
+    }
+
     this.httpGet = function (url, cb) {
+        self.requesting = !self.requesting;
         let reqOptions = {
             method: 'GET',
             url: url,
@@ -98,6 +150,7 @@ function Controller($scope, $element, $http, ModalService) {
             }
         }
         $http(reqOptions).then(result => {
+            self.requesting = !self.requesting;
             cb(result);
         });
     }
@@ -110,7 +163,7 @@ function Controller($scope, $element, $http, ModalService) {
     // }
 }
 
-let app = angular.module(moduleName, [textViewer, pdfViewer, imgPreview]);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview]);
 
 app.component(componentName, {
     template: require('./file-explorer.html'),
@@ -158,7 +211,7 @@ module.exports.name = moduleName;
 //         this.fileViewer = 'Please select a file to view its contents';
 //     }
 
-//     $scope.nodeSelected = this.nodeSelected || function (e, data) {
+//     $scope.fileList = this.fileList || function (e, data) {
 //         let node = data.node.li_attr;
 //         if (node.isLeaf) {
 //             $http.get('/api/resource?resource=' + encodeURIComponent(node.base)).then(function (result) {
@@ -285,7 +338,7 @@ module.exports.name = moduleName;
 //     controllerAs: 'self',
 //     bindings: {
 //         fileViewer: '<',
-//         nodeSelected: '<'
+//         fileList: '<'
 //     }
 // })
 

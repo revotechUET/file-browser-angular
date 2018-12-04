@@ -6,10 +6,6 @@ function Controller($scope) {
     let self = this;
 
     this.$onInit = function () {
-        // if (self.base64Data) {
-        //     self.base64Data = atob(self.base64Data || '');
-        // }
-
         let pdfjsLib = require('pdfjs-dist');
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/js/pdf.worker.min.js';
 
@@ -66,14 +62,6 @@ function Controller($scope) {
         })
     }
 
-    function queueRenderPage(num) {
-        if (self.pageRendering) {
-            self.pageNumPending = num;
-        } else {
-            renderPage(num);
-        }
-    }
-
     self.onPrevPage = function () {
         if (self.pageNum <= 1) {
             return;
@@ -88,6 +76,14 @@ function Controller($scope) {
         }
         self.pageNum++;
         queueRenderPage(self.pageNum);
+    }
+
+    function queueRenderPage(num) {
+        if (self.pageRendering) {
+            self.pageNumPending = num;
+        } else {
+            renderPage(num);
+        }
     }
 }
 

@@ -2,7 +2,8 @@
 require('./file-explorer.less');
 
 // Load js
-require('../../vendor/js/ng-file-upload.min.js');
+require('../../vendor/js/ng-file-upload.min');
+const async = require('../../vendor/js/async.min');
 
 // const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
@@ -15,8 +16,17 @@ const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal'
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
 
-// let algorithm = 'aes-256-cbc';
-// let password = 'myPass';
+// const ALGORITHM = 'aes-256-cbc';
+// const SECRET_KEY = 'secretKey';
+const HEADER_CONFIG = {
+    'Content-Type': 'application/json',
+    'Referrer-Policy': 'no-referrer',
+    'Authorization': `hoangk'stoken`,
+};
+const RAW_DATA_PATH = '/read-file?file_path=';
+const EXPLORE_PATH = '/file-explorer/shallow?dir=';
+const UPLOAD_PATH = '';
+const REMOVE_PATH = '';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 function Controller($scope, $element, $http, ModalService, Upload) {
@@ -27,16 +37,18 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.currentPath = [];
         self.selectedList = [];
         self.requesting = false;
-        self.rawDataUrl = self.url + '/read-file?file_path=';
-        self.exploreUrl = self.url + '/file-explorer/shallow?dir=';
         self.rootFolder = self.rootFolder || '/';
+
+        self.rawDataUrl = self.url + RAW_DATA_PATH;
+        self.exploreUrl = self.url + EXPLORE_PATH;
+        self.removeUrl = self.url + REMOVE_PATH;
 
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
             if (result) {
                 let data = result.data.data;
                 self.fileList = [...data.files, ...data.folders];
             } else {
-                console.log('No dir');
+                console.log('===empty');
             }
         })
     }
@@ -48,11 +60,6 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     this.clickNode = function (item, $event) {
         let indexInSelectedList = self.selectedList.indexOf(item);
 
-        console.log($event);
-        // if ($event && $event.target.hasAttribute('prevent')) {
-        //     self.selectedList = [];
-        //     return;
-        // }
         if ($event && $event.shiftKey) {
             let list = self.fileList;
             let indexInList = list.indexOf(item);
@@ -86,7 +93,6 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     }
 
     this.dblClickNode = function (item) {
-        console.log(self.exploreUrl + encodeURIComponent(item.path));
         if (!item.rootIsFile) {
             self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
                 let data = result.data.data;
@@ -127,11 +133,18 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         })
     }
 
-    this.getExtFile = function (item) {
-        if (!item.rootIsFile)
-            return '';
-        let arr = item.rootName.split('.');
-        return '.' + arr[arr.length - 1];
+    this.removeNodes = function () {
+        async.each(self.selectedList, (node, next) => {
+            let payload = angular.copy(node);
+            self.httpPost(self.removeUrl, payload, result => {
+                console.log(result);
+            })
+            next();
+        }, err => {
+            if (!err) {
+                self.goTo(self.currentPath.length - 1);
+            }
+        })
     }
 
     this.uploadFiles = function () {
@@ -143,11 +156,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         let reqOptions = {
             method: 'GET',
             url: url,
-            headers: {
-                'Content-Type': 'application/json',
-                'Referrer-Policy': 'no-referrer',
-                'Authorization': `hoangk'stoken`,
-            }
+            headers: HEADER_CONFIG
         }
         $http(reqOptions).then(result => {
             self.requesting = !self.requesting;
@@ -155,8 +164,29 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         });
     }
 
+    this.httpPost = function (url, payload, cb) {
+        self.requesting = !self.requesting;
+        let reqOptions = {
+            method: 'POST',
+            url: url,
+            headers: HEADER_CONFIG,
+            data: payload
+        }
+        $http(reqOptions).then(result => {
+            self.requesting = !self.requesting;
+            cb(result);
+        })
+    }
+
+    this.getExtFile = function (item) {
+        if (!item.rootIsFile)
+            return '';
+        let arr = item.rootName.split('.');
+        return '.' + arr[arr.length - 1];
+    }
+
     // function encrypt(text) {
-    //     var cipher = crypto.createCipher(algorithm, password)
+    //     var cipher = crypto.createCipher(ALGORITHM, SECRET_KEY)
     //     var crypted = cipher.update(text, 'utf8', 'hex')
     //     crypted += cipher.final('hex');
     //     return crypted;

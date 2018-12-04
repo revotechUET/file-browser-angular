@@ -5,7 +5,7 @@
                 <ol class="breadcrumb">
                     <li>
                         <a ng-show="self.currentPath.length > 0" href="" ng-click="self.goTo(-1)">{{
-                            'Root' | strLimit : 8}}</a>
+                            'Root'}}</a>
                         <span style="color: #fff;" ng-show="self.currentPath.length < 1">{{ 'Root' }}</span>
                     </li>
                     <li ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}" class="animated fast fadeIn">
@@ -21,6 +21,7 @@
         </div>
     </div>
 </nav>
+
 <div class="col-sm-3 col-md-2" style="width: 100%;">
     <div class="navbar-collapse">
         <div style="float: none!important;" class="navbar-form navbar-right">
@@ -41,7 +42,7 @@
                             <i class="glyphicon glyphicon-folder-open">&nbsp;Open</i>
                         </a>
                     </li>
-                    <li role="presentation" ng-show="self.selectedList.length > 0" ng-click="modal('newfolder') && prepareNewFolder()">
+                    <li role="presentation" ng-show="self.selectedList.length > 0" ng-click="self.removeNodes()">
                         <a href="" role="menuitem" tabindex="-1">
                             <i class="glyphicon glyphicon-trash">&nbsp;Remove</i>
                         </a>
@@ -62,7 +63,6 @@
             <th>
                 <a href="" ng-click="order('model.name')">
                     Name
-                    <span class="sortorder" ng-class="{reverse:reverse}"></span>
                 </a>
             </th>
             <th class="hidden-xs">

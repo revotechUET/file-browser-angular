@@ -25,7 +25,7 @@ const HEADER_CONFIG = {
 };
 const RAW_DATA_PATH = '/read-file?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';
-const UPLOAD_PATH = '';
+const UPLOAD_PATH = '/upload?location=';
 const REMOVE_PATH = '';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
@@ -41,6 +41,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
 
         self.rawDataUrl = self.url + RAW_DATA_PATH;
         self.exploreUrl = self.url + EXPLORE_PATH;
+        self.uploadUrl = self.url + UPLOAD_PATH;
         self.removeUrl = self.url + REMOVE_PATH;
 
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
@@ -138,8 +139,8 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             let payload = angular.copy(node);
             self.httpPost(self.removeUrl, payload, result => {
                 console.log(result);
+                next();
             })
-            next();
         }, err => {
             if (!err) {
                 self.goTo(self.currentPath.length - 1);
@@ -148,7 +149,8 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     }
 
     this.uploadFiles = function () {
-        uploadFileDialog(ModalService, Upload);
+        let path = self.uploadUrl + encodeURIComponent(self.rootFolder + self.currentPath.join('/'));
+        uploadFileDialog(ModalService, Upload, async, path);
     }
 
     this.httpGet = function (url, cb) {

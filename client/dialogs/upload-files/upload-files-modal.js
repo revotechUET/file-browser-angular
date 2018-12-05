@@ -1,13 +1,12 @@
-module.exports = function (ModalService, Upload, callback) {
+module.exports = function (ModalService, Upload, async, url, callback) {
     modalController.$inject = ['$scope', 'close'];
     function modalController($scope, close) {
         let self = this;
 
         this.uploadFileList = [];
-        this.uploadUrl = '';
+        this.uploadUrl = url;
 
         this.addForUpload = function ($files) {
-            console.log($files);
             self.uploadFileList = self.uploadFileList.concat($files);
         }
 
@@ -16,16 +15,25 @@ module.exports = function (ModalService, Upload, callback) {
         }
 
         this.uploadFiles = function () {
-            Upload.upload({
-                url: self.uploadUrl,
-                data: {
-                    file: self.uploadFileList
+            // console.log(self.uploadUrl);
+            async.each(self.uploadFileList, (file, next) => {
+                Upload.upload({
+                    url: self.uploadUrl,
+                    data: {
+                        'upload-file': file
+                    }
+                }).then(resp => {
+                    console.log('Success ' + resp);
+                    next();
+                }, resp => {
+                    console.log('Error status: ' + resp);
+                    next();
+                });
+            }, err => {
+                if (!err) {
+                    console.log('===upload files done');
                 }
-            }).then(function (resp) {
-                console.log('Success ' + resp);
-            }, function (resp) {
-                console.log('Error status: ' + resp);
-            });
+            })
         }
 
         this.closeModal = function () {

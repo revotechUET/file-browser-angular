@@ -26,6 +26,7 @@ const HEADER_CONFIG = {
 const RAW_DATA_PATH = '/read-file?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';
 const UPLOAD_PATH = '/upload?location=';
+const DOWNLOAD_PATH = '/download?file_path=';
 const REMOVE_PATH = '';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
@@ -42,6 +43,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.rawDataUrl = self.url + RAW_DATA_PATH;
         self.exploreUrl = self.url + EXPLORE_PATH;
         self.uploadUrl = self.url + UPLOAD_PATH;
+        self.downloadUrl = self.url + DOWNLOAD_PATH;
         self.removeUrl = self.url + REMOVE_PATH;
 
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
@@ -95,13 +97,14 @@ function Controller($scope, $element, $http, ModalService, Upload) {
 
     this.dblClickNode = function (item) {
         if (!item.rootIsFile) {
+            self.selectedList = [];
             self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
                 let data = result.data.data;
                 self.fileList = [...data.files, ...data.folders];
                 self.currentPath.push(item.rootName);
             })
         } else {
-            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path.substring(1)), result => {
+            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
                 let data = { title: item.rootName };
                 let resource = result.data.data;
                 data.fileContent = resource;
@@ -125,7 +128,22 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         }
     }
 
+    this.downloadFile = function (item) {
+        self.requesting = !self.requesting;
+        let header = HEADER_CONFIG;
+        header.responseType = 'arraybuffer';
+        let reqOptions = {
+            method: 'GET',
+            url: self.downloadUrl + encodeURIComponent(item.path),
+            headers: header,
+        }
+        $http(reqOptions).then(result => {
+            self.requesting = !self.requesting;
+        })
+    }
+
     this.goTo = function (index) {
+        self.selectedList = [];
         self.currentPath = self.currentPath.slice(0, index + 1);
         let newPath = self.rootFolder + self.currentPath.join('/');
         self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
@@ -150,7 +168,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
 
     this.uploadFiles = function () {
         let path = self.uploadUrl + encodeURIComponent(self.rootFolder + self.currentPath.join('/'));
-        uploadFileDialog(ModalService, Upload, async, path);
+        uploadFileDialog(ModalService, Upload, self);
     }
 
     this.httpGet = function (url, cb) {
@@ -163,6 +181,9 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         $http(reqOptions).then(result => {
             self.requesting = !self.requesting;
             cb(result);
+        }, err => {
+            self.requesting = !self.requesting;
+            console.log(err);
         });
     }
 

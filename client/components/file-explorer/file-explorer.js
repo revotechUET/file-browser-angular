@@ -137,8 +137,18 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             url: self.downloadUrl + encodeURIComponent(item.path),
             headers: header,
         }
-        $http(reqOptions).then(result => {
+        $http(reqOptions).then(res => {
             self.requesting = !self.requesting;
+            const blob = new Blob([res.data], {
+                type: res.headers('Content-Type')
+            });
+            const a = document.createElement('a');
+            a.download = item.rootName || 'untitled';
+            a.href = URL.createObjectURL(blob);
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            a.parentNode.removeChild(a);
         })
     }
 

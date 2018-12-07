@@ -27,7 +27,7 @@ const RAW_DATA_PATH = '/read-file?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';
 const UPLOAD_PATH = '/upload?location=';
 const DOWNLOAD_PATH = '/download?file_path=';
-const REMOVE_PATH = '';
+const REMOVE_PATH = '/action/remove?file_path=';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 function Controller($scope, $element, $http, ModalService, Upload) {
@@ -164,8 +164,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
 
     this.removeNodes = function () {
         async.each(self.selectedList, (node, next) => {
-            let payload = angular.copy(node);
-            self.httpPost(self.removeUrl, payload, result => {
+            self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
                 console.log(result);
                 next();
             })

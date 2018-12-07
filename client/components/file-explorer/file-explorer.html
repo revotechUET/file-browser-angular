@@ -32,14 +32,29 @@
             </div>
             <div class="btn-group">
                 <button class="btn btn-flat btn-sm dropdown-toggle" type="button" id="more" data-toggle="dropdown"
-                    aria-expanded="true" ng-disabled="self.selectedList.length < 1">More
+                    aria-expanded="true" ng-disabled="self.selectedList.length < 1 && self.pasteList.length < 1">More
                     <i class="glyphicon glyphicon-option-vertical"></i>
                 </button>
 
                 <ul class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
-                    <li role="presentation" ng-show="self.selectedList.length == 1" ng-click="self.dblClickNode(self.selectedList[0])">
+                    <li role="presentation" ng-show="!self.selectedList.length == 1" ng-click="self.dblClickNode(self.selectedList[0])">
                         <a href="" role="menuitem" tabindex="-1">
                             <i class="glyphicon glyphicon-folder-open">&nbsp;Open</i>
+                        </a>
+                    </li>
+                    <li role="presentation" ng-show="self.selectedList.length > 0" ng-click="self.copyOrCut('copy')">
+                        <a href="" role="menuitem" tabindex="-1">
+                            <i class="glyphicon glyphicon-copy">&nbsp;Copy</i>
+                        </a>
+                    </li>
+                    <li role="presentation" ng-show="self.selectedList.length > 0" ng-click="self.copyOrCut('cut')">
+                        <a href="" role="menuitem" tabindex="-1">
+                            <i class="glyphicon glyphicon-scissors">&nbsp;Cut</i>
+                        </a>
+                    </li>
+                    <li role="presentation" ng-show="self.pasteList.length > 0" ng-click="self.paste()">
+                        <a href="" role="menuitem" tabindex="-1">
+                            <i class="glyphicon glyphicon-paste">&nbsp;Paste</i>
                         </a>
                     </li>
                     <li role="presentation" ng-show="self.selectedList.length == 1" ng-click="self.downloadFile(self.selectedList[0])">

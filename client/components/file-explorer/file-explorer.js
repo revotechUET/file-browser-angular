@@ -28,6 +28,8 @@ const EXPLORE_PATH = '/file-explorer/shallow?dir=';
 const UPLOAD_PATH = '/upload?location=';
 const DOWNLOAD_PATH = '/download?file_path=';
 const REMOVE_PATH = '/action/remove?file_path=';
+const COPY_PATH = '/action/copy?';
+const MOVE_PATH = '/action/move?';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 function Controller($scope, $element, $http, ModalService, Upload) {
@@ -37,6 +39,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.imgResource = {};
         self.currentPath = [];
         self.selectedList = [];
+        self.pasteList = [];
         self.requesting = false;
         self.rootFolder = self.rootFolder || '/';
 
@@ -45,6 +48,8 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.uploadUrl = self.url + UPLOAD_PATH;
         self.downloadUrl = self.url + DOWNLOAD_PATH;
         self.removeUrl = self.url + REMOVE_PATH;
+        self.copyUrl = self.url + COPY_PATH;
+        self.moveUrl = self.url + MOVE_PATH;
 
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
             if (result) {
@@ -175,8 +180,53 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         })
     }
 
+    this.paste = function () {
+        switch (self.pasteList.action) {
+            case 'copy':
+                async.eachSeries(self.pasteList, (file, next) => {
+                    let from = `from=${encodeURIComponent(file.path)}&`;
+                    let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
+
+                    self.httpGet(`${self.copyUrl + from + dest}`, res => {
+                        console.log(res);
+                        next();
+                    })
+                }, err => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('===done');
+                    }
+                    self.goTo(self.currentPath.length - 1);
+                })
+                break;
+            case 'cut':
+                async.eachSeries(self.pasteList, (file, next) => {
+                    let from = `from=${encodeURIComponent(file.path)}&`;
+                    let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
+
+                    self.httpGet(`${self.moveUrl + from + dest}`, res => {
+                        console.log(res);
+                        next();
+                    })
+                }, err => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('===done');
+                    }
+                    self.goTo(self.currentPath.length - 1);
+                })
+                break;
+        }
+    }
+
+    this.copyOrCut = function (action) {
+        self.pasteList = self.selectedList;
+        self.pasteList.action = action;
+    }
+
     this.uploadFiles = function () {
-        let path = self.uploadUrl + encodeURIComponent(self.rootFolder + self.currentPath.join('/'));
         uploadFileDialog(ModalService, Upload, self);
     }
 

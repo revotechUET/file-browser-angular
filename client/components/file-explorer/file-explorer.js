@@ -12,6 +12,7 @@ const imgPreview = require('../img-preview/img-preview').name
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
+const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
 
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
@@ -19,9 +20,9 @@ const componentName = 'fileExplorer';
 // const ALGORITHM = 'aes-256-cbc';
 // const SECRET_KEY = 'secretKey';
 const HEADER_CONFIG = {
-    'Content-Type': 'application/json',
-    'Referrer-Policy': 'no-referrer',
-    'Authorization': `hoangk'stoken`,
+  'Content-Type': 'application/json',
+  'Referrer-Policy': 'no-referrer',
+  'Authorization': `hoangk'stoken`,
 };
 const RAW_DATA_PATH = '/read-file?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';
@@ -30,303 +31,319 @@ const DOWNLOAD_PATH = '/download?file_path=';
 const REMOVE_PATH = '/action/remove?file_path=';
 const COPY_PATH = '/action/copy?';
 const MOVE_PATH = '/action/move?';
+const NEW_FOLDER_PATH = '/action/create-folder?';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 function Controller($scope, $element, $http, ModalService, Upload) {
-    let self = this;
+  let self = this;
 
-    this.$onInit = function () {
-        self.imgResource = {};
-        self.currentPath = [];
+  this.$onInit = function () {
+    self.imgResource = {};
+    self.currentPath = [];
+    self.selectedList = [];
+    self.pasteList = [];
+    self.requesting = false;
+    self.rootFolder = self.rootFolder || '/';
+
+    self.rawDataUrl = self.url + RAW_DATA_PATH;
+    self.exploreUrl = self.url + EXPLORE_PATH;
+    self.uploadUrl = self.url + UPLOAD_PATH;
+    self.downloadUrl = self.url + DOWNLOAD_PATH;
+    self.removeUrl = self.url + REMOVE_PATH;
+    self.copyUrl = self.url + COPY_PATH;
+    self.moveUrl = self.url + MOVE_PATH;
+    self.newFolderUrl = self.url + NEW_FOLDER_PATH;
+
+    self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
+      if (result) {
+        let data = result.data.data;
+        self.fileList = [...data.files, ...data.folders];
+      } else {
+        console.log('===empty');
+      }
+    })
+  }
+
+  this.isSelected = function (item) {
+    return self.selectedList.indexOf(item) !== -1;
+  };
+
+  this.clickNode = function (item, $event) {
+    let indexInSelectedList = self.selectedList.indexOf(item);
+
+    if ($event && $event.shiftKey) {
+      let list = self.fileList;
+      let indexInList = list.indexOf(item);
+      let lastSelected = self.selectedList[0];
+      let i = list.indexOf(lastSelected);
+      let current = undefined;
+      if (lastSelected && list.indexOf(lastSelected) < indexInList) {
         self.selectedList = [];
-        self.pasteList = [];
-        self.requesting = false;
-        self.rootFolder = self.rootFolder || '/';
-
-        self.rawDataUrl = self.url + RAW_DATA_PATH;
-        self.exploreUrl = self.url + EXPLORE_PATH;
-        self.uploadUrl = self.url + UPLOAD_PATH;
-        self.downloadUrl = self.url + DOWNLOAD_PATH;
-        self.removeUrl = self.url + REMOVE_PATH;
-        self.copyUrl = self.url + COPY_PATH;
-        self.moveUrl = self.url + MOVE_PATH;
-
-        self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
-            if (result) {
-                let data = result.data.data;
-                self.fileList = [...data.files, ...data.folders];
-            } else {
-                console.log('===empty');
-            }
-        })
-    }
-
-    this.isSelected = function (item) {
-        return self.selectedList.indexOf(item) !== -1;
-    };
-
-    this.clickNode = function (item, $event) {
-        let indexInSelectedList = self.selectedList.indexOf(item);
-
-        if ($event && $event.shiftKey) {
-            let list = self.fileList;
-            let indexInList = list.indexOf(item);
-            let lastSelected = self.selectedList[0];
-            let i = list.indexOf(lastSelected);
-            let current = undefined;
-            if (lastSelected && list.indexOf(lastSelected) < indexInList) {
-                self.selectedList = [];
-                while (i <= indexInList) {
-                    current = list[i];
-                    !self.isSelected(current) && self.selectedList.push(current);
-                    i++;
-                }
-                return;
-            }
-            if (lastSelected && list.indexOf(lastSelected) > indexInList) {
-                $scope.temps = [];
-                while (i >= indexInList) {
-                    current = list[i];
-                    !self.isSelected(current) && self.selectedList.push(current);
-                    i--;
-                }
-                return;
-            }
+        while (i <= indexInList) {
+          current = list[i];
+          !self.isSelected(current) && self.selectedList.push(current);
+          i++;
         }
-        if ($event && $event.ctrlKey) {
-            self.isSelected(item) ? self.selectedList.splice(indexInSelectedList, 1) : self.selectedList.push(item);
-            return;
+        return;
+      }
+      if (lastSelected && list.indexOf(lastSelected) > indexInList) {
+        $scope.temps = [];
+        while (i >= indexInList) {
+          current = list[i];
+          !self.isSelected(current) && self.selectedList.push(current);
+          i--;
         }
-        self.selectedList = [item];
+        return;
+      }
     }
+    if ($event && $event.ctrlKey) {
+      self.isSelected(item) ? self.selectedList.splice(indexInSelectedList, 1) : self.selectedList.push(item);
+      return;
+    }
+    self.selectedList = [item];
+  }
 
-    this.dblClickNode = function (item) {
-        if (!item.rootIsFile) {
-            self.selectedList = [];
-            self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
-                let data = result.data.data;
-                self.fileList = [...data.files, ...data.folders];
-                self.currentPath.push(item.rootName);
-            })
-        } else {
-            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
-                let data = { title: item.rootName };
-                let resource = result.data.data;
-                data.fileContent = resource;
-                switch (true) {
-                    case /\.pdf$/.test(self.getExtFile(item)):
-                        data.fileContent = resource.base64;
-                        pdfViewerDialog(ModalService, data);
-                        break;
-                    case /\.(jpg|png)$/.test(self.getExtFile(item)):
-                        self.imgResource.title = item.rootName;
-                        self.imgResource.fileContent = resource.base64;
-                        let imgCtnElm = document.getElementById('img-container');
-                        self.imgResource.parentElem = imgCtnElm;
-                        imgCtnElm.style.display = 'block';
-                        break;
-                    default:
-                        data.fileContent = resource.utf8;
-                        textViewerDialog(ModalService, data);
-                }
-            })
+  this.dblClickNode = function (item) {
+    if (!item)
+      return;
+    if (!item.rootIsFile) {
+      self.selectedList = [];
+      self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
+        let data = result.data.data;
+        self.fileList = [...data.files, ...data.folders];
+        self.currentPath.push(item.rootName);
+      })
+    } else {
+      self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
+        let data = { title: item.rootName };
+        let resource = result.data.data;
+        data.fileContent = resource;
+        switch (true) {
+          case /\.pdf$/.test(self.getExtFile(item)):
+            data.fileContent = resource.base64;
+            pdfViewerDialog(ModalService, data);
+            break;
+          case /\.(jpg|png)$/.test(self.getExtFile(item)):
+            self.imgResource.title = item.rootName;
+            self.imgResource.fileContent = resource.base64;
+            let imgCtnElm = document.getElementById('img-container');
+            self.imgResource.parentElem = imgCtnElm;
+            imgCtnElm.style.display = 'block';
+            break;
+          default:
+            data.fileContent = resource.utf8;
+            textViewerDialog(ModalService, data);
         }
+      })
     }
+  }
 
-    this.downloadFile = function (item) {
-        self.requesting = !self.requesting;
-        let header = HEADER_CONFIG;
-        header.responseType = 'arraybuffer';
-        let reqOptions = {
-            method: 'GET',
-            url: self.downloadUrl + encodeURIComponent(item.path),
-            headers: header,
-        }
-        $http(reqOptions).then(res => {
-            self.requesting = !self.requesting;
-            const blob = new Blob([res.data], {
-                type: res.headers('Content-Type')
-            });
-            const a = document.createElement('a');
-            a.download = item.rootName || 'untitled';
-            a.href = URL.createObjectURL(blob);
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            a.parentNode.removeChild(a);
-        })
+  this.downloadFile = function (item) {
+    if (!item || !item.rootIsFile)
+      return;
+    self.requesting = !self.requesting;
+    let header = HEADER_CONFIG;
+    header.responseType = 'arraybuffer';
+    let reqOptions = {
+      method: 'GET',
+      url: self.downloadUrl + encodeURIComponent(item.path),
+      headers: header,
     }
+    $http(reqOptions).then(res => {
+      self.requesting = !self.requesting;
+      const blob = new Blob([res.data], {
+        type: res.headers('Content-Type')
+      });
+      const a = document.createElement('a');
+      a.download = item.rootName || 'untitled';
+      a.href = URL.createObjectURL(blob);
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      a.parentNode.removeChild(a);
+    })
+  }
 
-    this.goTo = function (index) {
-        self.selectedList = [];
-        self.currentPath = self.currentPath.slice(0, index + 1);
-        let newPath = self.rootFolder + self.currentPath.join('/');
-        self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
-            let data = result.data.data;
-            self.fileList = [...data.files, ...data.folders];
-        })
-    }
+  this.goTo = function (index) {
+    self.selectedList = [];
+    self.currentPath = self.currentPath.slice(0, index + 1);
+    let newPath = self.rootFolder + self.currentPath.join('/');
+    self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
+      let data = result.data.data;
+      self.fileList = [...data.files, ...data.folders];
+    })
+  }
 
-    this.removeNodes = function () {
-        async.each(self.selectedList, (node, next) => {
-            self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
-                console.log(result);
-                next();
-            })
+  this.removeNodes = function () {
+    if (!self.selectedList)
+      return;
+    async.each(self.selectedList, (node, next) => {
+      self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
+        console.log(result);
+        next();
+      })
+    }, err => {
+      if (!err) {
+        self.goTo(self.currentPath.length - 1);
+      }
+    })
+  }
+
+  this.paste = function () {
+    if (!(self.pasteList))
+      return;
+    switch (self.pasteList.action) {
+      case 'copy':
+        async.eachSeries(self.pasteList, (file, next) => {
+          let from = `from=${encodeURIComponent(file.path)}&`;
+          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
+
+          self.httpGet(`${self.copyUrl + from + dest}`, res => {
+            console.log(res);
+            next();
+          })
         }, err => {
-            if (!err) {
-                self.goTo(self.currentPath.length - 1);
-            }
-        })
-    }
-
-    this.paste = function () {
-        switch (self.pasteList.action) {
-            case 'copy':
-                async.eachSeries(self.pasteList, (file, next) => {
-                    let from = `from=${encodeURIComponent(file.path)}&`;
-                    let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
-
-                    self.httpGet(`${self.copyUrl + from + dest}`, res => {
-                        console.log(res);
-                        next();
-                    })
-                }, err => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log('===done');
-                    }
-                    self.goTo(self.currentPath.length - 1);
-                })
-                break;
-            case 'cut':
-                async.eachSeries(self.pasteList, (file, next) => {
-                    let from = `from=${encodeURIComponent(file.path)}&`;
-                    let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
-
-                    self.httpGet(`${self.moveUrl + from + dest}`, res => {
-                        console.log(res);
-                        next();
-                    })
-                }, err => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log('===done');
-                    }
-                    self.goTo(self.currentPath.length - 1);
-                })
-                break;
-        }
-    }
-
-    this.copyOrCut = function (action) {
-        self.pasteList = self.selectedList;
-        self.pasteList.action = action;
-    }
-
-    this.uploadFiles = function () {
-        uploadFileDialog(ModalService, Upload, self);
-    }
-
-    this.httpGet = function (url, cb) {
-        self.requesting = !self.requesting;
-        let reqOptions = {
-            method: 'GET',
-            url: url,
-            headers: HEADER_CONFIG
-        }
-        $http(reqOptions).then(result => {
-            self.requesting = !self.requesting;
-            cb(result);
-        }, err => {
-            self.requesting = !self.requesting;
+          if (err) {
             console.log(err);
-        });
-    }
-
-    this.httpPost = function (url, payload, cb) {
-        self.requesting = !self.requesting;
-        let reqOptions = {
-            method: 'POST',
-            url: url,
-            headers: HEADER_CONFIG,
-            data: payload
-        }
-        $http(reqOptions).then(result => {
-            self.requesting = !self.requesting;
-            cb(result);
+          } else {
+            console.log('===done');
+          }
+          self.goTo(self.currentPath.length - 1);
         })
-    }
+        break;
+      case 'cut':
+        async.eachSeries(self.pasteList, (file, next) => {
+          let from = `from=${encodeURIComponent(file.path)}&`;
+          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
 
-    this.getExtFile = function (item) {
-        if (!item.rootIsFile)
-            return '';
-        let arr = item.rootName.split('.');
-        return '.' + arr[arr.length - 1];
+          self.httpGet(`${self.moveUrl + from + dest}`, res => {
+            console.log(res);
+            next();
+          })
+        }, err => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log('=done');
+          }
+          self.goTo(self.currentPath.length - 1);
+        })
+        break;
     }
+  }
 
-    // function encrypt(text) {
-    //     var cipher = crypto.createCipher(ALGORITHM, SECRET_KEY)
-    //     var crypted = cipher.update(text, 'utf8', 'hex')
-    //     crypted += cipher.final('hex');
-    //     return crypted;
-    // }
+  this.copyOrCut = function (action) {
+    if (!self.selectedList)
+      return;
+    self.pasteList = self.selectedList;
+    self.pasteList.action = action;
+  }
+
+  this.uploadFiles = function () {
+    uploadFileDialog(ModalService, Upload, self);
+  }
+
+  this.newFolder = function () {
+    newFolderDialog(ModalService, self);
+  }
+
+  this.httpGet = function (url, cb) {
+    self.requesting = !self.requesting;
+    let reqOptions = {
+      method: 'GET',
+      url: url,
+      headers: HEADER_CONFIG
+    }
+    $http(reqOptions).then(result => {
+      self.requesting = !self.requesting;
+      cb(result);
+    }, err => {
+      self.requesting = !self.requesting;
+      console.log(err);
+    });
+  }
+
+  this.httpPost = function (url, payload, cb) {
+    self.requesting = !self.requesting;
+    let reqOptions = {
+      method: 'POST',
+      url: url,
+      headers: HEADER_CONFIG,
+      data: payload
+    }
+    $http(reqOptions).then(result => {
+      self.requesting = !self.requesting;
+      cb(result);
+    })
+  }
+
+  this.getExtFile = function (item) {
+    if (!item.rootIsFile)
+      return '';
+    let arr = item.rootName.split('.');
+    return '.' + arr[arr.length - 1];
+  }
+
+  // function encrypt(text) {
+  //     var cipher = crypto.createCipher(ALGORITHM, SECRET_KEY)
+  //     var crypted = cipher.update(text, 'utf8', 'hex')
+  //     crypted += cipher.final('hex');
+  //     return crypted;
+  // }
 }
 
 let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview]);
 
 app.component(componentName, {
-    template: require('./file-explorer.html'),
-    controller: Controller,
-    controllerAs: 'self',
-    bindings: {
-        rootFolder: '@',
-        url: '@',
-        rawDataUrl: '@'
-    }
+  template: require('./file-explorer.html'),
+  controller: Controller,
+  controllerAs: 'self',
+  bindings: {
+    rootFolder: '@',
+    url: '@',
+    rawDataUrl: '@'
+  }
 })
 
 app.filter('strLimit', ['$filter', function ($filter) {
-    return function (input, limit, more) {
-        if (input.length <= limit) {
-            return input;
-        }
-        return $filter('limitTo')(input, limit) + (more || '...');
-    };
+  return function (input, limit, more) {
+    if (input.length <= limit) {
+      return input;
+    }
+    return $filter('limitTo')(input, limit) + (more || '...');
+  };
 }]);
 
 app.filter('fileExtension', ['$filter', function ($filter) {
-    return function (input) {
-        return /\./.test(input) && $filter('strLimit')(input.split('.').pop(), 3, '..') || '';
-    };
+  return function (input) {
+    return /\./.test(input) && $filter('strLimit')(input.split('.').pop(), 3, '..') || '';
+  };
 }]);
 
 app.filter('formatDate', ['$filter', function () {
-    return function (input) {
-        return input instanceof Date ?
-            input.toISOString().substring(0, 19).replace('T', ' ') :
-            (input.toLocaleString || input.toString).apply(input);
-    };
+  return function (input) {
+    return input instanceof Date ?
+      input.toISOString().substring(0, 19).replace('T', ' ') :
+      (input.toLocaleString || input.toString).apply(input);
+  };
 }]);
 
 app.filter('humanReadableFileSize', ['$filter', function ($filter) {
-    let decimalByteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-    let binaryByteUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+  let decimalByteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+  let binaryByteUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
 
-    return function (input) {
-        let i = -1;
-        let fileSizeInBytes = input;
+  return function (input) {
+    let i = -1;
+    let fileSizeInBytes = input;
 
-        do {
-            fileSizeInBytes = fileSizeInBytes / 1024;
-            i++;
-        } while (fileSizeInBytes > 1024);
+    do {
+      fileSizeInBytes = fileSizeInBytes / 1024;
+      i++;
+    } while (fileSizeInBytes > 1024);
 
-        let result = false ? binaryByteUnits[i] : decimalByteUnits[i];
-        return Math.max(fileSizeInBytes, 0.1).toFixed(1) + ' ' + result;
-    };
+    let result = false ? binaryByteUnits[i] : decimalByteUnits[i];
+    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + ' ' + result;
+  };
 }]);
 
 module.exports.name = moduleName;

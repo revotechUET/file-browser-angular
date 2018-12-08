@@ -14,7 +14,7 @@ function Controller($scope) {
         self.totalPage = 0;
         self.pageRendering = false;
         self.pageNumPending = null;
-        self.scale = 0.7;
+        self.scale = 1;
         self.canvas = document.getElementById('pdfViewer');
 
         $scope.$watch(() => self.base64Data, (newVal, oldVal) => {

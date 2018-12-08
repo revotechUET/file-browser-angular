@@ -1,0 +1,18 @@
+<div class='modal fade' data-backdrop="static" data-keyboard="false">
+  <div class='modal-dialog modal-sm'>
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" aria-hidden="true" ng-click="self.closeModal()">&times;</button>
+        <h4 class="modal-title">New Folder</h4>
+      </div>
+      <div style="max-height: 70vh; overflow-y: overlay; overflow-x: hidden; text-align: left;" class="modal-body text-center">
+        <label class="radio">Folder Name</label>
+        <input class="form-control" ng-model="self.folderName" autofocus="autofocus">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="self.closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" ng-disabled="!self.folderName" ng-click="self.createFolder()">Create</button>
+      </div>
+    </div>
+  </div>
+</div>

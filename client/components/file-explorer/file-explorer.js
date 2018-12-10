@@ -22,7 +22,7 @@ const componentName = 'fileExplorer';
 const HEADER_CONFIG = {
   'Content-Type': 'application/json',
   'Referrer-Policy': 'no-referrer',
-  'Authorization': `hoangk'stoken`,
+  'Authorization': window.localStorage.getItem('token'),
 };
 const RAW_DATA_PATH = '/read-file?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';

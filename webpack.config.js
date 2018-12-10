@@ -8,7 +8,8 @@ module.exports = {
     // mode: 'production',
     devtool: 'inline-sourcemap',
     entry: [
-        './client/components/file-explorer/file-explorer.js'
+        './client/components/file-explorer/file-explorer.js',
+        './node_modules/pdfjs-dist/build/pdf.worker.entry.js'
     ],
     output: {
         path: OUTPUT,

@@ -7,7 +7,7 @@ function Controller($scope) {
 
     this.$onInit = function () {
         let pdfjsLib = require('pdfjs-dist');
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/js/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'file-explorer-module.js';
 
         self.pdfDoc = null;
         self.pageNum = 1;

@@ -30,50 +30,50 @@
       <div style="float: none!important; padding-left: 0;" class="navbar-form navbar-right">
         <div class="btn-group">
           <button class="btn btn-flat btn-sm" type="button" aria-expanded="true" ng-click="self.uploadFiles()">
-            <i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;Upload
+            <i class="fa fa-upload"></i>&nbsp;Upload
           </button>
         </div>
         <div class="btn-group">
           <button class="btn btn-flat btn-sm" type="button" aria-expanded="true" ng-click="self.newFolder()">
-            <i class="glyphicon glyphicon-plus"></i>&nbsp;New Folder
+            <i class="fa fa-plus"></i>&nbsp;New Folder
           </button>
         </div>
         <div class="btn-group">
           <button class="btn btn-flat btn-sm dropdown-toggle" type="button" id="more" data-toggle="dropdown"
-            aria-expanded="true" ng-disabled="self.selectedList.length < 1 && self.pasteList.length < 1">More
-            <i class="glyphicon glyphicon-option-vertical"></i>
+            aria-expanded="true" ng-disabled="self.selectedList.length < 1 && self.pasteList.length < 1">More&nbsp;&nbsp;
+            <i class="fa fa-ellipsis-v"></i>
           </button>
 
           <ul class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
             <li role="presentation" ng-click="self.dblClickNode(self.selectedList[0])">
               <a href="" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
-                <i class="glyphicon glyphicon-folder-open">&nbsp;Open</i>
+                <i class="fa fa-folder-open">&nbsp;&nbsp;Open</i>
               </a>
             </li>
             <li role="presentation" ng-click="self.copyOrCut('copy')">
               <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
-                <i class="glyphicon glyphicon-copy">&nbsp;Copy</i>
+                <i class="fa fa-copy">&nbsp;&nbsp;Copy</i>
               </a>
             </li>
             <li role="presentation" ng-click="self.copyOrCut('cut')">
               <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
-                <i class="glyphicon glyphicon-scissors">&nbsp;Cut</i>
+                <i class="fa fa-cut">&nbsp;&nbsp;Cut</i>
               </a>
             </li>
             <li role="presentation" ng-click="self.paste()">
               <a href="" ng-class="{inactive: !(self.pasteList.length > 0)}" role="menuitem" tabindex="-1">
-                <i class="glyphicon glyphicon-paste">&nbsp;Paste</i>
+                <i class="fa fa-paste">&nbsp;&nbsp;Paste</i>
               </a>
             </li>
             <li role="presentation" ng-click="self.downloadFile(self.selectedList[0])">
               <a href="" ng-class="{inactive: !(self.selectedList.length == 1) || !self.selectedList[0].rootIsFile}"
                 role="menuitem" tabindex="-1">
-                <i class="glyphicon glyphicon-download-alt">&nbsp;Download</i>
+                <i class="fa fa-download">&nbsp;&nbsp;Download</i>
               </a>
             </li>
             <li role="presentation" ng-click="self.removeNodes()">
               <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
-                <i class="glyphicon glyphicon-trash">&nbsp;Remove</i>
+                <i class="fa fa-trash">&nbsp;&nbsp;Remove</i>
               </a>
             </li>
           </ul>

@@ -125,13 +125,13 @@
             </a>
           </td>
           <td class="hidden-xs">
-            <span>
+            <span ng-if="item.rootIsFile">
               {{item.size | humanReadableFileSize}}
             </span>
           </td>
           <td class="hidden-sm hidden-xs">
             <span>
-              {{item.date}}
+              {{item.modifiedDate | formatDate}}
             </span>
           </td>
         </tr>

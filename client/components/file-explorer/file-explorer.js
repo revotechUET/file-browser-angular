@@ -144,7 +144,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
 
     const a = document.createElement('a');
     a.download = item.rootName || 'untitled';
-    a.href = self.downloadUrl + encodeURIComponent(item.path);
+    a.href = self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}`;
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();

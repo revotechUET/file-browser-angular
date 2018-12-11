@@ -115,6 +115,13 @@
             </div>
           </td>
         </tr>
+        <tr ng-show="!(self.fileList.length > 0) && !self.requesting">
+          <td>
+            <div>
+              <span>This Folder is empty.</span>
+            </div>
+          </td>
+        </tr>
         <tr ng-show="!self.requesting" class="item-list" ng-repeat="item in self.fileList" ng-click="self.clickNode(item, $event)"
           ng-dblclick="self.dblClickNode(item)" ng-class="{selected: self.isSelected(item)}">
           <td>
@@ -127,6 +134,9 @@
           <td class="hidden-xs">
             <span ng-if="item.rootIsFile">
               {{item.size | humanReadableFileSize}}
+            </span>
+            <span ng-if="!item.rootIsFile">
+              --
             </span>
           </td>
           <td class="hidden-sm hidden-xs">

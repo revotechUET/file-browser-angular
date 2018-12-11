@@ -10,8 +10,12 @@
         <input class="form-control" ng-model="self.folderName" autofocus="autofocus">
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="self.closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-primary" ng-disabled="!self.folderName" ng-click="self.createFolder()">Create</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="self.closeModal()">
+          <span class="close-16x16"></span>&nbsp;Cancel
+        </button>
+        <button type="submit" class="btn btn-default" ng-disabled="!self.folderName" ng-click="self.createFolder()">
+          <span class="ok-16x16"></span>&nbsp;Create
+        </button>
       </div>
     </div>
   </div>

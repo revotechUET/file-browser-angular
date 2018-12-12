@@ -19,11 +19,12 @@ const componentName = 'fileExplorer';
 
 // const ALGORITHM = 'aes-256-cbc';
 // const SECRET_KEY = 'secretKey';
-const HEADER_CONFIG = {
-  'Content-Type': 'application/json',
-  'Referrer-Policy': 'no-referrer',
-  'Authorization': window.localStorage.getItem('token'),
-};
+// const HEADER_CONFIG = {
+//   'Content-Type': 'application/json',
+//   'Referrer-Policy': 'no-referrer',
+//   'Authorization': window.localStorage.getItem('token'),
+//   'Storage-Database': window.localStorage.getItem('storage_database')
+// };
 const RAW_DATA_PATH = '/read-file?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';
 const UPLOAD_PATH = '/upload?location=';
@@ -34,6 +35,7 @@ const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
+
 function Controller($scope, $element, $http, ModalService, Upload) {
   let self = this;
 
@@ -44,7 +46,8 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.pasteList = [];
     self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
-    self.HEADER_CONFIG = HEADER_CONFIG;
+    console.log("===",self.storage_database);
+    // self.HEADER_CONFIG = HEADER_CONFIG;
 
     self.rawDataUrl = self.url + RAW_DATA_PATH;
     self.exploreUrl = self.url + EXPLORE_PATH;
@@ -116,7 +119,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       })
     } else {
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
-        let data = { title: item.rootName };
+        let data = {title: item.rootName};
         let resource = result.data.data;
         data.fileContent = resource;
         switch (true) {
@@ -262,7 +265,12 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     let reqOptions = {
       method: 'GET',
       url: url,
-      headers: HEADER_CONFIG
+      headers: {
+        'Content-Type': 'application/json',
+        'Referrer-Policy': 'no-referrer',
+        'Authorization': window.localStorage.getItem('token'),
+        'Storage-Database': window.localStorage.getItem('storage_database')
+      }
     }
     $http(reqOptions).then(result => {
       self.requesting = !self.requesting;
@@ -278,7 +286,12 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     let reqOptions = {
       method: 'POST',
       url: url,
-      headers: HEADER_CONFIG,
+      headers: {
+        'Content-Type': 'application/json',
+        'Referrer-Policy': 'no-referrer',
+        'Authorization': window.localStorage.getItem('token'),
+        'Storage-Database': window.localStorage.getItem('storage_database')
+      },
       data: payload
     }
     $http(reqOptions).then(result => {
@@ -311,7 +324,8 @@ app.component(componentName, {
   bindings: {
     rootFolder: '@',
     url: '@',
-    rawDataUrl: '@'
+    rawDataUrl: '@',
+    storage_database: '@'
   }
 })
 

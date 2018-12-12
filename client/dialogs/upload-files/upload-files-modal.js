@@ -23,7 +23,12 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       async.each(self.uploadFileList, (file, next) => {
         Upload.upload({
           url: self.uploadUrl,
-          headers: fileExplorerCtrl.HEADER_CONFIG,
+          headers: {
+            'Content-Type': 'application/json',
+            'Referrer-Policy': 'no-referrer',
+            'Authorization': window.localStorage.getItem('token'),
+            'Storage-Database': window.localStorage.getItem('storage_database')
+          },
           data: {
             'upload-file': file
           }

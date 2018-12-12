@@ -23,6 +23,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       async.each(self.uploadFileList, (file, next) => {
         Upload.upload({
           url: self.uploadUrl,
+          headers: fileExplorerCtrl.HEADER_CONFIG,
           data: {
             'upload-file': file
           }

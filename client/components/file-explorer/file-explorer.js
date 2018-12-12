@@ -44,6 +44,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.pasteList = [];
     self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
+    self.HEADER_CONFIG = HEADER_CONFIG;
 
     self.rawDataUrl = self.url + RAW_DATA_PATH;
     self.exploreUrl = self.url + EXPLORE_PATH;

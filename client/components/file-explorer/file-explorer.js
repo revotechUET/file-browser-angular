@@ -178,13 +178,21 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   }
 
   this.goTo = function (index) {
+    let current = self.currentPath;
     self.selectedList = [];
     self.currentPath = self.currentPath.slice(0, index + 1);
     let newPath = self.rootFolder + self.currentPath.join('/');
-    self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
-      let data = result.data.data;
-      self.fileList = [...data.files, ...data.folders];
-    })
+    if (index === 0) {
+      self.httpGet(self.exploreUrl + encodeURIComponent(current), result => {
+        let data = result.data.data;
+        self.fileList = [...data.files, ...data.folders];
+      })
+    } else {
+      self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
+        let data = result.data.data;
+        self.fileList = [...data.files, ...data.folders];
+      })
+    }
   }
 
   this.removeNodes = function () {

@@ -1,3 +1,5 @@
+const helper = require('../dialog-helper');
+
 module.exports = function (ModalService, fileExplorerCtrl, callback) {
   modalController.$inject = ['$scope', 'close'];
   function modalController($scope, close) {
@@ -26,10 +28,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     controller: modalController,
     controllerAs: 'self'
   }).then((modal) => {
-    modal.element.modal();
+    helper.initModal(modal);
     modal.close.then(data => {
-      $('.modal-backdrop').last().remove();
-      $('body').removeClass('modal-open');
+      helper.removeBackdrop();
       if (callback)
         callback(data);
     })

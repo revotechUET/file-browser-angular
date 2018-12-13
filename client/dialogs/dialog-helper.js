@@ -10,6 +10,7 @@ function initModal(modal) {
           containment:[-2*offsetWidth, -10, window.innerWidth-offsetWidth, window.innerHeight-offsetHeight],
           handle: '.modal-header'
       });
+      $(modal.element[0]).find('input').focus();
   }, 700);
   $(modal.element).keydown(function (e) {
       if (e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -19,6 +20,7 @@ function initModal(modal) {
           for (let i = 0; i < buttonElems.length; i++) {
               if (buttonElems[i].innerText.toLowerCase().trim() == 'ok'
                   || buttonElems[i].innerText.toLowerCase().trim() == 'close'
+                  || buttonElems[i].type === 'submit'
               ) {
                   okButton = buttonElems[i];
               }

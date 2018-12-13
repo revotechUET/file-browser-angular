@@ -196,4 +196,20 @@ file-explorer {
   //   background-image: url('../imgs/file.png') !important;
   //   background-position: 0 !important;
   // }
+  .table-files {
+    thead {
+      th:nth-child(2) {
+        width: 20%;
+      }
+      th:nth-child(3) {
+        width: 20%;
+      }
+    }
+    tr > td {
+      max-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }

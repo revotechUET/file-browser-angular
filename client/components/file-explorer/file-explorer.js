@@ -46,7 +46,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.pasteList = [];
     self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
-    console.log("===",self.storage_database);
+    console.log("===",self.storageDatabase);
     // self.HEADER_CONFIG = HEADER_CONFIG;
 
     self.rawDataUrl = self.url + RAW_DATA_PATH;
@@ -127,7 +127,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             data.fileContent = resource.base64;
             pdfViewerDialog(ModalService, data);
             break;
-          case /\.(jpg|png)$/.test(self.getExtFile(item)):
+          case /\.(jpg|JPG|png|PNG|jpeg|JPEG|gif|GIF|bmp|BMP|svg|SVG)$/.test(self.getExtFile(item)):
             self.imgResource.title = item.rootName;
             self.imgResource.fileContent = resource.base64;
             let imgCtnElm = document.getElementById('img-container');
@@ -178,7 +178,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   }
 
   this.goTo = function (index) {
-    if(index == '0'){
+    if(index == '-999'){
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.join('/')), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
@@ -276,7 +276,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': window.localStorage.getItem('storage_database')
+        'Storage-Database': JSON.stringify(self.storageDatabase)
       }
     }
     $http(reqOptions).then(result => {
@@ -297,7 +297,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': window.localStorage.getItem('storage_database')
+        'Storage-Database': JSON.stringify(self.storageDatabase)
       },
       data: payload
     }
@@ -332,7 +332,7 @@ app.component(componentName, {
     rootFolder: '@',
     url: '@',
     rawDataUrl: '@',
-    storage_database: '@'
+    storageDatabase: '<'
   }
 })
 

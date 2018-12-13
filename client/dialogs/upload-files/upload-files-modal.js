@@ -45,6 +45,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
           console.log('===upload files done');
           fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
+          close();
         }
       })
     }

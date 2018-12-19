@@ -57,22 +57,30 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.copyUrl = self.url + COPY_PATH;
     self.moveUrl = self.url + MOVE_PATH;
     self.newFolderUrl = self.url + NEW_FOLDER_PATH;
-
-    self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
-      if (result) {
-        let data = result.data.data;
-        self.fileList = [...data.files, ...data.folders];
-      } else {
-        console.log('===empty');
-      }
-    });
-    $scope.$watch(() => self.storageDatabase, () => {
+    if(self.storageDatabase){
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
         if (result) {
-          const data = result.data.data;
+          let data = result.data.data;
           self.fileList = [...data.files, ...data.folders];
+        } else {
+          console.log('===empty');
         }
       });
+    } else {
+      self.fileList = [];
+    }
+    $scope.$watch(() => self.storageDatabase, () => {
+      if(self.storageDatabase) {
+        self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
+          if (result) {
+            const data = result.data.data;
+            self.fileList = [...data.files, ...data.folders];
+          }
+        });
+      } else {
+        console.log("VAO day");
+        self.fileList = [];
+      }
     });
   }
 

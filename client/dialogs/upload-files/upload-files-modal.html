@@ -1,26 +1,56 @@
 <div class='upload-files-modal modal fade' data-backdrop="static" data-keyboard="false">
-    <div class='modal-dialog modal-md'>
+    <div class='modal-dialog modal-lg'>
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" aria-hidden="true" ng-click="self.closeModal()">&times;</button>
                 <h4 class="modal-title">Upload Files</h4>
             </div>
-            <div style="max-height: 70vh; overflow-y: overlay; overflow-x: hidden; text-align: left;" class="modal-body text-center">
-                <button class="btn btn-default btn-block" ngf-select="self.addForUpload($files)" ngf-multiple="true">
-                    Select Files
-                </button>
-
-                <div class="upload-list">
-                    <ul class="list-group">
-                        <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList">
-                            <button style="padding: 0 10px;" class="btn btn-sm btn-danger pull-right" ng-click="self.removeFromUpload(index)">
-                                &times;
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <button class="btn btn-default btn-block" ngf-select="self.addForUpload($files)"
+                                ngf-multiple="true">
+                            Select Files
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <div class="upload-list">
+                            <ul class="list-group">
+                                <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList">
+                                    <button style="padding: 0 10px;" class="btn btn-sm btn-danger pull-right"
+                                            ng-click="self.removeFromUpload(index)">
+                                        &times;
+                                    </button>
+                                    <h5 class="list-group-item-heading">{{uploadFile.name}}</h5>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="hr-sect-file">Meta Data</div>
+                    <div class="form-group" ng-repeat="m in self.metaData track by $index">
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" ng-model="m.name" required/>
+                        </div>
+                        <div class="col-sm-5">
+                            <input type="text" class="form-control" ng-model="m.value" required/>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-flat btn-sm" type="button" aria-expanded="true"
+                                    ng-click="self.removeMetadata(m)">
+                                <i class="fa fa-remove"></i>&nbsp;Delete
                             </button>
-                            <h5 class="list-group-item-heading">{{uploadFile.name}}</h5>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <button class="btn btn-flat btn-sm" type="button" aria-expanded="true"
+                                ng-click="self.addMetadata()">
+                            <i class="fa fa-plus"></i>&nbsp;Add Meta Data
+                        </button>
+                    </div>
                 </div>
             </div>
+            <!--<div style="max-height: 70vh; overflow-y: overlay; overflow-x: hidden; text-align: left;" class="modal-body text-center">-->
+            <!--</div>-->
             <div class="modal-footer">
                 <button type="button" ng-click="self.uploadFiles()" class="btn btn-default">
                     <span class="ok-16x16"></span>&nbsp;Upload

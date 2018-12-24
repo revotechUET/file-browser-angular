@@ -87,8 +87,8 @@
     <img-preview data="self.imgResource.fileContent" parent-elem="self.imgResource.parentElem"></img-preview>
   </div>
 
-  <div style="height: calc(100% - 90px); overflow: auto;">
-    <table style="margin-left: 15px; width: calc(100% - 30px);" class="table mb0 table-files noselect">
+  <div class="main-content">
+    <table class="table mb0 table-files noselect">
       <thead>
         <tr>
           <th>
@@ -148,6 +148,18 @@
         </tr>
       </tbody>
     </table>
+    <div class="right-panel">
+      <div>
+        <div class="col-sm-5">Name</div>
+        <div class="col-sm-7">Value</div>
+      </div>
+      <div ng-repeat="item in [1,2]">
+        <div class="col-sm-5">Name {{item}}</div>
+        <div class="col-sm-7">
+          <input type="text" ng-value="item" ng-blur="self.updateMetaData(item)">
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <!-- <div class="iconset noselect">

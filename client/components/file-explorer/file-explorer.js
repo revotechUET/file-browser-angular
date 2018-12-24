@@ -336,6 +336,10 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   //     crypted += cipher.final('hex');
   //     return crypted;
   // }
+
+  this.updateMetaData = function () {
+    
+  }
 }
 
 let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview]);

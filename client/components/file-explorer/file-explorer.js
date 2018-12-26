@@ -8,7 +8,7 @@ const async = require('../../vendor/js/async.min');
 // const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
-const imgPreview = require('../img-preview/img-preview').name
+const imgPreview = require('../img-preview/img-preview').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
@@ -33,6 +33,7 @@ const REMOVE_PATH = '/action/remove?file_path=';
 const COPY_PATH = '/action/copy?';
 const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
+const UPDATE_META_DATA = '/action/update-meta-data';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 
@@ -43,6 +44,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.imgResource = {};
     self.currentPath = [];
     self.selectedList = [];
+    self.selectedItem = {};
     self.pasteList = [];
     self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
@@ -57,6 +59,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.copyUrl = self.url + COPY_PATH;
     self.moveUrl = self.url + MOVE_PATH;
     self.newFolderUrl = self.url + NEW_FOLDER_PATH;
+    self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
     if(self.storageDatabase){
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
         if (result) {
@@ -82,13 +85,15 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.fileList = [];
       }
     });
-  }
+  };
 
   this.isSelected = function (item) {
     return self.selectedList.indexOf(item) !== -1;
   };
 
   this.clickNode = function (item, $event) {
+    console.log("Click item ", item);
+    self.selectedItem = item;
     let indexInSelectedList = self.selectedList.indexOf(item);
 
     if ($event && $event.shiftKey) {
@@ -121,7 +126,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       return;
     }
     self.selectedList = [item];
-  }
+  };
 
   this.dblClickNode = function (item) {
     if (!item)
@@ -156,7 +161,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         }
       })
     }
-  }
+  };
 
   this.downloadFile = function (item) {
     if (!item || !item.rootIsFile)
@@ -191,7 +196,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     //   a.click();
     //   a.parentNode.removeChild(a);
     // })
-  }
+  };
 
   this.goTo = function (index) {
     if(index == '-999'){
@@ -208,7 +213,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.fileList = [...data.files, ...data.folders];
       })
     }
-  }
+  };
 
   this.removeNodes = function () {
     if (!self.selectedList)
@@ -223,7 +228,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.goTo(self.currentPath.length - 1);
       }
     })
-  }
+  };
 
   this.paste = function () {
     if (!(self.pasteList))
@@ -245,7 +250,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             console.log('===done');
           }
           self.goTo(self.currentPath.length - 1);
-        })
+        });
         break;
       case 'cut':
         async.eachSeries(self.pasteList, (file, next) => {
@@ -263,25 +268,25 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             console.log('=done');
           }
           self.goTo(self.currentPath.length - 1);
-        })
+        });
         break;
     }
-  }
+  };
 
   this.copyOrCut = function (action) {
     if (!self.selectedList)
       return;
     self.pasteList = self.selectedList;
     self.pasteList.action = action;
-  }
+  };
 
   this.uploadFiles = function () {
     uploadFileDialog(ModalService, Upload, self);
-  }
+  };
 
   this.newFolder = function () {
     newFolderDialog(ModalService, self);
-  }
+  };
 
   this.httpGet = function (url, cb) {
     self.requesting = !self.requesting;
@@ -294,7 +299,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         'Authorization': window.localStorage.getItem('token'),
         'Storage-Database': JSON.stringify(self.storageDatabase)
       }
-    }
+    };
     $http(reqOptions).then(result => {
       self.requesting = !self.requesting;
       cb(result);
@@ -302,7 +307,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       self.requesting = !self.requesting;
       console.log(err);
     });
-  }
+  };
 
   this.httpPost = function (url, payload, cb) {
     self.requesting = !self.requesting;
@@ -316,19 +321,22 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         'Storage-Database': JSON.stringify(self.storageDatabase)
       },
       data: payload
-    }
+    };
     $http(reqOptions).then(result => {
       self.requesting = !self.requesting;
       cb(result);
+    }, err => {
+      self.requesting = !self.requesting;
+      console.log(err);
     })
-  }
+  };
 
   this.getExtFile = function (item) {
     if (!item.rootIsFile)
       return '';
     let arr = item.rootName.split('.');
     return '.' + arr[arr.length - 1];
-  }
+  };
 
   // function encrypt(text) {
   //     var cipher = crypto.createCipher(ALGORITHM, SECRET_KEY)
@@ -336,9 +344,38 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   //     crypted += cipher.final('hex');
   //     return crypted;
   // }
-
-  this.updateMetaData = function () {
-    
+  this.saveObject = function (payload) {
+    self.httpPost(self.updateMetaDataUrl, payload, (result) => {
+      console.log(result);
+    });
+  };
+  this.updateMetaData = function (name, value) {
+    console.log("update ", name, value);
+    console.log("item", self.selectedItem);
+    self.selectedItem.metaData[name] = value;
+    self.saveObject({
+      key: self.selectedItem.path,
+      metaData: self.selectedItem.metaData
+    });
+  };
+  this.removeMetaData = function (name) {
+    console.log("remove", name);
+    delete self.selectedItem.metaData[name];
+    self.saveObject({
+      key: self.selectedItem.path,
+      metaData: self.selectedItem.metaData
+    });
+  };
+  this.addMetaData = function (name, value) {
+    console.log("add", name, value);
+    if (!name || !value || name === "" || value === "") return;
+    self.selectedItem.metaData[name] = value;
+    self.saveObject({
+      key: self.selectedItem.path,
+      metaData: self.selectedItem.metaData
+    });
+    $scope.addName = "";
+    $scope.addValue = "";
   }
 }
 
@@ -354,7 +391,7 @@ app.component(componentName, {
     rawDataUrl: '@',
     storageDatabase: '<'
   }
-})
+});
 
 app.filter('strLimit', ['$filter', function ($filter) {
   return function (input, limit, more) {

@@ -150,14 +150,25 @@
     </table>
     <div class="right-panel">
       <div>
-        <div class="col-sm-5">Name</div>
+        <div class="col-sm-4">Name</div>
         <div class="col-sm-7">Value</div>
+        <div class="col-sm-1">&nbsp;</div>
       </div>
-      <div ng-repeat="item in [1,2]">
-        <div class="col-sm-5">Name {{item}}</div>
+      <div ng-repeat="(name, value) in self.selectedItem.metaData">
+        <div class="col-sm-4">{{name}}</div>
         <div class="col-sm-7">
-          <input type="text" ng-value="item" ng-blur="self.updateMetaData(item)">
+          <input type="text" ng-model="value" ng-blur="self.updateMetaData(name, value)">
         </div>
+        <div class="col-sm-1" ng-click="self.removeMetaData(name, value)">x</div>
+      </div>
+      <div>
+        <div class="col-sm-4">
+          <input type="text" ng-model="addName" ng-value="">
+        </div>
+        <div class="col-sm-7">
+          <input type="text" ng-model="addValue" ng-value="">
+        </div>
+        <div class="col-sm-1" ng-click="self.addMetaData(addName, addValue)">+</div>
       </div>
     </div>
   </div>

@@ -1,12 +1,16 @@
 const helper = require('../dialog-helper');
 
-module.exports = function (ModalService, data, callback) {
+module.exports = function (ModalService, fileExplorerCtrl, data, item, callback) {
     modalController.$inject = ['$scope', 'close'];
     function modalController($scope, close) {
         let self = this;
 
         this.fileContent = data.fileContent;
         this.title = data.title;
+
+        this.download = function () {
+            fileExplorerCtrl.downloadFile(item);
+        };
 
         this.closeModal = function () {
             close(null);
@@ -21,7 +25,7 @@ module.exports = function (ModalService, data, callback) {
         helper.initModal(modal);
         modal.close.then(data => {
             helper.removeBackdrop();
-            if (callback) 
+            if (callback)
                 callback(data);
         })
     })

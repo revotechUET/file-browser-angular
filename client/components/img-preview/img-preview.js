@@ -75,22 +75,23 @@ function Controller() {
     //     if(!self.zoomer) self.zoomer = creatZoomer();
     // }
 
-    // self.downloadOnClick = function () {
-    //     // self.downloadFunc(self.source);
-    //     // console.log('download');
+    self.downloadOnClick = function () {
+        // self.downloadFunc(self.source);
+        // console.log('download');
 
-    //     // const a = document.createElement('a');
-    //     // a.download = true;
-    //     // a.href = self.source;
+        // const a = document.createElement('a');
+        // a.download = true;
+        // a.href = self.source;
 
-    //     // a.onclick = function(e) {
-    //     //     e.preventDefault();
-    //     // }
+        // a.onclick = function(e) {
+        //     e.preventDefault();
+        // }
 
-    //     // a.click();
+        // a.click();
+        self.fxCtrl.downloadFile(self.fileItem);
 
-    //     console.log(self.downloadFunc());
-    // }
+        console.log(self.downloadFunc());
+    }
 
 
     function preProcess() {
@@ -239,7 +240,9 @@ app.component(componentName, {
         downloadLink: '<',
         fullImgLink: '<',
         data: '<',
-        parentElem: '<'
+        parentElem: '<',
+        fxCtrl: '<',
+        fileItem: '<',
     }
 });
 

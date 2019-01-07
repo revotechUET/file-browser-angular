@@ -1,3 +1,5 @@
+require('./pdf-viewer.less');
+
 const moduleName = 'pdf-viewer';
 const componentName = 'pdfViewer';
 

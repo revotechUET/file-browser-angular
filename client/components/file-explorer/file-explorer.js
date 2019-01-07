@@ -48,7 +48,9 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.pasteList = [];
     self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
-    console.log("===",self.storageDatabase);
+    self.propOrder = 'rootName';
+    self.reverse = false;
+    console.log("===", self.storageDatabase);
     // self.HEADER_CONFIG = HEADER_CONFIG;
 
     self.rawDataUrl = self.url + RAW_DATA_PATH;
@@ -60,7 +62,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.moveUrl = self.url + MOVE_PATH;
     self.newFolderUrl = self.url + NEW_FOLDER_PATH;
     self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
-    if(self.storageDatabase){
+    if (self.storageDatabase) {
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
         if (result) {
           let data = result.data.data;
@@ -73,7 +75,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       self.fileList = [];
     }
     $scope.$watch(() => self.storageDatabase, () => {
-      if(self.storageDatabase) {
+      if (self.storageDatabase) {
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
           if (result) {
             const data = result.data.data;
@@ -85,6 +87,11 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.fileList = [];
       }
     });
+  };
+
+  this.orderBy = function (propOrder) {
+    self.reverse = (self.propOrder === propOrder) ? !self.reverse : false;
+    self.propOrder = propOrder;
   };
 
   this.isSelected = function (item) {
@@ -139,14 +146,15 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.currentPath.push(item.rootName);
       })
     } else {
+      self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
-        let data = {title: item.rootName};
+        let data = { title: item.rootName };
         let resource = result.data.data;
         data.fileContent = resource;
         switch (true) {
           case /\.pdf$/.test(self.getExtFile(item)):
             data.fileContent = resource.base64;
-            pdfViewerDialog(ModalService, data);
+            pdfViewerDialog(ModalService, self, data, item);
             break;
           case /\.(jpg|JPG|png|PNG|jpeg|JPEG|gif|GIF|bmp|BMP|svg|SVG)$/.test(self.getExtFile(item)):
             self.imgResource.title = item.rootName;
@@ -156,8 +164,9 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             imgCtnElm.style.display = 'block';
             break;
           default:
+            console.log(result);
             data.fileContent = resource.utf8;
-            textViewerDialog(ModalService, data);
+            textViewerDialog(ModalService, self, data, item);
         }
       })
     }
@@ -199,7 +208,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   };
 
   this.goTo = function (index) {
-    if(index == '-999'){
+    if (index == '-999') {
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.join('/')), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];

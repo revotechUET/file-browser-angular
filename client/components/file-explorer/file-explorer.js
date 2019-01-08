@@ -33,6 +33,7 @@ const REMOVE_PATH = '/action/remove?file_path=';
 const COPY_PATH = '/action/copy?';
 const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
+const SEARCH_PATH = '/search?';
 const UPDATE_META_DATA = '/action/update-meta-data';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
@@ -48,6 +49,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.pasteList = [];
     self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
+    self.filter = '';
     self.propOrder = 'rootName';
     self.reverse = false;
     console.log("===", self.storageDatabase);
@@ -61,6 +63,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.copyUrl = self.url + COPY_PATH;
     self.moveUrl = self.url + MOVE_PATH;
     self.newFolderUrl = self.url + NEW_FOLDER_PATH;
+    self.searchUrl = self.url + SEARCH_PATH;
     self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
     if (self.storageDatabase) {
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
@@ -152,6 +155,12 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         let resource = result.data.data;
         data.fileContent = resource;
         switch (true) {
+          case !resource.isReadable:
+            console.log("Can't preview this file");
+            data.fileContent = "No preview available";
+            textViewerDialog(ModalService, self, data, item);
+            // self.downloadFile(item);
+            break;
           case /\.pdf$/.test(self.getExtFile(item)):
             data.fileContent = resource.base64;
             pdfViewerDialog(ModalService, self, data, item);
@@ -164,7 +173,6 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             imgCtnElm.style.display = 'block';
             break;
           default:
-            console.log(result);
             data.fileContent = resource.utf8;
             textViewerDialog(ModalService, self, data, item);
         }
@@ -296,6 +304,19 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   this.newFolder = function () {
     newFolderDialog(ModalService, self);
   };
+
+  this.search = function () {
+    if (self.filter != '') {
+      let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}&`;
+      let content = `content=${encodeURIComponent(self.filter)}`;
+
+      self.httpGet(`${self.searchUrl + folder + content}`, res => {
+        self.fileList = res.data.data;
+      })
+    } else {
+      self.goTo(self.currentPath.length - 1);
+    }
+  }
 
   this.httpGet = function (url, cb) {
     self.requesting = !self.requesting;

@@ -1,6 +1,6 @@
 const componentName = 'imgPreview';
 const moduleName = 'img-preview';
-require('../img-preview/img-preview.css');
+require('./img-preview.css');
 
 function Controller() {
     let self = this;

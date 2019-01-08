@@ -63,7 +63,7 @@ file-explorer {
   }
   .selected .item-extension::after {
     color: #2196F3;
-  }
+  } // nav-bar breadcrumb
   .breadcrumb {
     background: none;
     padding: 0;
@@ -94,7 +94,28 @@ file-explorer {
   }
   .selected .item-extension::after {
     color: #2196F3;
-  }
+  } // search-block
+  .search-block {
+    position: relative;
+    i {
+      position: absolute;
+      line-height: 2em;
+      left: 0.5em;
+      font-size: 14px;
+      color: #aaa;
+    }
+    input {
+      text-indent: 1.5em;
+      color: steelblue;
+      border: none;
+      width: 100%;
+      padding: 7px;
+    }
+    ::-webkit-input-placeholder {
+      color: #ccc;
+      font-style: italic;
+    }
+  } // sort icon
   .sortorder:after {
     color: #2196f3;
     content: '\25bc';
@@ -102,7 +123,7 @@ file-explorer {
   .sortorder.reverse:after {
     color: #2196f3;
     content: '\25b2';
-  }
+  } // spinner
   .spinner-wrapper {
     margin: 0 auto;
     text-align: center;

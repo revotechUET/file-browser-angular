@@ -1,3 +1,5 @@
+require('./text-viewer.less');
+
 const moduleName = 'text-viewer';
 const componentName = 'textViewer';
 

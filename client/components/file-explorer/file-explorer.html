@@ -2,7 +2,7 @@
   <nav class="navbar navbar-inverse dir-nav-bar" style="margin-bottom: 0;">
     <div style="padding-left: 0;" class="container-fluid">
       <div class="row" style="margin-left: 0px;">
-        <div style="padding-left: 0;" class="col-sm-9 col-md-10">
+        <div style="padding-left: 0;" class="col-sm-7 col-md-8">
           <ol class="breadcrumb">
             <li>
               <a ng-show="self.currentPath.length > 0" href="" ng-click="self.goTo(-1)">{{
@@ -18,6 +18,17 @@
               </span>
             </li>
           </ol>
+        </div>
+        <div class="col-sm-5 col-md-4">
+          <div class="navbar-collapse">
+            <div style="width: 100%;" class="navbar-form navbar-right text-right">
+              <div class="search-block">
+                <i class="fa fa-search"></i>
+                <input type='text' ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}"
+                  size='10' placeholder="[Search]">
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

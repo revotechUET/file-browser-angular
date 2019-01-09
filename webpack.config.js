@@ -1,7 +1,7 @@
 let path = require('path');
 let webpack = require('webpack');
-// let OUTPUT = path.join(__dirname, 'public');
-let OUTPUT = path.join(__dirname, '../wi-angular/source/vendor/js');
+let OUTPUT = path.join(__dirname, 'public');
+//let OUTPUT = path.join(__dirname, '../wi-angular/source/vendor/js');
 
 const generalConfig = {
     entry: [
@@ -22,8 +22,8 @@ const generalConfig = {
                     loader: 'file-loader',
                     options: {
                         name: '[name].[ext]',
-                        // outputPath: '../../img/'
-                        outputPath: 'img/',
+                        outputPath: '../../img/'
+                        //outputPath: 'img/',
                     },
                 },
             },

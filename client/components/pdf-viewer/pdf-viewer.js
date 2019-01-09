@@ -9,6 +9,10 @@ function Controller($scope) {
 
   this.$onInit = function () {
     self.PDFJS = require('pdfjs-dist');
+    self.totalPages = 0;
+    self.options = {
+      scale: 1.5
+    }
     // pdfjsLib.GlobalWorkerOptions.workerSrc = 'file-explorer-module.js';
 
     // self.pdfDoc = null;
@@ -21,7 +25,9 @@ function Controller($scope) {
 
     $scope.$watch(() => self.base64Data, (newVal, oldVal) => {
       if (newVal) {
-        renderPDF(atob(newVal), document.getElementById('holder'));
+        self.pdfHolder = document.getElementById('holder');
+        self.pdfEncoded = atob(newVal);
+        renderPDF(self.pdfEncoded);
         // self.loadingTask = pdfjsLib.getDocument({
         //   data: atob(newVal)
         // });
@@ -36,38 +42,61 @@ function Controller($scope) {
         // })
       }
     })
+
+    $scope.$watch(() => self.getCtrl, (newVal, oldVal) => {
+      if (newVal) {
+        self.getCtrl(self);
+      }
+    })
   }
 
-  function renderPDF(pdfEncoded, canvasContainer, options) {
-    var options = options || { scale: 1.5 };
+  this.loadMore = function () {
+    self.PDFJS.getDocument({
+      data: self.pdfEncoded
+    }).then(pdfDoc => {
+      let totalPages = self.totalPages;
+      self.totalPages += 10;
+      for (let i = totalPages + 1; i <= totalPages + 10 && i <= self.pdfPages; i++) {
+        pdfDoc.getPage(i).then(renderPage);
+      }
+    });
+  }
 
-    function renderPage(page) {
-      let viewport = page.getViewport(options.scale);
-      let div = document.createElement('div');
-      let canvas = document.createElement('canvas');
-      let ctx = canvas.getContext('2d');
-      let renderContext = {
-        canvasContext: ctx,
-        viewport: viewport
-      };
-
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-      div.appendChild(canvas);
-      canvasContainer.appendChild(div);
-
-      page.render(renderContext);
-    }
-
-    function renderPages(pdfDoc) {
-      for (let num = 1; num <= pdfDoc.numPages; num++)
-        pdfDoc.getPage(num).then(renderPage);
-    }
-
+  function renderPDF(pdfEncoded) {
     self.PDFJS.disableWorker = true;
     self.PDFJS.getDocument({
       data: pdfEncoded
-    }).then(renderPages);
+    }).then(pdfDoc => {
+      self.pdfPages = pdfDoc.numPages;
+      self.pagesToShow = self.pagesToShow || self.pdfPages;
+      renderPages(pdfDoc);
+    });
+  }
+
+  function renderPage(page) {
+    let viewport = page.getViewport(self.options.scale);
+    let div = document.createElement('div');
+    let canvas = document.createElement('canvas');
+    let ctx = canvas.getContext('2d');
+    let renderContext = {
+      canvasContext: ctx,
+      viewport: viewport
+    };
+
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    div.appendChild(canvas);
+    self.pdfHolder.appendChild(div);
+
+    page.render(renderContext);
+  }
+
+  function renderPages(pdfDoc) {
+    let totalPages = self.totalPages;
+    self.totalPages += self.pagesToShow;
+    for (let i = totalPages + 1; i <= totalPages + self.pagesToShow && i <= self.pdfPages; i++) {
+      pdfDoc.getPage(i).then(renderPage);
+    }
   }
 
   // function renderPage(num) {
@@ -129,7 +158,9 @@ app.component(componentName, {
   controller: Controller,
   controllerAs: 'self',
   bindings: {
-    base64Data: '<'
+    base64Data: '<',
+    pagesToShow: '<',
+    getCtrl: '<'
   }
 })
 

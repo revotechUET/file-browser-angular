@@ -99,69 +99,71 @@
   </div>
 
   <div class="main-content">
-    <table class="table mb0 table-files noselect">
-      <thead>
-        <tr>
-          <th>
-            <a href="" ng-click="self.orderBy('rootName')">
-              Name
-              <span class="sortorder" ng-show="self.propOrder == 'rootName'" ng-class="{reverse: self.reverse}"></span>
-            </a>
-          </th>
-          <th class="hidden-xs">
-            <a href="" ng-click="self.orderBy('size')">
-              Size
-              <span class="sortorder" ng-show="self.propOrder == 'size'" ng-class="{reverse: self.reverse}"></span>
-            </a>
-          </th>
-          <th class="hidden-sm hidden-xs">
-            <a href="" ng-click="self.orderBy('modifiedDate')">
-              Date
-              <span class="sortorder" ng-show="self.propOrder == 'modifiedDate'" ng-class="{reverse: self.reverse}"></span>
-            </a>
-          </th>
-        </tr>
-      </thead>
-      <tbody class="file-item">
-        <tr ng-show="self.requesting">
-          <td colspan="5">
-            <div class="spinner-wrapper col-xs-12">
-              <div class="lds-dual-ring"></div>
-            </div>
-          </td>
-        </tr>
-        <tr ng-show="!(self.fileList.length > 0) && !self.requesting">
-          <td>
-            <div>
-              <span>This Folder is empty.</span>
-            </div>
-          </td>
-        </tr>
-        <tr ng-show="!self.requesting" class="item-list" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
-          ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)" ng-class="{selected: self.isSelected(item)}">
-          <td>
-            <a href="" title="{{item.rootName}}">
-              <i class="glyphicon glyphicon-folder-close" ng-show="!item.rootIsFile"></i>
-              <i class="glyphicon glyphicon-file" ng-show="item.rootIsFile"></i>
-              {{item.rootName}}
-            </a>
-          </td>
-          <td class="hidden-xs">
-            <span ng-if="item.rootIsFile">
-              {{item.size | humanReadableFileSize}}
-            </span>
-            <span ng-if="!item.rootIsFile">
-              --
-            </span>
-          </td>
-          <td class="hidden-sm hidden-xs">
-            <span>
-              {{item.modifiedDate | formatDate}}
-            </span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-files">
+      <table class="table mb0 noselect">
+        <thead>
+          <tr>
+            <th>
+              <a href="" ng-click="self.orderBy('rootName')">
+                Name
+                <span class="sortorder" ng-show="self.propOrder == 'rootName'" ng-class="{reverse: self.reverse}"></span>
+              </a>
+            </th>
+            <th class="hidden-xs">
+              <a href="" ng-click="self.orderBy('size')">
+                Size
+                <span class="sortorder" ng-show="self.propOrder == 'size'" ng-class="{reverse: self.reverse}"></span>
+              </a>
+            </th>
+            <th class="hidden-sm hidden-xs">
+              <a href="" ng-click="self.orderBy('modifiedDate')">
+                Date
+                <span class="sortorder" ng-show="self.propOrder == 'modifiedDate'" ng-class="{reverse: self.reverse}"></span>
+              </a>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="file-item">
+          <tr ng-show="self.requesting">
+            <td colspan="5">
+              <div class="spinner-wrapper col-xs-12">
+                <div class="lds-dual-ring"></div>
+              </div>
+            </td>
+          </tr>
+          <tr ng-show="!(self.fileList.length > 0) && !self.requesting">
+            <td>
+              <div>
+                <span>This Folder is empty.</span>
+              </div>
+            </td>
+          </tr>
+          <tr ng-show="!self.requesting" class="item-list" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
+            ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)" ng-class="{selected: self.isSelected(item)}">
+            <td>
+              <a href="" title="{{item.rootName}}">
+                <i class="glyphicon glyphicon-folder-close" ng-show="!item.rootIsFile"></i>
+                <i class="glyphicon glyphicon-file" ng-show="item.rootIsFile"></i>
+                {{item.rootName}}
+              </a>
+            </td>
+            <td class="hidden-xs">
+              <span ng-if="item.rootIsFile">
+                {{item.size | humanReadableFileSize}}
+              </span>
+              <span ng-if="!item.rootIsFile">
+                --
+              </span>
+            </td>
+            <td class="hidden-sm hidden-xs">
+              <span>
+                {{item.modifiedDate | formatDate}}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="right-panel">
       <div>
         <div class="col-sm-4">Name</div>

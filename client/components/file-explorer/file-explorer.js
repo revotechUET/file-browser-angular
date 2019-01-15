@@ -52,7 +52,6 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.filter = '';
     self.propOrder = 'rootName';
     self.reverse = false;
-    console.log("===", self.storageDatabase);
     // self.HEADER_CONFIG = HEADER_CONFIG;
 
     self.rawDataUrl = self.url + RAW_DATA_PATH;
@@ -65,18 +64,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.newFolderUrl = self.url + NEW_FOLDER_PATH;
     self.searchUrl = self.url + SEARCH_PATH;
     self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
-    if (self.storageDatabase) {
-      self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
-        if (result) {
-          let data = result.data.data;
-          self.fileList = [...data.files, ...data.folders];
-        } else {
-          console.log('===empty');
-        }
-      });
-    } else {
-      self.fileList = [];
-    }
+
     $scope.$watch(() => self.storageDatabase, () => {
       if (self.storageDatabase) {
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
@@ -86,7 +74,6 @@ function Controller($scope, $element, $http, ModalService, Upload) {
           }
         });
       } else {
-        console.log("VAO day");
         self.fileList = [];
       }
     });
@@ -102,7 +89,6 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   };
 
   this.clickNode = function (item, $event) {
-    console.log("Click item ", item);
     self.selectedItem = item;
     let indexInSelectedList = self.selectedList.indexOf(item);
 

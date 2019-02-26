@@ -125,9 +125,12 @@ file-explorer {
     content: '\25b2';
   } // spinner
   .spinner-wrapper {
-    margin: 0 auto;
-    text-align: center;
-    margin-top: 8%;
+    position: absolute;
+    background-color: #ffffff88;
+    z-index: 9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .spinner-container {
     -webkit-animation: rotate 2s linear infinite;
@@ -229,6 +232,7 @@ file-explorer {
     height: calc(100% - 96px);
     // overflow: auto;
     display: flex;
+    position: relative;
     >* {
       height: 100%;
       overflow: auto;

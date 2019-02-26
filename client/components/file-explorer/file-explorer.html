@@ -51,7 +51,6 @@
           aria-expanded="true" ng-disabled="self.selectedList.length < 1 && self.pasteList.length < 1">More&nbsp;&nbsp;
           <i class="fa fa-ellipsis-v"></i>
         </button>
-
         <ul class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
           <li role="presentation" ng-click="self.dblClickNode(self.selectedList[0])">
             <a href="" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
@@ -99,6 +98,9 @@
   </div>
 
   <div class="main-content">
+    <div class="spinner-wrapper col-xs-12" ng-show="self.requesting">
+      <div class="lds-dual-ring"></div>
+    </div>
     <div class="table-files">
       <table class="table mb0 noselect">
         <thead>
@@ -124,13 +126,13 @@
           </tr>
         </thead>
         <tbody class="file-item">
-          <tr ng-show="self.requesting">
+          <!-- <tr ng-show="self.requesting">
             <td colspan="5">
               <div class="spinner-wrapper col-xs-12">
                 <div class="lds-dual-ring"></div>
               </div>
             </td>
-          </tr>
+          </tr> -->
           <tr ng-show="!(self.fileList.length > 0) && !self.requesting">
             <td>
               <div>
@@ -138,7 +140,7 @@
               </div>
             </td>
           </tr>
-          <tr ng-show="!self.requesting" class="item-list" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
+          <tr class="item-list" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
             ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)" ng-class="{selected: self.isSelected(item)}">
             <td>
               <a href="" title="{{item.rootName}}">

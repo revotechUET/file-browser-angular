@@ -89,7 +89,11 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   };
 
   this.clickNode = function (item, $event) {
-    self.selectedItem = item;
+    if (self.selectedItem !== item) {
+      self.selectedItem = item;
+      $scope.addName = '';
+      $scope.addValue = '';
+    }
     let indexInSelectedList = self.selectedList.indexOf(item);
 
     if ($event && $event.shiftKey) {

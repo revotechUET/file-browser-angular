@@ -259,24 +259,19 @@ file-explorer {
     .right-panel {
       flex: 1;
       border-left: 1px solid #ddd;
-      &>div {
-        &:first-child {
-          border-top: 1px solid #ddd;
+      input {
+        border: none;
+        background: none;
+        margin: -1px;
+        width: 100%;
+        &:focus {
+          background: #fff;
         }
-        &>div {
-          padding: 3px;
-          border-bottom: 1px solid #ddd;
-          border-right: 1px solid #ddd;
-          input {
-            border: none;
-            background: none;
-            margin: -1px;
-            width: 100%;
-            &:focus {
-              background: #fff;
-            }
-          }
-        }
+      }
+      button {
+        background-color: transparent;
+        border: none;
+        margin: -2px;
       }
     }
   }

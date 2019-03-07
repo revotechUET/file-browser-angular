@@ -374,7 +374,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     console.log("item", self.selectedItem);
     self.selectedItem.metaData[name] = value;
     self.saveObject({
-      key: self.selectedItem.path,
+      key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: self.selectedItem.metaData
     });
   };
@@ -382,16 +382,17 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     console.log("remove", name);
     delete self.selectedItem.metaData[name];
     self.saveObject({
-      key: self.selectedItem.path,
+      key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: self.selectedItem.metaData
     });
   };
   this.addMetaData = function (name, value) {
     console.log("add", name, value);
+    console.log("item", self.selectedItem);
     if (!name || !value || name === "" || value === "") return;
     self.selectedItem.metaData[name] = value;
     self.saveObject({
-      key: self.selectedItem.path,
+      key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: self.selectedItem.metaData
     });
     $scope.addName = "";

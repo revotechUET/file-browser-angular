@@ -8,13 +8,39 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
   function modalController($scope, close) {
     let self = this;
 
-    self.metaData = [];
+    // self.metaData = [];
 
     this.uploadFileList = [];
-    self.data = {};
+    self.selectedFile = null;
+    // self.data = {};
 
     this.addForUpload = function ($files) {
+      self.selectedFile = $files[0];
       self.uploadFileList = self.uploadFileList.concat($files);
+      async.each(self.uploadFileList, (file, next) => {
+        file.metaData = [
+          {name: "name", value: file.name},
+          {name: "type", value: (file.type || file.type !== '') ? file.type : 'Unknown'},
+          {name: "size", value: file.size},
+          {
+            name: "location",
+            value: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + file.name
+          },
+          {name: "author", value: window.localStorage.getItem('username')},
+          {name: "uploaded", value: Date.now()},
+          {name: "modified", value: file.lastModified},
+          {name: "source", value: "Desktop Uploaded"},
+          {name: "field", value: ""}, //from selected well box
+          {name: "well", value: ""}, // wells in project
+          {name: "welltype", value: ""}, // from selected well box
+          {name: "parameter", value: ""}, //select parameter task from list params set
+          {name: "datatype", value: "Other"}, //single select box
+          {name: "quality", value: 5}, //1-5
+          {name: "relatesto", value: ""},
+          {name: "description", value: ""},
+        ];
+        next();
+      });
     };
 
     this.removeFromUpload = function (index) {
@@ -23,12 +49,13 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
 
     this.uploadFiles = function () {
       // console.log(self.uploadUrl);
-      self.metaData.forEach(m => {
-        self.data[m.name.replace(/\s/g, '')] = m.value
-      });
-      self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(self.data));
       fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
       async.each(self.uploadFileList, (file, next) => {
+        let metaDataRequest = {};
+        file.metaData.forEach(m => {
+          metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
+        });
+        self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest));
         Upload.upload({
           url: self.uploadUrl,
           headers: {
@@ -57,17 +84,22 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       })
     };
 
-    self.addMetadata = function () {
-      self.metaData.push({
-        name: ("field " + (self.metaData.length + 1)).replace(/\s/g, ''),
-        value: ("value " + (self.metaData.length + 1))
+    self.addMetadata = function (selectedFile) {
+      selectedFile.metaData.push({
+        name: ("field " + (selectedFile.metaData.length + 1)).replace(/\s/g, ''),
+        value: ("value " + (selectedFile.metaData.length + 1))
       });
     };
 
     self.removeMetadata = function (m) {
-      _.remove(self.metaData, el => {
+      _.remove(self.selectedFile.metaData, el => {
         return el.name === m.name;
       })
+    };
+
+    self.selectFile = function (uploadFile) {
+      self.selectedFile = uploadFile;
+      console.log("Doi ne ", self.selectedFile);
     };
 
     this.closeModal = function () {

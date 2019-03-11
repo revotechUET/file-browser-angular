@@ -8,7 +8,7 @@
             <div class="modal-body">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <button class="btn btn-default btn-block" ngf-select="self.addForUpload($files)"
+                        <button class="btn btn-default btn-block" ngf-select="self.addForUpload($files, $event)"
                                 ngf-multiple="true">
                             Select Files
                         </button>
@@ -16,7 +16,7 @@
                     <div class="form-group">
                         <div class="upload-list">
                             <ul class="list-group">
-                                <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList">
+                                <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList" ng-click="self.selectFile(uploadFile)">
                                     <button style="padding: 0 10px;" class="btn btn-sm btn-danger pull-right"
                                             ng-click="self.removeFromUpload(index)">
                                         &times;
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="hr-sect-file">Meta Data</div>
-                    <div class="form-group" ng-repeat="m in self.metaData track by $index">
+                    <div class="form-group" ng-repeat="m in self.selectedFile.metaData track by $index">
                         <div class="col-sm-5">
                             <input type="text" class="form-control" ng-model="m.name" required/>
                         </div>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group text-center">
                         <button class="btn btn-flat btn-sm" type="button" aria-expanded="true"
-                                ng-click="self.addMetadata()">
+                                ng-click="self.addMetadata(self.selectedFile)">
                             <i class="fa fa-plus"></i>&nbsp;Add Meta Data
                         </button>
                     </div>

@@ -33,7 +33,7 @@ const REMOVE_PATH = '/action/remove?file_path=';
 const COPY_PATH = '/action/copy?';
 const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
-const SEARCH_PATH = '/search?';
+const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
@@ -141,7 +141,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     } else {
       self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
-        let data = { title: item.rootName };
+        let data = {title: item.rootName};
         let resource = result.data.data;
         data.fileContent = resource;
         switch (true) {
@@ -300,9 +300,21 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}&`;
       let content = `content=${encodeURIComponent(self.filter)}`;
 
-      self.httpGet(`${self.searchUrl + folder + content}`, res => {
+      // self.httpGet(`${self.searchUrl + folder + content}`, res => {
+      //   self.fileList = res.data.data;
+      // })
+      let payload = {
+        folder: self.rootFolder + self.currentPath.join('/'),
+        content: {
+          name: self.filter,
+          type: "all",
+          subFolders: "excluded",
+          operator: "or"
+        }
+      };
+      self.httpPost(self.searchUrl, payload, res => {
         self.fileList = res.data.data;
-      })
+      });
     } else {
       self.goTo(self.currentPath.length - 1);
     }

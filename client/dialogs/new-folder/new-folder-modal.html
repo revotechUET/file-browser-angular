@@ -10,7 +10,7 @@
                     <div class="form-group">
                         <label class="control-label col-sm-4 normal-text">Folder Name: </label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" ng-model="self.folderName" required/>
+                            <input type="text" class="form-control" ng-change="self.changeFolderName()" ng-model="self.folderName" required/>
                         </div>
                     </div>
                     <div class="hr-sect-file">Meta Data</div>

@@ -8,19 +8,39 @@
             <div class="modal-body">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <button class="btn btn-default btn-block" ngf-select="self.addForUpload($files, $event)"
+                        <button class="btn btn-default btn-block"
+                                ng-show="!self.processing"
+                                ngf-select="self.addForUpload($files, $event)"
                                 ngf-multiple="true">
                             Select Files
                         </button>
                     </div>
                     <div class="form-group">
+                        &nbsp;
+                    </div>
+                    <div class="form-group">
                         <div class="upload-list">
                             <ul class="list-group">
-                                <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList" ng-click="self.selectFile(uploadFile)">
+                                <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList"
+                                    ng-click="self.selectFile(uploadFile)">
                                     <button style="padding: 0 10px;" class="btn btn-sm btn-danger pull-right"
                                             ng-click="self.removeFromUpload(index)">
                                         &times;
                                     </button>
+                                    <div style="padding: 0 0.5em; max-height: 20%; overflow-y: auto;"
+                                         ng-show="uploadFile.uploadingProgress">
+                                        <div style="margin-bottom: 0.5em; border-top: 1px solid #eee; display: flex; align-items: center;">
+                                            <div style="flex: 1; overflow: hidden;">
+                                                <div style="overflow: hidden; text-overflow: ellipsis;">
+                                                    {{uploadFile.uploadingProgress.status}}
+                                                </div>
+                                                <div class="progress" style="margin-bottom: 3px; height: 3px;">
+                                                    <div class="progress-bar progress-bar-striped active"
+                                                         ng-style="{width: uploadFile.uploadingProgress.progress + '%'}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <h5 class="list-group-item-heading">{{uploadFile.name}}</h5>
                                 </li>
                             </ul>

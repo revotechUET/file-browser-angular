@@ -48,6 +48,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       if (self.uploadFileList[index].uploadingObject) self.uploadFileList[index].uploadingObject.abort();
       self.uploadFileList.splice(index, 1);
       self.selectedFile = null;
+      if (self.uploadFileList.length === 0) self.processing = false;
+      // !$scope.$$phase && $scope.$digest();
     };
 
     this.uploadFiles = function (index) {

@@ -3,8 +3,8 @@ let webpack = require('webpack');
 
 var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
-// let OUTPUT = path.join(__dirname, 'public');
-let OUTPUT = path.join('E:/workspace/wi-angular/build/vendor/js');
+let OUTPUT = path.join(__dirname, 'public');
+// let OUTPUT = path.join('E:/workspace/wi-angular/build/vendor/js');
 
 const generalConfig = {
     entry: [
@@ -46,6 +46,6 @@ const generalConfig = {
 module.exports = (env, argv) => {
     const config = Object.assign({}, generalConfig, {
         mode: argv.mode,
-    })
+    });
     return config;
-}
+};

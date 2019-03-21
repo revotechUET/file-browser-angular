@@ -8,16 +8,15 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
   function modalController($scope, close) {
     let self = this;
 
-    // self.metaData = [];
-
     this.uploadFileList = [];
     self.selectedFile = null;
-    // self.data = {};
-
+    self.processing = false;
     this.addForUpload = function ($files) {
       self.selectedFile = $files[0];
-      self.uploadFileList = self.uploadFileList.concat($files);
+      self.uploadFileList = _.union(self.uploadFileList, $files);
       async.each(self.uploadFileList, (file, next) => {
+        let currentTime = Date.now() + '';
+        file.uploadingProgress = null;
         file.metaData = [
           {name: "name", value: file.name},
           {name: "type", value: (file.type || file.type !== '') ? file.type : 'Unknown'},
@@ -27,7 +26,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             value: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + file.name
           },
           {name: "author", value: window.localStorage.getItem('username')},
-          {name: "uploaded", value: Date.now()},
+          {name: "uploaded", value: currentTime},
           {name: "modified", value: file.lastModified},
           {name: "source", value: "Desktop Uploaded"},
           {name: "field", value: ""}, //from selected well box
@@ -44,45 +43,67 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     };
 
     this.removeFromUpload = function (index) {
+      if (self.uploadFileList[index].uploadingObject) self.uploadFileList[index].uploadingObject.abort();
       self.uploadFileList.splice(index, 1);
     };
 
     this.uploadFiles = function () {
-      // console.log(self.uploadUrl);
       fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
+      self.processing = true;
       async.each(self.uploadFileList, (file, next) => {
-        let metaDataRequest = {};
-        file.metaData.forEach(m => {
-          metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
-        });
-        self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest));
-        Upload.upload({
-          url: self.uploadUrl,
-          headers: {
-            'Content-Type': 'application/json',
-            'Referrer-Policy': 'no-referrer',
-            'Authorization': window.localStorage.getItem('token'),
-            'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
-          },
-          data: {
-            'upload-file': file
+          if (file.uploadingProgress) {
+            next();
+          } else {
+            let metaDataRequest = {};
+            file.metaData.forEach(m => {
+              metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
+            });
+            self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest));
+            file.uploadingObject = Upload.upload({
+              url: self.uploadUrl,
+              headers: {
+                'Content-Type': 'application/json',
+                'Referrer-Policy': 'no-referrer',
+                'Authorization': window.localStorage.getItem('token'),
+                'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
+              },
+              data: {
+                'upload-file': file
+              }
+            });
+            file.uploadingObject.then(resp => {
+              self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
+              console.log(resp);
+              next();
+            }, err => {
+              console.log('Error status: ' + err);
+              next();
+            }, event => {
+              let percentage = event.loaded / event.total * 100;
+              if (event.type === "load") {
+                file.uploadingProgress.status = "Uploaded ...";
+              }
+              file.uploadingProgress = {
+                progress: percentage,
+                status: "Uploading ..."
+              };
+              !$scope.$$phase && $scope.$digest();
+            });
+            file.uploadingObject.catch(err => {
+              console.log("Upload terminated", err.message);
+            });
           }
-        }).then(resp => {
-          console.log('Success ' + resp);
-          next();
-        }, resp => {
-          console.log('Error status: ' + resp);
-          next();
-        });
-      }, err => {
-        if (!err) {
-          fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
-          console.log('===upload files done');
-          fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
-          close();
+        }, err => {
+          if (!err && self.uploadFileList.length === 0) {
+            fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
+            console.log('===upload files done');
+            fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
+            close();
+          }
         }
-      })
-    };
+      )
+    }
+    ;
 
     self.addMetadata = function (selectedFile) {
       selectedFile.metaData.push({
@@ -119,4 +140,5 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         callback(data);
     })
   })
-};
+}
+;

@@ -13,6 +13,9 @@ const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
+const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
+const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advanced-search-modal');
+
 
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
@@ -65,6 +68,22 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.searchUrl = self.url + SEARCH_PATH;
     self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
 
+    let searchQuery = {
+      conditions: {
+        operator: "and",
+        children: [
+          {
+            operator: "or",
+            children: [
+              {name : ""}
+            ]
+          }
+        ]
+      },
+      type: "all",
+      subFolders: "included"
+    }
+    self.searchQuery = searchQuery;
     $scope.$watch(() => self.storageDatabase, () => {
       if (self.storageDatabase) {
         self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
@@ -296,6 +315,21 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   };
 
   this.search = function () {
+    self.searchQuery = {
+      conditions: {
+        operator: "and",
+        children: [
+          {
+            operator: "or",
+            children: [
+              {name : ""}
+            ]
+          }
+        ]
+      },
+      type: "all",
+      subFolders: "included"
+    };
     if (self.filter != '') {
       let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}&`;
       let content = `content=${encodeURIComponent(self.filter)}`;
@@ -306,20 +340,37 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       let payload = {
         folder: self.rootFolder + self.currentPath.join('/'),
         content: {
-          name: self.filter,
+          conditions : {
+            children: [{name: self.filter}],
+            operator: "or"
+          },
           type: "all",
           subFolders: "excluded",
-          operator: "or"
         }
       };
       self.httpPost(self.searchUrl, payload, res => {
         self.fileList = res.data.data;
       });
-    } else {
+    } else if ( self.filter != '[Custom search]'){
       self.goTo(self.currentPath.length - 1);
     }
   }
+  this.advancedSearch = function () {
+    newAdvancedSearchDialog(ModalService, self, function(isSearching) {
+      if(isSearching) {
+        self.filter = '[Custom search]';
+        let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}&`;
 
+        let payload = {
+          folder: self.rootFolder + self.currentPath.join('/'),
+          content: self.searchQuery
+        };
+        self.httpPost(self.searchUrl, payload, res => {
+          self.fileList = res.data.data;
+        });
+      }
+    });
+  }
   this.httpGet = function (url, cb) {
     self.requesting = !self.requesting;
     let reqOptions = {

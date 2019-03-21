@@ -1,7 +1,10 @@
 let path = require('path');
 let webpack = require('webpack');
-let OUTPUT = path.join(__dirname, 'public');
-//let OUTPUT = path.join(__dirname, '../wi-angular/source/vendor/js');
+
+var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
+// let OUTPUT = path.join(__dirname, 'public');
+let OUTPUT = path.join('E:/workspace/wi-angular/build/vendor/js');
 
 const generalConfig = {
     entry: [
@@ -29,6 +32,9 @@ const generalConfig = {
             },
         ],
     },
+    plugins: [
+        new HardSourceWebpackPlugin()
+      ]
     // plugins: [
     //     new webpack.ProvidePlugin({
     //         $: 'jquery',
@@ -36,6 +42,7 @@ const generalConfig = {
     //     })
     // ]
 };
+// webpack.config.js
 module.exports = (env, argv) => {
     const config = Object.assign({}, generalConfig, {
         mode: argv.mode,

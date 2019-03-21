@@ -26,6 +26,8 @@
                 <i class="fa fa-search"></i>
                 <input type='text' ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}"
                   size='10' placeholder="[Search]">
+                <i class="fa fa-filter" ng-click="self.advancedSearch()"
+                    title="Advanced search"></i>
               </div>
             </div>
           </div>
@@ -86,7 +88,7 @@
         </ul>
       </div>
       <div class="btn-group">
-        <button class="btn btn-flat btn-sm" type="button" aria-expanded="true" ng-click="self.goTo(-999)">
+        <button class="btn btn-flat btn-sm" type="button" aria-expanded="true" ng-click="self.goTo(-999); self.filter = ''">
           <i class="fa fa-refresh"></i>&nbsp;Refresh
         </button>
       </div>

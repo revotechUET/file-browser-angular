@@ -23,9 +23,14 @@
                             <ul class="list-group">
                                 <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList"
                                     ng-click="self.selectFile(uploadFile)">
-                                    <button style="padding: 0 10px;" class="btn btn-sm btn-danger pull-right"
-                                            ng-click="self.removeFromUpload(index)">
-                                        &times;
+                                    <button style="padding: 0 10px;"
+                                            class="fa fa-remove btn btn-sm btn-danger pull-right"
+                                            ng-click="self.removeFromUpload(index)" title="Remove from uploadlist">
+                                    </button>
+                                    <button style="padding: 0 10px;"
+                                            class="fa fa-refresh btn btn-sm btn-success pull-right"
+                                            ng-click="self.uploadFiles(index)" ng-show="uploadFile.existed"
+                                            title="Overwrite and upload">
                                     </button>
                                     <div style="padding: 0 0.5em; max-height: 20%; overflow-y: auto;"
                                          ng-show="uploadFile.uploadingProgress">
@@ -41,7 +46,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h5 class="list-group-item-heading">{{uploadFile.name}}</h5>
+                                    <h5 class="list-group-item-heading">{{uploadFile.name}}&nbsp;&nbsp;&nbsp;<b
+                                            ng-show="uploadFile.existed"
+                                            style="color: red">Existed</b>
+                                    </h5>
                                 </li>
                             </ul>
                         </div>

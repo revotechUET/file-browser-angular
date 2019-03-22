@@ -17,13 +17,15 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       async.each(self.uploadFileList, (file, next) => {
         let currentTime = Date.now() + '';
         file.uploadingProgress = null;
+        file.overwrite = false;
+        file.existed = false;
         file.metaData = [
           {name: "name", value: file.name},
           {name: "type", value: (file.type || file.type !== '') ? file.type : 'Unknown'},
           {name: "size", value: file.size},
           {
             name: "location",
-            value: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + file.name
+            value: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + file.name).replace('//', '/')
           },
           {name: "author", value: window.localStorage.getItem('username')},
           {name: "uploaded", value: currentTime},
@@ -45,57 +47,74 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     this.removeFromUpload = function (index) {
       if (self.uploadFileList[index].uploadingObject) self.uploadFileList[index].uploadingObject.abort();
       self.uploadFileList.splice(index, 1);
+      self.selectedFile = null;
+      if (self.uploadFileList.length === 0) self.processing = false;
+      // !$scope.$$phase && $scope.$digest();
     };
 
-    this.uploadFiles = function () {
-      fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
+    this.uploadFiles = function (index) {
+      if (_.isFinite(index)) {
+        self.uploadFileList[index].overwrite = true;
+      }
+      // fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
       self.processing = true;
+      self.selectedFile = null;
       async.each(self.uploadFileList, (file, next) => {
-          if (file.uploadingProgress) {
+          if (file.uploadingProgress || (file.existed && !file.overwrite)) {
             next();
           } else {
             let metaDataRequest = {};
             file.metaData.forEach(m => {
               metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
             });
-            self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest));
-            file.uploadingObject = Upload.upload({
-              url: self.uploadUrl,
-              headers: {
-                'Content-Type': 'application/json',
-                'Referrer-Policy': 'no-referrer',
-                'Authorization': window.localStorage.getItem('token'),
-                'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
-              },
-              data: {
-                'upload-file': file
+            fileExplorerCtrl.httpGet(fileExplorerCtrl.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), result => {
+              if (result.data.code === 409 && !file.overwrite) {
+                console.log("Vao day");
+                let index = self.uploadFileList.findIndex(f => _.isEqual(f, file));
+                self.uploadFileList[index].existed = true;
+                self.uploadFileList[index].uploadingProgress = null;
+                self.uploadFileList[index].overwrite = false;
+                next();
+              } else {
+                self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
+                file.uploadingObject = Upload.upload({
+                  url: self.uploadUrl,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Referrer-Policy': 'no-referrer',
+                    'Authorization': window.localStorage.getItem('token'),
+                    'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
+                  },
+                  data: {
+                    'upload-file': file
+                  }
+                });
+                file.uploadingObject.then(resp => {
+                  self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
+                  console.log(resp);
+                  next();
+                }, err => {
+                  console.log('Error status: ' + err);
+                }, event => {
+                  let percentage = event.loaded / event.total * 100;
+                  if (event.type === "load") {
+                    file.uploadingProgress.status = "Uploaded ...";
+                  }
+                  file.uploadingProgress = {
+                    progress: percentage,
+                    status: "Uploading ..."
+                  };
+                  !$scope.$$phase && $scope.$digest();
+                });
+                file.uploadingObject.catch(err => {
+                  console.log("Upload terminated", err.message);
+                });
               }
-            });
-            file.uploadingObject.then(resp => {
-              self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
-              console.log(resp);
-              next();
-            }, err => {
-              console.log('Error status: ' + err);
-              next();
-            }, event => {
-              let percentage = event.loaded / event.total * 100;
-              if (event.type === "load") {
-                file.uploadingProgress.status = "Uploaded ...";
-              }
-              file.uploadingProgress = {
-                progress: percentage,
-                status: "Uploading ..."
-              };
-              !$scope.$$phase && $scope.$digest();
-            });
-            file.uploadingObject.catch(err => {
-              console.log("Upload terminated", err.message);
             });
           }
         }, err => {
           if (!err && self.uploadFileList.length === 0) {
-            fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
+            // fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
             console.log('===upload files done');
             fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
             close();

@@ -15,7 +15,8 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "hard-source-webpack-plugin": "^0.13.1"
   },
   "devDependencies": {
     "bower": "^1.8.4",

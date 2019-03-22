@@ -67,45 +67,49 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             file.metaData.forEach(m => {
               metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
             });
-            self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
-            file.uploadingObject = Upload.upload({
-              url: self.uploadUrl,
-              headers: {
-                'Content-Type': 'application/json',
-                'Referrer-Policy': 'no-referrer',
-                'Authorization': window.localStorage.getItem('token'),
-                'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
-              },
-              data: {
-                'upload-file': file
-              }
-            });
-            file.uploadingObject.then(resp => {
-              self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
-              console.log(resp);
-              next();
-            }, err => {
-              console.log('Error status: ' + err);
-              if (err.status === 409) {
+            fileExplorerCtrl.httpGet(fileExplorerCtrl.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), result => {
+              if (result.data.code === 409 && !file.overwrite) {
+                console.log("Vao day");
                 let index = self.uploadFileList.findIndex(f => _.isEqual(f, file));
                 self.uploadFileList[index].existed = true;
                 self.uploadFileList[index].uploadingProgress = null;
                 self.uploadFileList[index].overwrite = false;
                 next();
+              } else {
+                self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
+                file.uploadingObject = Upload.upload({
+                  url: self.uploadUrl,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Referrer-Policy': 'no-referrer',
+                    'Authorization': window.localStorage.getItem('token'),
+                    'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
+                  },
+                  data: {
+                    'upload-file': file
+                  }
+                });
+                file.uploadingObject.then(resp => {
+                  self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
+                  console.log(resp);
+                  next();
+                }, err => {
+                  console.log('Error status: ' + err);
+                }, event => {
+                  let percentage = event.loaded / event.total * 100;
+                  if (event.type === "load") {
+                    file.uploadingProgress.status = "Uploaded ...";
+                  }
+                  file.uploadingProgress = {
+                    progress: percentage,
+                    status: "Uploading ..."
+                  };
+                  !$scope.$$phase && $scope.$digest();
+                });
+                file.uploadingObject.catch(err => {
+                  console.log("Upload terminated", err.message);
+                });
               }
-            }, event => {
-              let percentage = event.loaded / event.total * 100;
-              if (event.type === "load") {
-                file.uploadingProgress.status = "Uploaded ...";
-              }
-              file.uploadingProgress = {
-                progress: percentage,
-                status: "Uploading ..."
-              };
-              !$scope.$$phase && $scope.$digest();
-            });
-            file.uploadingObject.catch(err => {
-              console.log("Upload terminated", err.message);
             });
           }
         }, err => {

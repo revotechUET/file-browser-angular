@@ -46,7 +46,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h5 class="list-group-item-heading">{{uploadFile.name}}</h5>
+                                    <h5 class="list-group-item-heading">{{uploadFile.name}}&nbsp;&nbsp;&nbsp;<b
+                                            ng-show="uploadFile.existed"
+                                            style="color: red">Existed</b>
+                                    </h5>
                                 </li>
                             </ul>
                         </div>

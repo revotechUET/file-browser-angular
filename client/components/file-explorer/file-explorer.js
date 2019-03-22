@@ -38,6 +38,7 @@ const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
 const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
+const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 
 Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 
@@ -67,6 +68,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.newFolderUrl = self.url + NEW_FOLDER_PATH;
     self.searchUrl = self.url + SEARCH_PATH;
     self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
+    self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
 
     let searchQuery = {
       conditions: {

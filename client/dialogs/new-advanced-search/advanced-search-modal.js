@@ -36,7 +36,11 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           let children = [];
           if(keyObj == 'uploaded') children = child.children.map(item => {
                                           let rObj = {};
-                                          rObj[keyObj] = new Date(item.uploaded);
+                                          if(item.uploaded) {
+                                            rObj[keyObj] = {};
+                                            rObj[keyObj].from = new Date(item.uploaded.from);
+                                            rObj[keyObj].to = new Date(item.uploaded.to);
+                                          }
                                           return rObj;
                                         });
           else children = child.children;

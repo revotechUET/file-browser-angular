@@ -72,10 +72,12 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         if(key != 'uploaded') self.conditions[idx].children.push({[key] : ''});
       }
       else {
+        let inputtype = (key == 'uploaded') ? 'date' : 'text';
+        let children = (key == 'uploaded') ? [{[key] : {from: '', to: ''}}] : [{[key] : ''}]
         self.conditions.push({
           mdtype: key,
           inputtype: (key == 'uploaded') ? 'date' : 'text',
-          children: [{[key] : ''}]
+          children: children
         });
       }
     };
@@ -120,11 +122,20 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           condition.children
                     .forEach(item => {
                       let rObj = {};
-                      if(item[condition.mdtype] && item[condition.mdtype] != '') {
-                        if(condition.inputtype == 'date') 
-                          rObj[condition.mdtype] = new Date(item[condition.mdtype]).getTime();
+                      let mdtype = condition.mdtype;
+                      if(item[mdtype] && item[mdtype] != '') {
+                        if(condition.inputtype == 'date') {
+                          rObj[mdtype] = {};
+                          if((item[mdtype].from != '') && (item[mdtype].to != '')) {
+                            rObj[mdtype].from = new Date(item[mdtype].from).getTime();
+                            rObj[mdtype].to = new Date(item[mdtype].to).getTime();
+                          } else if ((item[mdtype].from != '') && (item[mdtype].to == '')) {
+                            rObj[mdtype].from = new Date(item[mdtype].from).getTime();
+                            rObj[mdtype].to = new Date(item[mdtype].from).getTime();
+                          } else {}
+                        } 
                         else rObj[condition.mdtype] = item[condition.mdtype];
-                        return children.push(rObj);
+                        if (rObj != {}) children.push(rObj);
                       };
                     });
           return children;

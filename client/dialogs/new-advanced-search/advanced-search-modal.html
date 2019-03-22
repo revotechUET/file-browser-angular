@@ -92,9 +92,21 @@
                                             ng-if="$index == 0">{{self.getLabel(md)}}</label>
                                     <label class="col-sm-2"
                                             ng-if="$index > 0">&nbsp;</label>
-                                    <div class="col-sm-9" style="padding-right: 5px;">
+                                    <div class="col-sm-9" style="padding-right: 5px;"
+                                        ng-if="md.inputtype != 'date'">
                                         <input type="{{md.inputtype}}" class="form-control"
                                                 ng-model="child[self.getKeyObj(child)]">
+                                    </div>
+                                    <div class="uploaded" ng-if="md.inputtype == 'date'">
+                                        <div class="col-sm-4">
+                                            <input type="date" class="form-control"
+                                                    ng-model="child[self.getKeyObj(child)].from">
+                                        </div>
+                                        <div class="col-sm-1">To</div>
+                                        <div class="col-sm-4">
+                                            <input type="date" class="form-control"
+                                                    ng-model="child[self.getKeyObj(child)].to">
+                                        </div>
                                     </div>
                                     <div class="col-sm-1" style="padding-left: 0; padding-top: 6px;">
                                         <span style="height: 24px" 

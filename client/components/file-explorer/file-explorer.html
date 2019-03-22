@@ -169,37 +169,38 @@
       </table>
     </div>
     <div class="right-panel">
-      <table class="table table-bordered table-condensed">
-          <thead>
-            <tr>
-              <td class="col-sm-4">Name</td>
-              <td class="col-sm-7">Value</td>
-              <td class="col-sm-1"></td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="(name, value) in self.selectedItem.metaData">
-              <td ng-bind="name"></td>
-              <td>
-                <input type="text" ng-model="value" ng-blur="self.updateMetaData(name, value)">
-              </td>
-              <td>
-                <button ng-click="self.removeMetaData(name, value)">&times;</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <input type="text" ng-model="addName">
-              </td>
-              <td>
-                <input type="text" ng-model="addValue">
-              </td>
-              <td>
-                <button ng-click="self.addMetaData(addName, addValue)">&plus;</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- <table class="table table-bordered table-condensed">
+        <thead>
+          <tr>
+            <td class="col-sm-4">Name</td>
+            <td class="col-sm-7">Value</td>
+            <td class="col-sm-1"></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(name, value) in self.selectedItem.metaData">
+            <td ng-bind="name"></td>
+            <td>
+              <input type="text" ng-model="value" ng-blur="self.updateMetaData(name, value)">
+            </td>
+            <td>
+              <button ng-click="self.removeMetaData(name, value)">&times;</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <input type="text" ng-model="addName">
+            </td>
+            <td>
+              <input type="text" ng-model="addValue">
+            </td>
+            <td>
+              <button ng-click="self.addMetaData(addName, addValue)">&plus;</button>
+            </td>
+          </tr>
+        </tbody>
+      </table> -->
+      <data-properties meta-data="self.selectedItem.metaData"></data-properties>
     </div>
   </div>
 </div>

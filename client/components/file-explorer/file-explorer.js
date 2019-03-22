@@ -9,6 +9,7 @@ const async = require('../../vendor/js/async.min');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 const imgPreview = require('../img-preview/img-preview').name;
+const dataProperties = require('../data-properties/data-properties').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
@@ -463,7 +464,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview]);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, dataProperties]);
 
 app.component(componentName, {
   template: require('./file-explorer.html'),

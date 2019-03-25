@@ -8,7 +8,7 @@
             <div class="modal-body">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <button class="btn btn-default btn-block"
+                        <button class="btn btn-default btn-block upload-btn"
                                 ng-show="!self.processing"
                                 ngf-select="self.addForUpload($files, $event)"
                                 ngf-multiple="true">
@@ -16,18 +16,17 @@
                         </button>
                     </div>
                     <div class="form-group">
-                        &nbsp;
-                    </div>
-                    <div class="form-group">
                         <div class="upload-list">
-                            <ul class="list-group">
-                                <li class="list-group-item" ng-repeat="(index, uploadFile) in self.uploadFileList"
-                                    ng-click="self.selectFile(uploadFile)">
-                                    <button style="padding: 0 10px;"
+                            <ul class="list-files-group">
+                                <li class="list-files-group-item" 
+                                    ng-repeat="(index, uploadFile) in self.uploadFileList"
+                                    ng-click="self.selectFile(uploadFile, index)"
+                                    ng-class="{'selectFile' : self.selectedFile == uploadFile}">
+                                    <button style="padding: 5 10px; margin-top: -3px;"
                                             class="fa fa-remove btn btn-sm btn-danger pull-right"
                                             ng-click="self.removeFromUpload(index)" title="Remove from uploadlist">
                                     </button>
-                                    <button style="padding: 0 10px;"
+                                    <button style="padding: 5 10px; margin-top: -3px;"
                                             class="fa fa-refresh btn btn-sm btn-success pull-right"
                                             ng-click="self.uploadFiles(index)" ng-show="uploadFile.existed"
                                             title="Overwrite and upload">
@@ -46,10 +45,13 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h5 class="list-group-item-heading">{{uploadFile.name}}&nbsp;&nbsp;&nbsp;<b
-                                            ng-show="uploadFile.existed"
+                                    <span class="item-index">{{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
+                                    <p class="list-group-item-heading"
+                                        title="{{uploadFile.name}}">
+                                        {{uploadFile.name}}&nbsp;&nbsp;&nbsp;
+                                        <b ng-show="uploadFile.existed"
                                             style="color: red">Existed</b>
-                                    </h5>
+                                    </p>
                                 </li>
                             </ul>
                         </div>

@@ -161,6 +161,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.currentPath.push(item.rootName);
       })
     } else {
+      self.filter = ''
       self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
         let data = {title: item.rootName};

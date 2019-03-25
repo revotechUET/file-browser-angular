@@ -1,6 +1,6 @@
 const async = require('../../vendor/js/async.min');
 const helper = require('../dialog-helper');
-require('./upload-files-modal');
+require('./upload-files-modal.css');
 
 module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
   modalController.$inject = ['$scope', 'close'];
@@ -137,7 +137,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       })
     };
 
-    self.selectFile = function (uploadFile) {
+    self.selectFile = function (uploadFile, index) {
       self.selectedFile = uploadFile;
       console.log("Doi ne ", self.selectedFile);
     };

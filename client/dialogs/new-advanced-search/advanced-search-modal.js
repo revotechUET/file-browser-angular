@@ -147,12 +147,16 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       });
       return searchQuery;
     };
-
-    this.applySearch = function () {
+    function onSearch() {
       self.searchQuery.subFolders = (self.subFolders) ? 'included' : 'excluded';
-
       fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions);
-      console.log("@@@", fileExplorerCtrl.searchQuery);
+    }
+    this.applySearch = function () {
+      onSearch();
+      callback('Ok');
+    }
+    this.okSearch = function () {
+      onSearch();
       close('Ok');
     }
     this.closeModal = function () {

@@ -37,7 +37,19 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           {name: "parameter", value: ""}, //select parameter task from list params set
           {name: "datatype", value: "Other"}, //single select box
           {name: "quality", value: 5}, //1-5
-          {name: "relatesto", value: ""},
+          {
+            name: "relatesto", value: JSON.stringify([
+              {idObject: 1, objectType: "well"},
+              {idObject: 2, objectType: "dataset"},
+              {idObject: 3, objectType: "zoneset"},
+              {idObject: 4, objectType: "zone"},
+              {idObject: 5, objectType: "markerset"},
+              {idObject: 7, objectType: "logplot"},
+              {idObject: 6, objectType: "histogram"},
+              {idObject: 8, objectType: "crossplot"},
+              {idObject: 9, objectType: "curve"}
+            ])
+          },
           {name: "description", value: ""},
         ];
         next();

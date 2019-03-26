@@ -13,7 +13,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       {name: "size", value: 0},
       {
         name: "location",
-        value: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + self.folderName
+        value: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName
       },
       {name: "author", value: window.localStorage.getItem('username')},
       {name: "uploaded", value: Date.now()},
@@ -32,7 +32,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     this.folderName = '';
     self.changeFolderName = function () {
       self.metaData[0].value = self.folderName;
-      self.metaData[3].value = fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + self.folderName;
+      self.metaData[3].value = fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName;
     };
 
     this.createFolder = function () {
@@ -40,7 +40,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       self.metaData.forEach(m => {
         data[m.name.replace(/\s/g, '')] = m.value + ''
       });
-      let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
+      let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
 
       fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, res => {
         console.log(res);

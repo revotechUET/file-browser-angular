@@ -78,7 +78,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
           {
             operator: "or",
             children: [
-              {name : ""}
+              {name: ""}
             ]
           }
         ]
@@ -158,7 +158,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
-        self.currentPath.push(item.rootName);
+        self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
       })
     } else {
       self.filter = ''
@@ -230,14 +230,14 @@ function Controller($scope, $element, $http, ModalService, Upload) {
 
   this.goTo = function (index) {
     if (index == '-999') {
-      self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.join('/')), result => {
+      self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
       })
     } else {
       self.selectedList = [];
       self.currentPath = self.currentPath.slice(0, index + 1);
-      let newPath = self.rootFolder + self.currentPath.join('/');
+      let newPath = self.rootFolder + self.currentPath.map(c => c.rootName).join('/');
       self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
@@ -267,7 +267,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       case 'copy':
         async.eachSeries(self.pasteList, (file, next) => {
           let from = `from=${encodeURIComponent(file.path)}&`;
-          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
+          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}`;
 
           self.httpGet(`${self.copyUrl + from + dest}`, res => {
             console.log(res);
@@ -285,7 +285,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       case 'cut':
         async.eachSeries(self.pasteList, (file, next) => {
           let from = `from=${encodeURIComponent(file.path)}&`;
-          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}`;
+          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}`;
 
           self.httpGet(`${self.moveUrl + from + dest}`, res => {
             console.log(res);
@@ -326,7 +326,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
           {
             operator: "or",
             children: [
-              {name : ""}
+              {name: ""}
             ]
           }
         ]
@@ -335,16 +335,16 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       subFolders: "included"
     };
     if (self.filter != '') {
-      let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}&`;
+      let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}&`;
       let content = `content=${encodeURIComponent(self.filter)}`;
 
       // self.httpGet(`${self.searchUrl + folder + content}`, res => {
       //   self.fileList = res.data.data;
       // })
       let payload = {
-        folder: self.rootFolder + self.currentPath.join('/'),
+        folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
         content: {
-          conditions : {
+          conditions: {
             children: [{name: self.filter}],
             operator: "or"
           },
@@ -355,18 +355,18 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       self.httpPost(self.searchUrl, payload, res => {
         self.fileList = res.data.data;
       });
-    } else if ( self.filter != '[Custom search]'){
+    } else if (self.filter != '[Custom search]') {
       self.goTo(self.currentPath.length - 1);
     }
   }
   this.advancedSearch = function () {
-    newAdvancedSearchDialog(ModalService, self, function(isSearching) {
-      if(isSearching) {
+    newAdvancedSearchDialog(ModalService, self, function (isSearching) {
+      if (isSearching) {
         self.filter = '[Custom search]';
-        let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.join('/'))}&`;
+        let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}&`;
 
         let payload = {
-          folder: self.rootFolder + self.currentPath.join('/'),
+          folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
           content: self.searchQuery
         };
         self.httpPost(self.searchUrl, payload, res => {

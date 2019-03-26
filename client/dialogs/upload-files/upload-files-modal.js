@@ -25,7 +25,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           {name: "size", value: file.size},
           {
             name: "location",
-            value: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/') + '/' + file.name).replace('//', '/')
+            value: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + file.name).replace('//', '/')
           },
           {name: "author", value: window.localStorage.getItem('username')},
           {name: "uploaded", value: currentTime},
@@ -76,7 +76,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                 self.uploadFileList[index].overwrite = false;
                 next();
               } else {
-                self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
+                self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
                 file.uploadingObject = Upload.upload({
                   url: self.uploadUrl,
                   headers: {

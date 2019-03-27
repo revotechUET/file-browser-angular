@@ -3,6 +3,8 @@ require('./storage-props.less');
 const moduleName = 'storage-props';
 const componentName = 'storageProps';
 
+Controller.$inject = ['$scope'];
+
 function Controller($scope) {
   	let self = this;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];

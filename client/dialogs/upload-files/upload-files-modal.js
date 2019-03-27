@@ -19,7 +19,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         file.uploadingProgress = null;
         file.overwrite = false;
         file.existed = false;
-        /*file.metaData = [
+        file.metaData = [
           {name: "name", value: file.name},
           {name: "type", value: (file.type || file.type !== '') ? file.type : 'Unknown'},
           {name: "size", value: file.size},
@@ -51,8 +51,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             ])
           },
           {name: "description", value: ""},
-        ];*/
-        file.metaData = {
+        ];
+        /*file.metaData = {
           name: file.name,
           type: (file.type || file.type !== '') ? file.type : 'Unknown',
           size: file.size,
@@ -79,7 +79,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
               {idObject: 9, objectType: "curve"}
             ]),
           description: ''
-        }
+        }*/
         next();
       });
     };
@@ -103,10 +103,10 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           if (file.uploadingProgress || (file.existed && !file.overwrite)) {
             next();
           } else {
-            let metaDataRequest = file.metaData;
-            /*file.metaData.forEach(m => {
+            let metaDataRequest = {};
+            file.metaData.forEach(m => {
               metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
-            });*/
+            });
             fileExplorerCtrl.httpGet(fileExplorerCtrl.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), result => {
               if (result.data.code === 409 && !file.overwrite) {
                 console.log("Vao day");

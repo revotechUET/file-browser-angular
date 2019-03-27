@@ -3,10 +3,199 @@ require('./storage-props.less');
 const moduleName = 'storage-props';
 const componentName = 'storageProps';
 
-function Controller($scope, wiComponentService, wiApiService) {
+function Controller($scope) {
   	let self = this;
-  	let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
-  	let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
+  	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
+  	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
+  	let config = {
+        "name": {
+            "translation": "Name",
+            "option": "use",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "type": {
+            "translation": "Type",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "size": {
+            "translation": "Size",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "location": {
+            "translation": "Location",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "source": {
+            "translation": "Source",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "author": {
+            "translation": "Author",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "uploaded": {
+            "translation": "Date Uploaded",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": "wiref",
+            "refSpec": "time",
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "modified": {
+            "translation": "Date Modified",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": "wiref",
+            "refSpec": "time",
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "field": {
+            "translation": "Field",
+            "option": "notuse",
+            "section": "Information",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "well": {
+            "translation": "Well",
+            "option": "notuse",
+            "section": "Information",
+            "typeSpec": "wiselect",
+            "refSpec": null,
+            "choices": "wells",
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "welltype": {
+            "translation": "Well Type",
+            "option": "notuse",
+            "section": "Information",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "parameter": {
+            "translation": "Parameter",
+            "option": "use",
+            "section": "Information",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "datatype": {
+            "translation": "Data Type",
+            "option": "use",
+            "section": "Information",
+            "typeSpec": "wiselect",
+            "refSpec": null,
+            "choices": "datatypes",
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "quality": {
+            "translation": "Quality",
+            "option": null,
+            "section": "Information",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "relatesto": {
+            "translation": "Relates to",
+            "option": "use",
+            "section": "Hyperlink",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "description": {
+            "translation": "Description",
+            "option": "use",
+            "section": "Description",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        },
+        "undefinedfields": {
+            "translation": "More Information",
+            "option": "use",
+            "section": "More Information",
+            "typeSpec": "undefinedfields",
+            "refSpec": null,
+            "choices": null,
+            "modelBy": null,
+            "require": null,
+            "func": null
+        }
+    }
   	this.sections = ['General', 'Information', 'Hyperlink', 'Description', 'More Information'];
   	this.selections = {
   		"datatypes" : [
@@ -54,13 +243,13 @@ function Controller($scope, wiComponentService, wiApiService) {
 	this.$onChanges = function(changeObj) {
 		if(changeObj.metaData) {
 			// self.metaData = self.selectedItem.metaData;
- 			console.log(self.getMDObj());
+ 			/*console.log(self.getMDObj());
  			wiApiService.listWells({idProject: idProject}, function(wells) {
  				self.wells = wells;
  				self.selections.wells = wells.map(w => w.name);
  				self.selections.wells.unshift("");
- 				self.fields = self.getMDObj();
- 			});
+ 			});*/
+ 			self.fields = self.getMDObj();
 		}
 	};
 	this.getMDObj = function() {
@@ -92,6 +281,7 @@ function Controller($scope, wiComponentService, wiApiService) {
 			type: configObj.typeSpec || 'text',
 			readonly: (configObj.option == 'readonly') ? true : false,
 			value : self.metaData[mdKey],
+			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
 			selections: configObj.choices ? self.selections[configObj.choices] : []
 		}
@@ -148,14 +338,19 @@ function Controller($scope, wiComponentService, wiApiService) {
 	}
 
 	this.addMetaData = function() {
+		let newKey = 'New Meta Data';
+		/*if (self.fields['More Information']
+				.find(f => f.name.toLowerCase() == encodingSpace(newKey.toLowerCase()))) {
+
+		}*/
 		self.fields['More Information'].push({
-			name: encodingSpace('New Meta Data'),
-			label: 'New Meta Data',
+			name: encodingSpace(newKey),
+			label: newKey,
 			type: 'text',
 			readonly: false,
 			value: ''
 		});
-		self.metaData[encodingSpace('New Meta Data')] = '';
+		self.metaData[encodingSpace(newKey)] = '';
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.removeDataMeta = function(name) {

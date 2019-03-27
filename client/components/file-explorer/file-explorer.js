@@ -41,9 +41,9 @@ const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 
-Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload', 'wiComponentService', 'wiApiService'];
+// Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 
-function Controller($scope, $element, $http, ModalService, Upload, wiComponentService, wiApiService) {
+function Controller($scope, $element, $http, ModalService, Upload) {
   let self = this;
 
   this.$onInit = function () {

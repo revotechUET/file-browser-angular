@@ -19,7 +19,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         file.uploadingProgress = null;
         file.overwrite = false;
         file.existed = false;
-        file.metaData = [
+        /*file.metaData = [
           {name: "name", value: file.name},
           {name: "type", value: (file.type || file.type !== '') ? file.type : 'Unknown'},
           {name: "size", value: file.size},
@@ -51,7 +51,35 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             ])
           },
           {name: "description", value: ""},
-        ];
+        ];*/
+        file.metaData = {
+          name: file.name,
+          type: (file.type || file.type !== '') ? file.type : 'Unknown',
+          size: file.size,
+          location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + file.name).replace('//', '/'),
+          author: window.localStorage.getItem('username'),
+          uploaded: currentTime,
+          modified: file.lastModified,
+          source: 'Desktop Uploaded',
+          field: '',
+          well: '',
+          welltype: '',
+          parameter: '',
+          datatype: 'Other',
+          quality: '5',
+          relatesto: JSON.stringify([
+              {idObject: 1, objectType: "well"},
+              {idObject: 2, objectType: "dataset"},
+              {idObject: 3, objectType: "zoneset"},
+              {idObject: 4, objectType: "zone"},
+              {idObject: 5, objectType: "markerset"},
+              {idObject: 7, objectType: "logplot"},
+              {idObject: 6, objectType: "histogram"},
+              {idObject: 8, objectType: "crossplot"},
+              {idObject: 9, objectType: "curve"}
+            ]),
+          description: ''
+        }
         next();
       });
     };
@@ -75,10 +103,10 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           if (file.uploadingProgress || (file.existed && !file.overwrite)) {
             next();
           } else {
-            let metaDataRequest = {};
-            file.metaData.forEach(m => {
+            let metaDataRequest = file.metaData;
+            /*file.metaData.forEach(m => {
               metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
-            });
+            });*/
             fileExplorerCtrl.httpGet(fileExplorerCtrl.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), result => {
               if (result.data.code === 409 && !file.overwrite) {
                 console.log("Vao day");
@@ -136,7 +164,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     }
     ;
 
-    self.addMetadata = function (selectedFile) {
+    /*self.addMetadata = function (selectedFile) {
       selectedFile.metaData.push({
         name: ("field " + (selectedFile.metaData.length + 1)).replace(/\s/g, ''),
         value: ("value " + (selectedFile.metaData.length + 1))
@@ -147,7 +175,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       _.remove(self.selectedFile.metaData, el => {
         return el.name === m.name;
       })
-    };
+    };*/
 
     self.selectFile = function (uploadFile, index) {
       self.selectedFile = uploadFile;

@@ -1,0 +1,55 @@
+<form class="form-horizontal storage-props">
+	<!-- <div ng-if="!self.checkMDObj()">no info</div> -->
+	<div ng-repeat="section in self.sections" ng-if="self.checkMDObj()">
+		<div class="heading">{{section}}</div>
+		<div ng-repeat="md in self.fields[section]"
+			class="form-group props-group"
+			ng-if="section!='More Information'">
+			<label class="col-sm-5">{{md.label}}</label>
+			<div class="col-sm-7"
+				style="border-left: 1px solid #ddd; padding: 0">
+				<input type="text" ng-model="md.value" 
+						class="form-control props-value"
+						ng-readonly="{{md.readonly}}"
+						ng-if="md.type == 'text'"
+						ng-blur="self.updateMetaData(md.name, md.value)">
+				<input ng-if="md.type == 'wiref'" 
+						type="text" ng-model="md.ref"
+						class="form-control props-value"
+						readonly="">
+				<select ng-if="md.type == 'wiselect'"
+						class="form-control props-value"
+						ng-model="md.value"
+						ng-options="item for item in md.selections"
+						ng-change="self.onChangeSelect(md.name, md.value)">
+				</select>
+			</div>
+		</div>
+		<div class="form-group props-group more-info"
+			ng-if="section=='More Information'">
+			<div ng-repeat="md in self.fields[section]">
+				<div class="col-sm-5">
+					<input type="text" class="form-control props-value"
+							ng-model="md.label"
+							ng-blur="self.updateMDName(md.label, md.name, md.value)">
+				</div>
+				<div class="col-sm-6">
+					<input type="text" class="form-control props-value"
+							ng-model="md.value"
+							ng-blur="self.updateMetaData(md.name, md.value)">
+				</div>
+				<div class="col-sm-1">
+					<button type="text" class="btn btn-flat"
+							ng-click="self.removeDataMeta(md.name)">
+						<i class="fa fa-close"></i>
+					</button>
+				</div>
+			</div>
+			<span>{{self.warning}}</span>
+			<button class="btn btn-flat add-mdata" title="Add Meta Data"
+					ng-click="self.addMetaData()">
+				<i class="fa fa-plus"></i> Add Meta Data
+			</button>
+		</div>
+	</div>
+</form>

@@ -55,6 +55,7 @@
 }
 
 .upload-list .selectFile {
-    background: steelblue !important;
-    color: #fff !important;
+    background: #fff !important;
+    color: #ed4643 !important;
+    border: 2px solid steelblue !important;
 }

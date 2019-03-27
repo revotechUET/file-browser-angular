@@ -9,7 +9,7 @@ const async = require('../../vendor/js/async.min');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 const imgPreview = require('../img-preview/img-preview').name;
-const dataProperties = require('../data-properties/data-properties').name;
+const storageProps = require('../storage-props/storage-props').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
@@ -41,9 +41,9 @@ const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 
-Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
+Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload', 'wiComponentService', 'wiApiService'];
 
-function Controller($scope, $element, $http, ModalService, Upload) {
+function Controller($scope, $element, $http, ModalService, Upload, wiComponentService, wiApiService) {
   let self = this;
 
   this.$onInit = function () {
@@ -161,7 +161,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
         self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
       })
     } else {
-      self.filter = ''
+      self.filter = '';
       self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
         let data = {title: item.rootName};
@@ -349,7 +349,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
             operator: "or"
           },
           type: "all",
-          subFolders: "excluded",
+          subFolders: "included",
         }
       };
       self.httpPost(self.searchUrl, payload, res => {
@@ -436,13 +436,11 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       console.log(result);
     });
   };
-  this.updateMetaData = function (name, value) {
-    console.log("update ", name, value);
-    console.log("item", self.selectedItem);
-    self.selectedItem.metaData[name] = value;
+  this.updateMetaData = function (metaData) {
+    self.selectedItem.metaData = metaData;
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
-      metaData: self.selectedItem.metaData
+      metaData: metaData
     });
   };
   this.removeMetaData = function (name) {
@@ -467,7 +465,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, dataProperties]);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps]);
 
 app.component(componentName, {
   template: require('./file-explorer.html'),

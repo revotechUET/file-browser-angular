@@ -33,7 +33,7 @@
                                     </button>
                                     <div style="padding: 0 0.5em; max-height: 20%; overflow-y: auto;"
                                          ng-show="uploadFile.uploadingProgress">
-                                        <div style="margin-bottom: 0.5em; border-top: 1px solid #eee; display: flex; align-items: center;">
+                                        <div style="margin-bottom: 0.5em; display: flex; align-items: center;">
                                             <div style="flex: 1; overflow: hidden;">
                                                 <div style="overflow: hidden; text-overflow: ellipsis;">
                                                     {{uploadFile.uploadingProgress.status}}
@@ -57,6 +57,7 @@
                         </div>
                     </div>
                     <div class="hr-sect-file">Meta Data</div>
+                    <!-- <storage-props meta-data="self.selectedFile.metaData"></storage-props> -->
                     <div class="form-group" ng-repeat="m in self.selectedFile.metaData track by $index">
                         <div class="col-sm-5">
                             <input type="text" class="form-control" ng-model="m.name" required/>

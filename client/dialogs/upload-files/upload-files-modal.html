@@ -57,8 +57,23 @@
                         </div>
                     </div>
                     <div class="hr-sect-file">Meta Data</div>
-                    <!-- <storage-props meta-data="self.selectedFile.metaData"></storage-props> -->
-                    <div class="form-group" ng-repeat="m in self.selectedFile.metaData track by $index">
+                    <div class="meta-data" ng-if="self.selectedFile.metaData">
+                        <div class="form-group">
+                            <label class="col-sm-2" style="text-align: right;">Edit All File: </label>
+                            <div class="col-sm-4">
+                                <span class="ti-check button-checkbox checked-off" 
+                                        ng-class="{'checked-on':self.multiMD}"
+                                        ng-click="self.multiMD = !self.multiMD"></span>
+                            </div>
+                        </div>
+                        <storage-props meta-data="self.selectedFile.metaData"
+                                        update-metadat-func="self.updateMetaData"
+                                        ng-if="!self.multiMD"></storage-props>
+                        <storage-props meta-data="self.metaData4All" hide-header="true"
+                                        update-metadat-func="self.updateMD4All"
+                                        ng-if="self.multiMD"></storage-props>
+                    </div>
+                    <!-- <div class="form-group" ng-repeat="m in self.selectedFile.metaData track by $index">
                         <div class="col-sm-5">
                             <input type="text" class="form-control" ng-model="m.name" required/>
                         </div>
@@ -77,7 +92,7 @@
                                 ng-click="self.addMetadata(self.selectedFile)">
                             <i class="fa fa-plus"></i>&nbsp;Add Meta Data
                         </button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <!--<div style="max-height: 70vh; overflow-y: overlay; overflow-x: hidden; text-align: left;" class="modal-body text-center">-->

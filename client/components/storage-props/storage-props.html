@@ -1,7 +1,7 @@
 <form class="form-horizontal storage-props">
 	<!-- <div ng-if="!self.checkMDObj()">no info</div> -->
 	<div ng-repeat="section in self.sections" ng-if="self.checkMDObj()">
-		<div class="heading">{{section}}</div>
+		<div class="heading" ng-if="!self.hideHeader || section=='More Information'">{{section}}</div>
 		<div ng-repeat="md in self.fields[section]"
 			class="form-group props-group"
 			ng-if="section!='More Information' && md.use">
@@ -31,9 +31,11 @@
 				<div class="col-sm-5">
 					<input type="text" class="form-control props-value"
 							ng-model="md.label"
-							ng-blur="self.updateMDName(md.label, md.name, md.value)">
+							ng-blur="self.updateMDName(md.label, md.name, md.value)"
+							readonly="">
 				</div>
-				<div class="col-sm-6">
+				<div class="col-sm-6"
+					style="border-left: 1px solid #ddd;">
 					<input type="text" class="form-control props-value"
 							ng-model="md.value"
 							ng-blur="self.updateMetaData(md.name, md.value)">
@@ -46,7 +48,7 @@
 					</button>
 				</div>
 			</div>
-			<span>{{self.warning}}</span>
+			<p>{{self.warning}}</p>
 			<button class="btn btn-flat add-mdata" title="Add Meta Data"
 					ng-click="self.addMetaData()">
 				<i class="fa fa-plus"></i> Add Meta Data

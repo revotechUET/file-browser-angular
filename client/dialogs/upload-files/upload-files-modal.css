@@ -22,7 +22,23 @@
     border: 1px solid steelblue;
     font-style: italic;
 }
-
+.upload-files-modal .meta-data .button-checkbox {
+    width: 16px;
+    height: 16px;
+    margin-top: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 5px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    font-weight: bold;
+}
+.upload-files-modal .meta-data .checked-off {
+    color: #ccc;
+}
+.upload-files-modal .meta-data .checked-on {
+    color: #000;
+}
 .upload-list {
     max-height: 300px;
     overflow-y: auto;

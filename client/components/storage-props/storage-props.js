@@ -3,9 +3,11 @@ require('./storage-props.less');
 const moduleName = 'storage-props';
 const componentName = 'storageProps';
 
-Controller.$inject = ['$scope'];
+const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
 
-function Controller($scope) {
+Controller.$inject = ['$scope', 'ModalService'];
+
+function Controller($scope, ModalService) {
   	let self = this;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
@@ -237,14 +239,12 @@ function Controller($scope) {
 		"Others"
 	  	]
 	  }
-
  	this.$onInit = function () {
 	};
 	this.fields = [];
 	this.wells = [];
 	this.$onChanges = function(changeObj) {
 		if(changeObj.metaData) {
-			// self.metaData = self.selectedItem.metaData;
  			/*console.log(self.getMDObj());
  			wiApiService.listWells({idProject: idProject}, function(wells) {
  				self.wells = wells;
@@ -304,6 +304,7 @@ function Controller($scope) {
 		else return true;
 	}
     this.updateMetaData = function (name, value) {
+    	if(self.metaData[name] == value) return;
     	self.metaData[name] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	};
@@ -338,22 +339,32 @@ function Controller($scope) {
 	function decodingSpace (name) {
 		return name.replace(/%20/g, " ");
 	}
-
+	function getRandomKey () {
+		let newKey = randomKeys[Math.floor(Math.random() * randomKeys.length)];
+		randomKeys = randomKeys.filter(e => { return e !== newKey });
+		return newKey;
+	};
+	function checkValidKey (keyName) {
+		let valid = true;
+		for(let key in self.metaData) {
+			if(key.toLowerCase() == keyName.toLowerCase()) valid = false;
+		}
+		return valid;
+	}
 	this.addMetaData = function() {
-		let newKey = 'New Meta Data';
-		/*if (self.fields['More Information']
-				.find(f => f.name.toLowerCase() == encodingSpace(newKey.toLowerCase()))) {
-
-		}*/
-		self.fields['More Information'].push({
-			name: encodingSpace(newKey),
-			label: newKey,
-			type: 'text',
-			readonly: false,
-			value: ''
+		addMetadataDialog(ModalService, self.metaData, function(md) {
+			if(md) {
+				self.fields['More Information'].push({
+					name: md.name,
+					label: decodingSpace(md.name),
+					type: 'text',
+					readonly: false,
+					value: md.value
+				});
+				self.metaData[md.name] = md.value;
+		    	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
+			}
 		});
-		self.metaData[encodingSpace(newKey)] = '';
-    	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.removeDataMeta = function(name) {
 		self.fields['More Information'] = self.fields['More Information']
@@ -378,7 +389,8 @@ app.component(componentName, {
     transclude: true,
     bindings: {
         metaData : '<',
-        updateMetadatFunc : '<'
+        updateMetadatFunc : '<',
+        hideHeader: '@'
     }
 });
 

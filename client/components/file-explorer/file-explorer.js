@@ -194,25 +194,30 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   };
 
   this.downloadFile = function (item) {
+    console.log("Donwload naaaaaaaaaa");
     if (!item || !item.rootIsFile)
       return;
 
     const a = document.createElement('a');
     a.download = item.rootName || 'untitled';
-    a.href = self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}`;
+    a.href = self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}&storage_database=${JSON.stringify(self.storageDatabase)}`;
     a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
     a.parentNode.removeChild(a);
 
     // self.requesting = !self.requesting;
-    // let header = HEADER_CONFIG;
-    // header.responseType = 'arraybuffer';
     // let reqOptions = {
     //   method: 'GET',
     //   url: self.downloadUrl + encodeURIComponent(item.path),
-    //   headers: header,
-    // }
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Referrer-Policy': 'no-referrer',
+    //     'Authorization': window.localStorage.getItem('token'),
+    //     'Storage-Database': JSON.stringify(self.storageDatabase),
+    //     'responseType': 'arraybuffer'
+    //   },
+    // };
     // $http(reqOptions).then(res => {
     //   self.requesting = !self.requesting;
     //   const blob = new Blob([res.data], {

@@ -75,7 +75,7 @@ function Controller($scope, ModalService) {
             "typeSpec": "wiref",
             "refSpec": "time",
             "choices": null
-        },
+        }/*,
         "field": {
             "translation": "Field",
             "option": "notuse",
@@ -99,7 +99,7 @@ function Controller($scope, ModalService) {
             "typeSpec": null,
             "refSpec": null,
             "choices": null
-        },
+        }*/,
         "parameter": {
             "translation": "Parameter",
             "option": "use",
@@ -211,6 +211,7 @@ function Controller($scope, ModalService) {
 					value: self.metaData[key]
 				});
 			};
+			arr.sort((a, b) => a.label.localeCompare(b.label));
 			obj[section] = arr;
 			obj['More Information'] = undefinedArr;
 		});
@@ -337,5 +338,17 @@ app.component(componentName, {
         readonlyValues: '<'
     }
 });
-
+app.directive('spEnter', function ($parse) {
+    return function (scope, element, attrs) {
+        let fn = $parse(attrs['spEnter']);
+        element.bind("keydown keypress", function (event) {
+            if (event.which === 13) {
+                scope.$apply(function () {
+                    event.preventDefault();
+                    fn(scope, {$event: event});
+                });
+            }
+        });
+    };
+});
 module.exports.name = moduleName;

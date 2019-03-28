@@ -12,11 +12,13 @@
 						class="form-control props-value"
 						ng-readonly="{{md.readonly}}"
 						ng-if="md.type == 'text'"
-						ng-blur="self.updateMetaData(md.name, md.value)">
+						ng-blur="self.updateMetaData(md.name, md.value)"
+						sp-enter="$event.currentTarget.blur();">
 				<input ng-if="md.type == 'wiref'" 
 						type="text" ng-model="md.ref"
 						class="form-control props-value"
-						readonly="">
+						readonly=""
+						sp-enter="">
 				<select ng-if="md.type == 'wiselect'"
 						class="form-control props-value"
 						ng-model="md.value"
@@ -32,13 +34,15 @@
 					<input type="text" class="form-control props-value"
 							ng-model="md.label"
 							ng-blur="self.updateMDName(md.label, md.name, md.value)"
+							sp-enter="$event.currentTarget.blur();"
 							readonly="">
 				</div>
 				<div class="col-sm-6"
 					style="border-left: 1px solid #ddd;">
 					<input type="text" class="form-control props-value"
 							ng-model="md.value"
-							ng-blur="self.updateMetaData(md.name, md.value)">
+							ng-blur="self.updateMetaData(md.name, md.value)"
+							sp-enter="$event.currentTarget.blur();">
 				</div>
 				<div class="col-sm-1">
 					<button type="text" class="btn btn-flat pull-right"

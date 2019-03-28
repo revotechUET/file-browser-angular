@@ -10,7 +10,7 @@ module.exports = function (ModalService, metadata, callback) {
     self.warning = '';
     self.name = '';
     self.value = '';
-    let fixKeys = ['name', 'type', 'size', 'location', 'author', 'uploaded', 'modifided', 'source', 'field', 'well', 'welltype', 'parameter', 'quality', 'relatesto'];
+    let fixKeys = ['name', 'type', 'size', 'location', 'author', 'uploaded', 'modifided', 'source', 'parameter', 'quality', 'relatesto'];
     this.onOk = function () {
       let name = self.name.replace(/ /g, "%20");
       for(key in metadata) {

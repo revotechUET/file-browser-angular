@@ -7,7 +7,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
   function modalController($scope, close) {
     let self = this;
     this.newFolderUrl = fileExplorerCtrl.newFolderUrl;
-    self.metaData = [
+    /*self.metaData = [
       {name: "name", value: self.folderName},
       {name: "type", value: 'Folder'},
       {name: "size", value: 0},
@@ -28,18 +28,39 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       {name: "relatesto", value: ""},
       {name: "description", value: ""},
     ];
-
+*/
+    self.metaData = {
+      name: self.folderName,
+      type: 'Folder',
+      size: 0,
+      location: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName,
+      author: window.localStorage.getItem('username'),
+      uploaded: Date.now(),
+      modified: Date.now(),
+      source: 'Desktop Uploaded',
+      field: '',
+      well: '',
+      welltype: '',
+      parameter: '',
+      datatype: 'Other',
+      quality: '5',
+      relatesto: '',
+      description: ''
+    }
     this.folderName = '';
     self.changeFolderName = function () {
-      self.metaData[0].value = self.folderName;
-      self.metaData[3].value = fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName;
+      let copiedData = angular.copy(self.metaData); // to hook $onchanges func
+      self.metaData = {};
+      self.metaData = copiedData;
+      self.metaData.name = self.folderName;
+      self.metaData.location = fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName;
     };
 
     this.createFolder = function () {
       let data = {};
-      self.metaData.forEach(m => {
-        data[m.name.replace(/\s/g, '')] = m.value + ''
-      });
+      for (let key in self.metaData) {
+        data[key] = self.metaData[key] + '';
+      }
       let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
 
       fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, res => {
@@ -48,7 +69,10 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
       })
     };
-
+    self.updateMetaData = function(metaData) {
+      self.metaData = metaData;
+    }
+/*
     self.addMetadata = function () {
       self.metaData.push({
         name: ("field " + (self.metaData.length + 1)).replace(/\s/g, ''),
@@ -60,7 +84,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       _.remove(self.metaData, el => {
         return el.name === m.name;
       })
-    };
+    };*/
 
     this.closeModal = function () {
       close(null);

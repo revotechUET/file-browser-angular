@@ -18,10 +18,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "type": {
             "translation": "Type",
@@ -29,10 +26,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null  
         },
         "size": {
             "translation": "Size",
@@ -40,10 +34,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "location": {
             "translation": "Location",
@@ -51,10 +42,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "source": {
             "translation": "Source",
@@ -62,10 +50,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "author": {
             "translation": "Author",
@@ -73,10 +58,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null  
         },
         "uploaded": {
             "translation": "Date Uploaded",
@@ -84,10 +66,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": "wiref",
             "refSpec": "time",
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "modified": {
             "translation": "Date Modified",
@@ -95,10 +74,7 @@ function Controller($scope, ModalService) {
             "section": "General",
             "typeSpec": "wiref",
             "refSpec": "time",
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "field": {
             "translation": "Field",
@@ -106,10 +82,7 @@ function Controller($scope, ModalService) {
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "well": {
             "translation": "Well",
@@ -117,10 +90,7 @@ function Controller($scope, ModalService) {
             "section": "Information",
             "typeSpec": "wiselect",
             "refSpec": null,
-            "choices": "wells",
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": "wells"
         },
         "welltype": {
             "translation": "Well Type",
@@ -128,10 +98,7 @@ function Controller($scope, ModalService) {
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "parameter": {
             "translation": "Parameter",
@@ -139,10 +106,7 @@ function Controller($scope, ModalService) {
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null 
         },
         "datatype": {
             "translation": "Data Type",
@@ -150,10 +114,7 @@ function Controller($scope, ModalService) {
             "section": "Information",
             "typeSpec": "wiselect",
             "refSpec": null,
-            "choices": "datatypes",
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": "datatypes"
         },
         "quality": {
             "translation": "Quality",
@@ -161,10 +122,7 @@ function Controller($scope, ModalService) {
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null 
         },
         "relatesto": {
             "translation": "Relates to",
@@ -172,10 +130,7 @@ function Controller($scope, ModalService) {
             "section": "Hyperlink",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null
         },
         "description": {
             "translation": "Description",
@@ -183,21 +138,7 @@ function Controller($scope, ModalService) {
             "section": "Description",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
-        },
-        "undefinedfields": {
-            "translation": "More Information",
-            "option": "use",
-            "section": "More Information",
-            "typeSpec": "undefinedfields",
-            "refSpec": null,
-            "choices": null,
-            "modelBy": null,
-            "require": null,
-            "func": null
+            "choices": null   
         }
     }
   	this.sections = ['General', 'Information', 'Hyperlink', 'Description', 'More Information'];
@@ -281,7 +222,7 @@ function Controller($scope, ModalService) {
 			name: mdKey,
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
-			readonly: (configObj.option == 'readonly') ? true : false,
+			readonly: (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false,
 			value : self.metaData[mdKey],
 			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
@@ -374,6 +315,7 @@ function Controller($scope, ModalService) {
 	}
 	this.updateMDName = function(newLabel, name, value) {
 		let newName = encodingSpace(newLabel);
+		if(newName == name) return;
 		delete self.metaData[name];
 		self.metaData[newName] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
@@ -390,7 +332,8 @@ app.component(componentName, {
     bindings: {
         metaData : '<',
         updateMetadatFunc : '<',
-        hideHeader: '@'
+        hideHeader: '@',
+        readonlyValues: '<'
     }
 });
 

@@ -218,6 +218,7 @@ function Controller($scope, ModalService) {
 	};
 
 	function getMDProps (mdKey, configObj) {
+		if(!self.readonlyValues) self.readonlyValues = []; 
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,

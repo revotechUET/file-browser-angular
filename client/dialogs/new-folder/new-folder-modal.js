@@ -33,7 +33,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       name: self.folderName,
       type: 'Folder',
       size: 0,
-      location: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName,
+      location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName).replace('//', '/'),
       author: window.localStorage.getItem('username'),
       uploaded: Date.now(),
       modified: Date.now(),
@@ -69,22 +69,22 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
       })
     };
-    self.updateMetaData = function(metaData) {
+    self.updateMetaData = function (metaData) {
       self.metaData = metaData;
     }
-/*
-    self.addMetadata = function () {
-      self.metaData.push({
-        name: ("field " + (self.metaData.length + 1)).replace(/\s/g, ''),
-        value: ("value " + (self.metaData.length + 1))
-      });
-    };
+    /*
+        self.addMetadata = function () {
+          self.metaData.push({
+            name: ("field " + (self.metaData.length + 1)).replace(/\s/g, ''),
+            value: ("value " + (self.metaData.length + 1))
+          });
+        };
 
-    self.removeMetadata = function (m) {
-      _.remove(self.metaData, el => {
-        return el.name === m.name;
-      })
-    };*/
+        self.removeMetadata = function (m) {
+          _.remove(self.metaData, el => {
+            return el.name === m.name;
+          })
+        };*/
 
     this.closeModal = function () {
       close(null);

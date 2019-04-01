@@ -10,7 +10,7 @@ function initModal(modal) {
           containment:[-2*offsetWidth, -10, window.innerWidth-offsetWidth, window.innerHeight-offsetHeight],
           handle: '.modal-header'
       });
-      $(modal.element[0]).find('input').focus();
+      $(modal.element[0]).find('input').first().focus();
   }, 700);
   $(modal.element).keydown(function (e) {
       if (e.ctrlKey || e.shiftKey || e.altKey) return;

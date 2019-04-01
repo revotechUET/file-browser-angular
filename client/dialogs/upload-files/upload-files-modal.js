@@ -14,15 +14,6 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.selectedFolder = null;
     self.processing = false;
     self.multiMD = true;
-    /*self.metaData4All = {
-      general: {
-        datatype : '',
-        description: ''
-      },
-      moreInfo: {
-
-      }
-    }*/
     self.metaData4All = {
       datatype: '',
       description: ''

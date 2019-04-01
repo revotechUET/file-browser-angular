@@ -105,6 +105,11 @@
     <div class="spinner-wrapper col-xs-12" ng-show="self.requesting">
       <div class="lds-dual-ring"></div>
     </div>
+    <side-bar my-default-width="300" style="border-right: 1px solid #dedede;">
+      <div class="right-panel">
+        <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"></storage-props>
+      </div>
+    </side-bar>
     <div class="table-files">
       <table class="table mb0 noselect">
         <thead>
@@ -170,76 +175,6 @@
         </tbody>
       </table>
     </div>
-    <div class="right-panel">
-      <!-- <table class="table table-bordered table-condensed">
-        <thead>
-          <tr>
-            <td class="col-sm-4">Name</td>
-            <td class="col-sm-7">Value</td>
-            <td class="col-sm-1"></td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="(name, value) in self.selectedItem.metaData">
-            <td ng-bind="name"></td>
-            <td>
-              <input type="text" ng-model="value" ng-blur="self.updateMetaData(name, value)">
-            </td>
-            <td>
-              <button ng-click="self.removeMetaData(name, value)">&times;</button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <input type="text" ng-model="addName">
-            </td>
-            <td>
-              <input type="text" ng-model="addValue">
-            </td>
-            <td>
-              <button ng-click="self.addMetaData(addName, addValue)">&plus;</button>
-            </td>
-          </tr>
-        </tbody>
-      </table> -->
-      <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"></storage-props>
-    </div>
+    
   </div>
 </div>
-<!-- <div class="iconset noselect">
-    <div class="item-list clearfix">
-        <div class="col-120" ng-repeat="item in self.fileList">
-            <a href="" class="thumbnail text-center" title="{{item.rootName}}" ng-click="self.clickNode(item, $event)"
-                ng-dblclick="self.dblClickNode(item)">
-                <div class="item-icon">
-                    <i class="glyphicon glyphicon-folder-open" ng-if="!item.rootIsFile"></i>
-                    <i class="glyphicon glyphicon-file" data-ext="{{ self.getExtFile(item) | fileExtension }}" ng-if="item.rootIsFile"
-                        ng-class="{'item-extension': true}"></i>
-                </div>
-                {{item.rootName | strLimit : 11}}
-            </a>
-        </div>
-    </div>
-</div> -->
-
-<!-- <div class="row">
-    <div class="col-md-3 tree-browser">
-        <js-tree tree-events="select_node:fileList" tree-ajax="/api/tree"></js-tree>
-    </div>
-    <div class="col-md-8 file-viewer">
-        <div class="myPreview">
-            Testing!!!
-        </div>
-        <div>
-            <pre style="background-color: #f5f5f5; border: 1px solid #ccc; border-radius: 5px;"><code>{{ self.fileViewer }}</code></pre>
-        </div>
-        <div>
-            <button id="prev">Previous</button>
-            <button id="next">Next</button>&nbsp; &nbsp;
-            <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
-        </div>
-        <div>
-            <canvas id="pdfViewer" style="border: 1px solid #ccc"></canvas>
-        </div>
-    </div>
-</div> -->

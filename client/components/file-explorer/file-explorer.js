@@ -2,8 +2,11 @@
 require('./file-explorer.less');
 
 // Load js
+/*
 require('../../vendor/js/ng-file-upload.min');
 const async = require('../../vendor/js/async.min');
+*/
+
 
 // const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
@@ -21,6 +24,7 @@ const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advan
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
 
+// var miscComponent = require('misc-component');
 // const ALGORITHM = 'aes-256-cbc';
 // const SECRET_KEY = 'secretKey';
 // const HEADER_CONFIG = {
@@ -45,7 +49,7 @@ Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
 
 function Controller($scope, $element, $http, ModalService, Upload) {
   let self = this;
-
+  window.fileBrowser = self;
   this.$onInit = function () {
     self.imgResource = {};
     self.currentPath = [];
@@ -89,12 +93,16 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     self.searchQuery = searchQuery;
     $scope.$watch(() => self.storageDatabase, () => {
       if (self.storageDatabase) {
-        self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
-          if (result) {
-            const data = result.data.data;
-            self.fileList = [...data.files, ...data.folders];
-          }
-        });
+        if(self.linkedFile) {
+          self.goToByPath(self.linkedFile);
+        } else {
+          self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
+            if (result) {
+              const data = result.data.data;
+              self.fileList = [...data.files, ...data.folders];
+            }
+          });
+        }
       } else {
         self.fileList = [];
       }
@@ -232,8 +240,20 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     //   a.parentNode.removeChild(a);
     // })
   };
-
-  this.goTo = function (index) {
+  this.goToByPath = function(path) {
+    if(!path) return;
+    let array = path.split('/')
+    let fileName = array[array.length-1];
+    let parts = array.slice(1, array.length-1);
+    parts.forEach(p => {
+      self.currentPath.push({rootName: p, displayName: p});
+    });
+    self.goTo(parts.length-1, function(fileList) {
+      let linkedFile = fileList.find(file => file.rootName == fileName);
+      if(linkedFile) self.clickNode(linkedFile);
+    });
+  }
+  this.goTo = function (index, callback) {
     if (index == '-999') {
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
         let data = result.data.data;
@@ -246,9 +266,11 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
+        callback && callback(self.fileList);
       })
     }
   };
+
 
   this.removeNodes = function () {
     if (!self.selectedList)
@@ -468,9 +490,12 @@ function Controller($scope, $element, $http, ModalService, Upload) {
     $scope.addName = "";
     $scope.addValue = "";
   }
+  this.$onDestroy = function () {
+    delete window.fileBrowser;
+  }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps]);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar']);
 
 app.component(componentName, {
   template: require('./file-explorer.html'),
@@ -480,7 +505,8 @@ app.component(componentName, {
     rootFolder: '@',
     url: '@',
     rawDataUrl: '@',
-    storageDatabase: '<'
+    storageDatabase: '<',
+    linkedFile: '@'
   }
 });
 

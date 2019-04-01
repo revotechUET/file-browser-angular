@@ -1,15 +1,16 @@
 let path = require('path');
-let webpack = require('webpack');
+//let webpack = require('webpack');
 
 var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
-let OUTPUT = path.join(__dirname, 'public');
+// let OUTPUT = path.join(__dirname, 'public');
 // let OUTPUT = path.join('E:/workspace/wi-angular/build/vendor/js');
+let OUTPUT = path.join(__dirname, 'dist');
 
 const generalConfig = {
     entry: [
-        './client/components/file-explorer/file-explorer.js',
-        './node_modules/pdfjs-dist/build/pdf.worker.entry.js',
+        './client/components/file-explorer/file-explorer.js'
+        ,'./node_modules/pdfjs-dist/build/pdf.worker.entry.js',
     ],
     output: {
         path: OUTPUT,
@@ -34,7 +35,7 @@ const generalConfig = {
     },
     plugins: [
         new HardSourceWebpackPlugin()
-      ]
+    ]
     // plugins: [
     //     new webpack.ProvidePlugin({
     //         $: 'jquery',

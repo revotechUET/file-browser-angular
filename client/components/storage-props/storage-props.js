@@ -294,6 +294,17 @@ function Controller($scope, ModalService) {
 		}
 		return valid;
 	}
+	self.checkNameMess = '';
+	$scope.flag = true;
+	self.checkName = function (md, oldValue) {
+		if(md.name == 'name') {
+			let format = /[\/:*?"><|]/;
+			if(format.test(md.value)) {
+				self.checkNameMess = "A file name can't contain any of the following characters: \/:*?\"><|";
+				md.value = oldValue;
+			};
+		}
+	}
 	this.addMetaData = function() {
 		addMetadataDialog(ModalService, self.metaData, function(md) {
 			if(md) {

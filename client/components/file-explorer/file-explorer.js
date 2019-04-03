@@ -461,6 +461,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
   this.saveObject = function (payload) {
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
+      self.goTo(-999);
     });
   };
   this.updateMetaData = function (metaData) {

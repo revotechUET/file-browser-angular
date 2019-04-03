@@ -36,6 +36,7 @@
 							ng-model="md.label"
 							ng-blur="self.updateMDName(md.label, md.name, md.value)"
 							sp-enter="$event.currentTarget.blur();"
+							ng-change="self.warning = ''"
 							readonly="">
 				</div>
 				<div class="col-sm-6"

@@ -139,6 +139,14 @@ function Controller($scope, ModalService) {
             "typeSpec": null,
             "refSpec": null,
             "choices": null   
+        },
+        "encodingtype": {
+            "translation": "Description",
+            "option": "notuse",
+            "section": "",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null   
         }
     }
   	this.sections = ['General', 'Information', 'Hyperlink', 'Description', 'More Information'];
@@ -301,8 +309,11 @@ function Controller($scope, ModalService) {
 			let format = /[\/:*?"><|]/;
 			if(format.test(md.value)) {
 				self.checkNameMess = "A file name can't contain any of the following characters: \/:*?\"><|";
-				md.value = oldValue;
-			};
+				setTimeout(function() {
+					md.value = oldValue;
+					self.checkNameMess = '';
+				}, 3000)
+			} else self.checkNameMess = '';
 		}
 	}
 	this.addMetaData = function() {
@@ -329,6 +340,10 @@ function Controller($scope, ModalService) {
 	this.updateMDName = function(newLabel, name, value) {
 		let newName = encodingSpace(newLabel);
 		if(newName == name) return;
+		if(!checkValidKey(newName)) {
+			self.warning = "Meta data's key existed!";
+			return;
+		}
 		delete self.metaData[name];
 		self.metaData[newName] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);

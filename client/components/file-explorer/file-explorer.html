@@ -105,11 +105,7 @@
     <div class="spinner-wrapper col-xs-12" ng-show="self.requesting">
       <div class="lds-dual-ring"></div>
     </div>
-    <side-bar my-default-width="300" style="border-right: 1px solid #dedede;">
-      <div class="right-panel">
-        <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"></storage-props>
-      </div>
-    </side-bar>
+    
     <div class="table-files">
       <table class="table mb0 noselect">
         <thead>
@@ -175,6 +171,13 @@
         </tbody>
       </table>
     </div>
-    
+    <side-bar my-default-width="300" 
+              orientation="w" 
+              style="border-right: 1px solid #dedede;" 
+              ng-if="self.selectedItem.metaData">
+      <div class="right-panel">
+        <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"></storage-props>
+      </div>
+    </side-bar>
   </div>
 </div>

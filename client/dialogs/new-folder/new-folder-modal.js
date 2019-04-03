@@ -37,7 +37,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       author: window.localStorage.getItem('username'),
       uploaded: Date.now(),
       modified: Date.now(),
-      source: 'Desktop Uploaded',
+      source: 'Project Storage',
       /*field: '',
       well: '',
       welltype: '',*/

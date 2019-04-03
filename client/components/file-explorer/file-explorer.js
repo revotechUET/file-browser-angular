@@ -45,9 +45,9 @@ const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 
-Controller.$inject = ['$scope', '$element', '$http', 'ModalService', 'Upload'];
+Controller.$inject = ['$scope', '$filter', '$element', '$http', 'ModalService', 'Upload'];
 
-function Controller($scope, $element, $http, ModalService, Upload) {
+function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   let self = this;
   window.fileBrowser = self;
   this.$onInit = function () {
@@ -124,6 +124,7 @@ function Controller($scope, $element, $http, ModalService, Upload) {
       $scope.addName = '';
       $scope.addValue = '';
     }
+    self.selectedItem.metaData.modified = new Date(self.selectedItem.modifiedDate).getTime() + '';
     let indexInSelectedList = self.selectedList.indexOf(item);
 
     if ($event && $event.shiftKey) {
@@ -528,7 +529,8 @@ app.filter('fileExtension', ['$filter', function ($filter) {
 
 app.filter('formatDate', ['$filter', function () {
   return function (input) {
-    return input.substring(0, 19).replace('T', ' ');
+    return moment(input).format('YYYY/MM/DD hh:mm:ss');
+    // return input.substring(0, 19).replace('T', ' ');
     // return input instanceof Date ?
     //   input.toISOString().substring(0, 19).replace('T', ' ') :
     //   (input.toLocaleString || input.toString).apply(input);

@@ -5,9 +5,9 @@ const componentName = 'storageProps';
 
 const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
 
-Controller.$inject = ['$scope', 'ModalService'];
+Controller.$inject = ['$scope', '$filter', 'ModalService'];
 
-function Controller($scope, ModalService) {
+function Controller($scope, $filter, ModalService) {
   	let self = this;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
@@ -219,13 +219,26 @@ function Controller($scope, ModalService) {
 					value: self.metaData[key]
 				});
 			};
-			arr.sort((a, b) => a.label.localeCompare(b.label));
+			arr = mapOrder(arr, Object.keys(config), 'name');
 			obj[section] = arr;
 			obj['More Information'] = undefinedArr;
 		});
 		return obj;
 	};
-
+	function mapOrder (array, order, key) {
+		array.sort( function (a, b) {
+		    var A = a[key], B = b[key];
+		    
+		    if (order.indexOf(A) > order.indexOf(B)) {
+		        return 1;
+		    } else {
+		        return -1;
+		    }
+		    
+		  });
+		  
+		return array;
+	};
 	function getMDProps (mdKey, configObj) {
 		if(!self.readonlyValues) self.readonlyValues = []; 
 		return mdProps = {
@@ -233,7 +246,7 @@ function Controller($scope, ModalService) {
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
 			readonly: (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false,
-			value : self.metaData[mdKey],
+			value : mdKey == 'size' ? $filter('humanReadableFileSize')(self.metaData[mdKey]) : self.metaData[mdKey],
 			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
 			selections: configObj.choices ? self.selections[configObj.choices] : []
@@ -243,7 +256,7 @@ function Controller($scope, ModalService) {
 	function getRef (refSpec, mdKey) {
 		let ref = null;
 		switch(refSpec) {
-			case 'time' : 
+			case 'time' :  
 				ref = moment(parseInt(self.metaData[mdKey])).format('YYYY/MM/DD hh:mm:ss');
 				break;
 			default: 

@@ -5,9 +5,9 @@ const componentName = 'storageProps';
 
 const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
 
-Controller.$inject = ['$scope', '$filter', 'ModalService'];
+Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession'];
 
-function Controller($scope, $filter, ModalService) {
+function Controller($scope, $filter, ModalService, wiSession) {
   	let self = this;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
@@ -360,6 +360,9 @@ function Controller($scope, $filter, ModalService) {
 		delete self.metaData[name];
 		self.metaData[newName] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
+	}
+	this.copyLocation = function(value) {
+		wiSession.putData('location', value);
 	}
 }
 

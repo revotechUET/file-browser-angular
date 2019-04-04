@@ -114,6 +114,13 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         cb()
       });
     };
+    this.getExistedFiles = function () {
+      return self.uploadFileList.filter(f => f.existed);
+    }
+    this.overwriteAllFiles = function () {
+      self.uploadFileList.map(file => { file.overwrite = true });
+      self.uploadFiles();
+    }
     this.uploadFiles = function (index) {
       if (_.isFinite(index)) {
         self.uploadFileList[index].overwrite = true;

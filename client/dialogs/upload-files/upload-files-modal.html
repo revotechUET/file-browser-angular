@@ -74,6 +74,11 @@
                                            style="color: red">Existed</b>
                                     </p>
                                 </li>
+                                <button class="btn btn-sm btn-success pull-right"
+                                        ng-click="self.overwriteAllFiles()"
+                                        ng-if="self.getExistedFiles().length > 0">
+                                    <i class="fa fa-refresh"></i>&nbsp;Yes to all
+                                </button>
                             </ul>
                         </div>
                     </div>

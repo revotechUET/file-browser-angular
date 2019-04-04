@@ -90,7 +90,9 @@
         </ul>
       </div>
       <div class="btn-group">
-        <button class="btn btn-flat btn-sm" type="button" aria-expanded="true" ng-click="self.goTo(-999); self.filter = ''">
+        <button class="btn btn-flat btn-sm" type="button" 
+              aria-expanded="true" 
+              ng-click="self.goTo(-999); self.filter = ''; self.propOrder='rootName'; self.reverse=false">
           <i class="fa fa-refresh"></i>&nbsp;Refresh
         </button>
       </div>
@@ -151,8 +153,16 @@
               </div>
             </td>
           </tr>
-          <tr class="item-list" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
-            ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)" ng-class="{selected: self.isSelected(item)}">
+          <tr class="item-list" 
+              ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
+              ng-click="self.clickNode(item, $event)" 
+              ng-dblclick="self.dblClickNode(item)" 
+              ng-class="{selected: self.isSelected(item)}">
+          <!-- <tr class="item-list" 
+              ng-repeat="item in self.getFileListOrder(self.fileList, self.propOrder, self.reverse)"
+              ng-click="self.clickNode(item, $event)" 
+              ng-dblclick="self.dblClickNode(item)" 
+              ng-class="{selected: self.isSelected(item)}"> -->
             <td>
               <a href="" title="{{item.displayName}}">
                 <i class="glyphicon glyphicon-folder-close" ng-show="!item.rootIsFile"></i>

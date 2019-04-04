@@ -117,7 +117,15 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   this.isSelected = function (item) {
     return self.selectedList.indexOf(item) !== -1;
   };
-
+  function getFileListOrder (fileList, propOrder, reverse) {
+    if(!fileList) return;
+    let files = fileList;
+    if(propOrder === 'size') files.sort( function ( a, b ) { return b.size - a.size; } );
+    else files.sort(function(a, b) {return a[propOrder].localeCompare(b[propOrder])});
+    if(!reverse) files.reverse();
+    return files;
+  };
+  this.getFileListOrder = getFileListOrder
   this.clickNode = function (item, $event) {
     if (self.selectedItem !== item) {
       self.selectedItem = item;
@@ -128,7 +136,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     let indexInSelectedList = self.selectedList.indexOf(item);
 
     if ($event && $event.shiftKey) {
-      let list = self.fileList;
+      let list = getFileListOrder(self.fileList, self.propOrder, self.reverse);
       let indexInList = list.indexOf(item);
       let lastSelected = self.selectedList[0];
       let i = list.indexOf(lastSelected);
@@ -497,7 +505,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar']);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession']);
 
 app.component(componentName, {
   template: require('./file-explorer.html'),

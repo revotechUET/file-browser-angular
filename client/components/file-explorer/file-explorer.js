@@ -119,13 +119,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   };
   function getFileListOrder (fileList, propOrder, reverse) {
     if(!fileList) return;
-    let files = fileList;
-    if(propOrder === 'size') files.sort( function ( a, b ) { return b.size - a.size; } );
-    else files.sort(function(a, b) {return a[propOrder].localeCompare(b[propOrder])});
-    if(!reverse) files.reverse();
-    return files;
+    let orderBy = $filter('orderBy');
+    return orderBy(fileList, propOrder, reverse);
   };
-  this.getFileListOrder = getFileListOrder
   this.clickNode = function (item, $event) {
     if (self.selectedItem !== item) {
       self.selectedItem = item;

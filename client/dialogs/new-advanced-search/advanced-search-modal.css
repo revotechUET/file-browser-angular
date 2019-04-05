@@ -13,12 +13,13 @@
 }
 .advanced-search .btn-area {
 	margin-bottom: 20px;
+	display: inline-block;
 }
 .advanced-search .btn-area span {
 	padding: 4px 8px 6px;
 	border: 1px solid #ddd;
 	border-radius: 15px;
-	margin: 3px;
+	margin: 2px;
 	cursor: pointer;
 	font-size: 13px;
 	position: relative;

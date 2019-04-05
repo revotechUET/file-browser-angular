@@ -44,7 +44,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           well: '',
           welltype: '',*/
           parameter: '',
-          datatype: 'Other',
+          datatype: '',
           quality: '5',
           relatesto: '',
           description: ''
@@ -81,7 +81,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             modified: Date.now() + '',
             source: 'Desktop Uploaded',
             parameter: '',
-            datatype: 'Other',
+            datatype: '',
             quality: '5',
             relatesto: '',
             description: ''

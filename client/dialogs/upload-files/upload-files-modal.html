@@ -99,30 +99,8 @@
                                        update-metadat-func="self.updateMD4All"
                                        ng-if="self.multiMD"></storage-props>
                     </div>
-                    <!-- <div class="form-group" ng-repeat="m in self.selectedFile.metaData track by $index">
-                        <div class="col-sm-5">
-                            <input type="text" class="form-control" ng-model="m.name" required/>
-                        </div>
-                        <div class="col-sm-5">
-                            <input type="text" class="form-control" ng-model="m.value" required/>
-                        </div>
-                        <div class="col-sm-2">
-                            <button class="btn btn-flat btn-sm" type="button" aria-expanded="true"
-                                    ng-click="self.removeMetadata(m)">
-                                <i class="fa fa-remove"></i>&nbsp;Delete
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group text-center">
-                        <button class="btn btn-flat btn-sm" type="button" aria-expanded="true"
-                                ng-click="self.addMetadata(self.selectedFile)">
-                            <i class="fa fa-plus"></i>&nbsp;Add Meta Data
-                        </button>
-                    </div> -->
                 </div>
             </div>
-            <!--<div style="max-height: 70vh; overflow-y: overlay; overflow-x: hidden; text-align: left;" class="modal-body text-center">-->
-            <!--</div>-->
             <div class="modal-footer">
                 <button type="button" ng-click="self.uploadFiles()" class="btn btn-default">
                     <span class="ok-16x16"></span>&nbsp;Upload

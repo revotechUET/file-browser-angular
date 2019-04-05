@@ -7,28 +7,6 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
   function modalController($scope, close) {
     let self = this;
     this.newFolderUrl = fileExplorerCtrl.newFolderUrl;
-    /*self.metaData = [
-      {name: "name", value: self.folderName},
-      {name: "type", value: 'Folder'},
-      {name: "size", value: 0},
-      {
-        name: "location",
-        value: fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName
-      },
-      {name: "author", value: window.localStorage.getItem('username')},
-      {name: "uploaded", value: Date.now()},
-      {name: "modified", value: Date.now()},
-      {name: "source", value: "Desktop Uploaded"},
-      {name: "field", value: ""}, //from selected well box
-      {name: "well", value: ""}, // wells in project
-      {name: "welltype", value: ""}, // from selected well box
-      {name: "parameter", value: ""}, //select parameter task from list params set
-      {name: "datatype", value: "Other"}, //single select box
-      {name: "quality", value: 5}, //1-5
-      {name: "relatesto", value: ""},
-      {name: "description", value: ""},
-    ];
-*/
     self.metaData = {
       name: self.folderName,
       type: 'Folder',
@@ -42,7 +20,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       well: '',
       welltype: '',*/
       parameter: '',
-      datatype: 'Other',
+      datatype: '',
       quality: '5',
       relatesto: '',
       description: ''

@@ -3,12 +3,12 @@
         <div class="modal-content" ng-form="form">
             <div class="modal-header">
                 <button type="button" class="close" aria-hidden="true" ng-click="self.closeModal()">&times;</button>
-                <h4 class="modal-title">New Advanced Search</h4>
+                <h4 class="modal-title">Advanced Search</h4>
             </div>
             <div class="modal-body">
                 <div class="form-horizontal advanced-search">
                     <div class="form-group">
-                        <label class="col-sm-5">Search in</label>
+                        <label class="col-sm-5">Search for</label>
                         <div class="col-sm-6">
                             <select class="form-control" ng-model="self.searchQuery.type" style="padding:0">
                                 <option value="all">All</option>
@@ -23,64 +23,11 @@
                             <input type="checkbox" ng-model="self.subFolders">
                         </div>
                     </div>
-                    <!-- <div class="col-sm-2">{{self.searchQuery.conditions.operator}}</div>
-                    <div class="col-sm-10">
-                        <div ng-repeat="child in self.searchQuery.conditions.children">
-                            <div class="col-sm-2">{{child.operator}}</div>
-                            <div class="col-sm-10" 
-                                ng-class="{'selected-item' : self.rowSelected(child)}" 
-                                ng-click="self.selectItem(child)">
-                                <div ng-repeat="subChild in child.children track by $index">
-                                    <div class="form-group">
-                                        <label class="col-sm-3">{{self.getKeyObj(subChild)}}</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" ng-model="child.children[$index][self.getKeyObj(subChild)]">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-                    <div class="btn-area">
-                        <span ng-click="self.insertMetaDataKey('name')"
-                            ng-class="{'has-item' : self.countMDRow('name')}">
-                            Name
-                            <p ng-if="self.countMDRow('name')">{{self.countMDRow('name')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('type')"
-                            ng-class="{'has-item' : self.countMDRow('type')}">
-                            Type
-                            <p ng-if="self.countMDRow('type')">{{self.countMDRow('type')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('author')"
-                            ng-class="{'has-item' : self.countMDRow('author')}">
-                            Author
-                            <p ng-if="self.countMDRow('author')">{{self.countMDRow('author')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('uploaded')"
-                            ng-class="{'has-item' : self.countMDRow('uploaded')}">
-                            Date Uploaded
-                            <p ng-if="self.countMDRow('uploaded')">{{self.countMDRow('uploaded')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('field')"
-                            ng-class="{'has-item' : self.countMDRow('field')}">
-                            Field
-                            <p ng-if="self.countMDRow('field')">{{self.countMDRow('field')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('well')"
-                            ng-class="{'has-item' : self.countMDRow('well')}">
-                            Well
-                            <p ng-if="self.countMDRow('well')">{{self.countMDRow('well')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('welltype')"
-                            ng-class="{'has-item' : self.countMDRow('welltype')}">
-                            Well type
-                            <p ng-if="self.countMDRow('welltype')">{{self.countMDRow('welltype')}}</p>
-                        </span>
-                        <span ng-click="self.insertMetaDataKey('datatype')"
-                            ng-class="{'has-item' : self.countMDRow('datatype')}">
-                            Data type
-                            <p ng-if="self.countMDRow('datatype')">{{self.countMDRow('datatype')}}</p>
+                    <div class="btn-area" ng-repeat="(key, value) in self.mapKey">
+                        <span ng-click="self.insertMetaDataKey(key)"
+                            ng-class="{'has-item' : self.countMDRow(key)}">
+                            {{value.label}}
+                            <p ng-if="self.countMDRow(key)">{{self.countMDRow(key)}}</p>
                         </span>
                     </div>
                     <div class="data-key-area">
@@ -93,7 +40,7 @@
                                     <label class="col-sm-2"
                                             ng-if="$index > 0">&nbsp;</label>
                                     <div class="col-sm-9" style="padding-right: 5px;"
-                                        ng-if="md.inputtype != 'date'">
+                                        ng-if="md.inputtype != 'date' && md.inputtype != 'select'">
                                         <input type="{{md.inputtype}}" class="form-control"
                                                 ng-model="child[self.getKeyObj(child)]">
                                     </div>
@@ -107,6 +54,12 @@
                                             <input type="date" class="form-control"
                                                     ng-model="child[self.getKeyObj(child)].to">
                                         </div>
+                                    </div>
+                                    <div ng-if="md.inputtype == 'select'" class="col-sm-9"
+                                         style="padding-right: 5px;">
+                                        <select class="form-control" style="padding: 0" 
+                                                ng-model="child[self.getKeyObj(child)]"
+                                                ng-options="item for item in self.datatypes"></select>
                                     </div>
                                     <div class="col-sm-1" style="padding-left: 0; padding-top: 6px;">
                                         <span style="height: 24px" 

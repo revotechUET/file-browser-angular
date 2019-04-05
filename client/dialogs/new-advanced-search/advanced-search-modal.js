@@ -1,21 +1,47 @@
 const helper = require('../dialog-helper');
 require('./advanced-search-modal.css');
+const utils = require('../../js/utils');
 
 module.exports = function (ModalService, fileExplorerCtrl, callback) {
   modalController.$inject = ['$scope', 'close'];
 
   function modalController($scope, close) {
     let self = this;
-    let mapLabel = {
-      "name" : "File Name", 
-      "type" : "File Type",
-      "author" : "Author",
-      "uploaded" : "Date Uploaded",
-      "field" : "Field",
-      "well" : "Well",
-      "welltype" : "Well Type",
-      "datatype" : "Data Type"
+    this.mapKey = {
+      "name" : {
+        type: 'text',
+        label: "File Name"
+      }, 
+      "type" : {
+        type: 'text',
+        label: "File Type"
+      },
+      "author" : {
+        type: 'text',
+        label: "Author"
+      },
+      "uploaded" : {
+        type: 'date',
+        label: "Date Uploaded"
+      },
+      "field" : {
+        type: 'text',
+        label: "Field"
+      },
+      "well" : {
+        type: 'text',
+        label: "Well"
+      },
+      "welltype" : {
+        type: 'text',
+        label: "Well Type"
+      },
+      "datatype" : {
+        type: 'select',
+        label: "Data Type"
+      }
     }
+    this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';
     this.searchQuery = angular.copy(fileExplorerCtrl.searchQuery);
     console.log('**', getTableConditions(this.searchQuery));
@@ -26,7 +52,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     }
     this.getLabel = function (childObj) {
       let key = Object.keys(childObj.children[0])[0];
-      return mapLabel[key];
+      return self.mapKey[key].label;
     }
     function getTableConditions (searchQuery) {
       let conditions = [];
@@ -46,7 +72,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           else children = child.children;
           conditions.push({
             mdtype: keyObj,
-            inputtype: (keyObj == 'uploaded') ? 'date' : 'text',
+            inputtype: self.mapKey[keyObj].type,
             children: children
           });
         }
@@ -76,11 +102,10 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         if(key != 'uploaded') self.conditions[idx].children.push({[key] : ''});
       }
       else {
-        let inputtype = (key == 'uploaded') ? 'date' : 'text';
         let children = (key == 'uploaded') ? [{[key] : {from: '', to: ''}}] : [{[key] : ''}]
         self.conditions.push({
           mdtype: key,
-          inputtype: (key == 'uploaded') ? 'date' : 'text',
+          inputtype: self.mapKey[key].type,
           children: children
         });
       }

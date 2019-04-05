@@ -28,6 +28,7 @@
 							ng-options="item for item in md.selections"
 							ng-change="self.onChangeSelect(md.name, md.value)">
 					</select>
+					<star-rating-comp rating="{{md.value}}" ng-if="md.type=='rating'"></star-rating-comp>
 				</div>
 				<i ng-if="md.name == 'location'" class="fa fa-copy"
 					ng-click="self.copyLocation(md.value)"

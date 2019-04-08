@@ -195,8 +195,11 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		wiSession.putData('location', value);
 	}
 	this.pasteWell = function(md) {
-		md.value = JSON.parse(wiSession.getData('wellNode'));
-		delete md.value.children;
+		let wellNode = JSON.parse(wiSession.getData('wellNode'));
+		md.value = {
+			name: wellNode.properties.name,
+			idWell: wellNode.properties.idWell
+		};
 		self.metaData[md.name] = JSON.stringify(md.value);
 		function getWellheaderByKey(wellProps, key) {
 			return wellProps.wellheaders.find(wh => wh.header == key).value;
@@ -208,15 +211,15 @@ function Controller($scope, $filter, ModalService, wiSession) {
 				}
 			});
 		}
-		self.metaData.field = getWellheaderByKey(md.value.properties, 'FLD');
-		self.metaData.welltype = getWellheaderByKey(md.value.properties, 'TYPE');
+		self.metaData.field = getWellheaderByKey(wellNode.properties, 'FLD');
+		self.metaData.welltype = getWellheaderByKey(wellNode.properties, 'TYPE');
 		setValue('field');
 		setValue('welltype');
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
-	this.visitNode = function(node) {
-		if(!node) return;
-		window.basetreeview.scrollToNode(node);
+	this.visitNode = function(obj) {
+		if(!obj || !obj.id) return;
+		window.basetreeview.scrollToNode(obj);
 	}
 }
 

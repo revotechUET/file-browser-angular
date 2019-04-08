@@ -29,12 +29,30 @@
 							ng-change="self.onChangeSelect(md.name, md.value)">
 					</select>
 					<star-rating-comp rating="{{md.value}}" ng-if="md.type=='rating'"></star-rating-comp>
+					<input type="text" ng-model="md.value.name"
+							class="form-control props-value"
+							ng-if="md.type=='wiwell'"
+							readonly>
 				</div>
-				<i ng-if="md.name == 'location'" class="fa fa-copy"
-					ng-click="self.copyLocation(md.value)"
-					style="padding: 0 5px; cursor: pointer;"
-					title="Copy!">
-				</i>
+				<div ng-if="md.name == 'location'" >
+					<i class="fa fa-copy"
+						ng-click="self.copyLocation(md.value)"
+						style="padding: 0 5px; cursor: pointer;"
+						title="Copy!">
+					</i>
+				</div>
+				<div ng-if="md.name == 'well'" >
+					<i class="fa fa-paste"
+						ng-click="self.pasteWell(md)"
+						style="padding: 0 5px; cursor: pointer;"
+						title="Paste!">
+					</i>
+					<i class="fa fa-external-link"
+						ng-click="self.visitNode(md.value)"
+						style="padding: 0 5px; cursor: pointer;"
+						title="Paste!">
+					</i>
+				</div>
 			</div>
 		</div>
 		<div class="form-group props-group more-info"

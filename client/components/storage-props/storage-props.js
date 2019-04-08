@@ -67,13 +67,16 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		return array;
 	};
 	function getMDProps (mdKey, configObj) {
-		if(!self.readonlyValues) self.readonlyValues = []; 
+		if(!self.readonlyValues) self.readonlyValues = [];
+		let value = self.metaData[mdKey];
+		if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
+		if(mdKey == 'well') value = JSON.parse(self.metaData[mdKey]);
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
 			readonly: (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false,
-			value : mdKey == 'size' ? $filter('humanReadableFileSize')(self.metaData[mdKey]) : self.metaData[mdKey],
+			value : value,
 			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
 			selections: configObj.choices ? self.selections[configObj.choices] : []
@@ -190,6 +193,30 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	}
 	this.copyLocation = function(value) {
 		wiSession.putData('location', value);
+	}
+	this.pasteWell = function(md) {
+		md.value = JSON.parse(wiSession.getData('wellNode'));
+		delete md.value.children;
+		self.metaData[md.name] = JSON.stringify(md.value);
+		function getWellheaderByKey(wellProps, key) {
+			return wellProps.wellheaders.find(wh => wh.header == key).value;
+		}
+		function setValue (key) {
+			self.fields['Information'].forEach(md => {
+				if(md.name == key) {
+					md.value = self.metaData[key];
+				}
+			});
+		}
+		self.metaData.field = getWellheaderByKey(md.value.properties, 'FLD');
+		self.metaData.welltype = getWellheaderByKey(md.value.properties, 'TYPE');
+		setValue('field');
+		setValue('welltype');
+    	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
+	}
+	this.visitNode = function(node) {
+		if(!node) return;
+		window.basetreeview.scrollToNode(node);
 	}
 }
 

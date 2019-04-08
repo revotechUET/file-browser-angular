@@ -63,10 +63,10 @@ exports.getConfigProps = function() {
             "typeSpec": "wiref",
             "refSpec": "time",
             "choices": null
-        }/*,
+        },
         "field": {
             "translation": "Field",
-            "option": "notuse",
+            "option": "readonly",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
@@ -74,20 +74,20 @@ exports.getConfigProps = function() {
         },
         "well": {
             "translation": "Well",
-            "option": "notuse",
+            "option": "use",
             "section": "Information",
-            "typeSpec": "wiselect",
+            "typeSpec": "wiwell",
             "refSpec": null,
             "choices": "wells"
         },
         "welltype": {
             "translation": "Well Type",
-            "option": "notuse",
+            "option": "readonly",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
             "choices": null
-        }*/,
+        },
         "parameter": {
             "translation": "Parameter",
             "option": "use",

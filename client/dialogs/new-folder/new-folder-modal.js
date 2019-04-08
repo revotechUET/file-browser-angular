@@ -16,9 +16,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       uploaded: Date.now(),
       modified: Date.now(),
       source: 'Project Storage',
-      /*field: '',
-      well: '',
-      welltype: '',*/
+      field: '',
+      well: '{}',
+      welltype: '',
       parameter: '',
       datatype: '',
       quality: '5',

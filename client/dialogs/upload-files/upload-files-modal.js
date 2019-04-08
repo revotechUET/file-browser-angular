@@ -40,9 +40,9 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           modified: currentTime,
           // modified: file.lastModified,
           source: 'Desktop Uploaded',
-          /*field: '',
-          well: '',
-          welltype: '',*/
+          field: '',
+          well: '{}',
+          welltype: '',
           parameter: '',
           datatype: '',
           quality: '5',

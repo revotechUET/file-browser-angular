@@ -76,7 +76,7 @@ exports.getConfigProps = function() {
             "translation": "Well",
             "option": "use",
             "section": "Information",
-            "typeSpec": "wiwell",
+            "typeSpec": "wilink",
             "refSpec": null,
             "choices": "wells"
         },

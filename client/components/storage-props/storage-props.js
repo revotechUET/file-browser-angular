@@ -219,7 +219,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	}
 	this.visitNode = function(obj) {
 		if(!obj || !obj.id) return;
-		window.basetreeview.scrollToNode(obj);
+		window.explorertreeview.scrollToNode(obj);
 	}
 }
 

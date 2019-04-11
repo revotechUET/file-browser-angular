@@ -80,10 +80,11 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             uploaded: Date.now() + '',
             modified: Date.now() + '',
             source: 'Desktop Uploaded',
-            parameter: '',
+            field: '',
+            welltype: '',
             datatype: '',
             quality: '5',
-            relatesto: '',
+            relatesto: '{}',
             description: ''
           }
         };

@@ -28,7 +28,13 @@
 							ng-options="item for item in md.selections"
 							ng-change="self.onChangeSelect(md.name, md.value)">
 					</select>
-					<star-rating-comp rating="{{md.value}}" ng-if="md.type=='rating'"></star-rating-comp>
+					<div ng-if="md.type=='rating'" class="quality-field">
+						<span ng-repeat="star in [1,2,3,4,5]" 
+							ng-click="self.doRating(md, star)"
+							ng-class="{highlight: star <= md.value}">
+							<i class="fa fa-star"></i>
+						</span>
+					</div>
 					<div ng-if="md.type=='wilink'">
 						<span class="{{md.value.icon}}" title="{{md.value.type}}"
 								style="vertical-align: middle;margin-left: 2px"></span>

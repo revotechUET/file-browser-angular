@@ -70,7 +70,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(!self.readonlyValues) self.readonlyValues = [];
 		let value = self.metaData[mdKey];
 		if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
-		if(mdKey == 'relatesto') value = JSON.parse(self.metaData[mdKey]);
+		if(mdKey == 'relatesto') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
@@ -229,6 +229,10 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.locationCopied = function(location) {
 		if(wiSession.getData('location') == location) return true;
 		else return false;
+	};
+	this.doRating = function (md, index) {
+		md.value = index;
+		self.updateMetaData(md.name, index +'' );
 	}
 }
 

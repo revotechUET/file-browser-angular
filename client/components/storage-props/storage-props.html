@@ -29,10 +29,14 @@
 							ng-change="self.onChangeSelect(md.name, md.value)">
 					</select>
 					<star-rating-comp rating="{{md.value}}" ng-if="md.type=='rating'"></star-rating-comp>
-					<input type="text" ng-model="md.value.name"
-							class="form-control props-value"
-							ng-if="md.type=='wilink'"
-							readonly>
+					<div ng-if="md.type=='wilink'">
+						<span class="{{md.value.icon}}" title="{{md.value.type}}"
+								style="vertical-align: middle;margin-left: 2px"></span>
+						<input type="text" ng-model="md.value.name"
+								class="form-control props-value"
+								readonly
+								style="display: inline;">
+					</div>
 				</div>
 				<div ng-if="md.name == 'location'" >
 					<i class="fa fa-copy"
@@ -43,12 +47,12 @@
 				</div>
 				<div ng-if="md.type=='wilink'" >
 					<i class="fa fa-paste"
-						ng-click="self.pasteWell(md)"
+						ng-click="self.pasteObject(md)"
 						style="padding: 0 5px; cursor: pointer;"
 						title="Paste!">
 					</i>
 					<i class="fa fa-external-link"
-						ng-click="self.visitNode({type: 'well', id: md.value.idWell})"
+						ng-click="self.visitNode(md)"
 						style="padding: 0 5px; cursor: pointer;"
 						title="Go!">
 					</i>

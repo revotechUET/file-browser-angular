@@ -17,12 +17,12 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       modified: Date.now(),
       source: 'Project Storage',
       field: '',
-      well: '{}',
+      // well: '{}',
       welltype: '',
-      parameter: '',
+      // parameter: '',
       datatype: '',
       quality: '5',
-      relatesto: '',
+      relatesto: '{}',
       description: ''
     }
     this.folderName = '';

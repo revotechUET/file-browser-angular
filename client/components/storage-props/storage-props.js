@@ -13,7 +13,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
-  	this.sections = ['General', 'Information', 'Hyperlink', 'Description', 'More Information'];
+  	this.sections = ['General', 'Information', 'Description', 'More Information'];
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
 	};
@@ -70,7 +70,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(!self.readonlyValues) self.readonlyValues = [];
 		let value = self.metaData[mdKey];
 		if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
-		if(mdKey == 'well') value = JSON.parse(self.metaData[mdKey]);
+		if(mdKey == 'relatesto') value = JSON.parse(self.metaData[mdKey]);
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
@@ -120,7 +120,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 					self.metaData[md.name] = md.value;
 				}
 				if(md.name == 'welltype') {
-					md.value = findWellheader('TYPE', selectedWell);
+					md.value = findWellheader('WTYPE', selectedWell);
 					self.metaData[md.name] = md.value;
 				}
 			});
@@ -194,27 +194,32 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.copyLocation = function(value) {
 		wiSession.putData('location', value);
 	}
-	this.pasteWell = function(md) {
-		let wellNode = JSON.parse(wiSession.getData('wellNode'));
+	this.pasteObject = function(md) {
+		let object = JSON.parse(wiSession.getData('objectNode'));
+		if(!object) return; 
 		md.value = {
-			name: wellNode.properties.name,
-			idWell: wellNode.properties.idWell
+			type: object.type,
+			name: object.properties.name,
+			id: object.id,
+			icon: object.data.icon
 		};
 		self.metaData[md.name] = JSON.stringify(md.value);
-		function getWellheaderByKey(wellProps, key) {
-			return wellProps.wellheaders.find(wh => wh.header == key).value;
+		if(md.value.type == 'well') {
+			function getWellheaderByKey(wellProps, key) {
+				return wellProps.wellheaders.find(wh => wh.header == key).value;
+			}
+			function setValue (key) {
+				self.fields['Information'].forEach(md => {
+					if(md.name == key) {
+						md.value = self.metaData[key];
+					}
+				});
+			}
+			self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
+			self.metaData.welltype = getWellheaderByKey(object.properties, 'WTYPE');
+			setValue('field');
+			setValue('welltype');
 		}
-		function setValue (key) {
-			self.fields['Information'].forEach(md => {
-				if(md.name == key) {
-					md.value = self.metaData[key];
-				}
-			});
-		}
-		self.metaData.field = getWellheaderByKey(wellNode.properties, 'FLD');
-		self.metaData.welltype = getWellheaderByKey(wellNode.properties, 'TYPE');
-		setValue('field');
-		setValue('welltype');
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.visitNode = function(obj) {

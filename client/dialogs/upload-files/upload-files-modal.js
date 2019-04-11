@@ -41,12 +41,12 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           // modified: file.lastModified,
           source: 'Desktop Uploaded',
           field: '',
-          well: '{}',
+          // well: '{}',
           welltype: '',
-          parameter: '',
+          // parameter: '',
           datatype: '',
           quality: '5',
-          relatesto: '',
+          relatesto: '{}',
           description: ''
         };
         next();

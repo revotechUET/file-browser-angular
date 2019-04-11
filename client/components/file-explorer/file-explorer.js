@@ -263,6 +263,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
+        callback && callback(self.fileList);
       })
     } else {
       self.selectedList = [];
@@ -463,10 +464,12 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   //     crypted += cipher.final('hex');
   //     return crypted;
   // }
-  this.saveObject = function (payload) {
+  this.saveObject = function (payload, cb) {
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
-      self.goTo(-999);
+      self.goTo(-999, function(fileList) {
+        cb && cb(fileList);
+      });
     });
   };
   this.updateMetaData = function (metaData) {
@@ -474,6 +477,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData
+    }, function(fileList) {
+      let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
+      self.clickNode(item);
     });
   };
   this.removeMetaData = function (name) {

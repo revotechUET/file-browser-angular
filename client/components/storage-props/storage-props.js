@@ -226,6 +226,10 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(!obj || !obj.id) return;
 		window.explorertreeview.scrollToNode(obj);
 	}
+	this.locationCopied = function(location) {
+		if(wiSession.getData('location') == location) return true;
+		else return false;
+	}
 }
 
 let app = angular.module(moduleName, []);

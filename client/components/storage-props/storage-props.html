@@ -40,6 +40,7 @@
 				</div>
 				<div ng-if="md.name == 'location'" >
 					<i class="fa fa-copy"
+						ng-class="{copied: self.locationCopied(md.value)}"
 						ng-click="self.copyLocation(md.value)"
 						style="padding: 0 5px; cursor: pointer;"
 						title="Copy!">

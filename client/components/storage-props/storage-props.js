@@ -194,6 +194,13 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.copyLocation = function(value) {
 		wiSession.putData('location', value);
 	}
+	function setValue (key) {
+		self.fields['Information'].forEach(md => {
+			if(md.name == key) {
+				md.value = self.metaData[key];
+			}
+		});
+	}
 	this.pasteObject = function(md) {
 		let object = JSON.parse(wiSession.getData('objectNode'));
 		if(!object) return; 
@@ -204,27 +211,35 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			icon: object.data.icon
 		};
 		self.metaData[md.name] = JSON.stringify(md.value);
+		
 		if(md.value.type == 'well') {
 			function getWellheaderByKey(wellProps, key) {
-				return wellProps.wellheaders.find(wh => wh.header == key).value;
-			}
-			function setValue (key) {
-				self.fields['Information'].forEach(md => {
-					if(md.name == key) {
-						md.value = self.metaData[key];
-					}
-				});
+				let value = wellProps.wellheaders.find(wh => wh.header == key).value;
+				return value || '';
 			}
 			self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
 			self.metaData.welltype = getWellheaderByKey(object.properties, 'WTYPE');
-			setValue('field');
-			setValue('welltype');
+		} else {
+			self.metaData.field = '';
+			self.metaData.welltype = '';
 		}
+		setValue('field');
+		setValue('welltype');
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.visitNode = function(obj) {
 		if(!obj || !obj.id) return;
 		window.explorertreeview.scrollToNode(obj);
+	}
+	this.clearObject = function(md) {
+		if(!md || !md.value) return;
+		md.value = {};
+		self.metaData.field = '';
+		self.metaData.welltype = '';
+		setValue('field');
+		setValue('welltype');
+		self.metaData[md.name] = JSON.stringify(md.value);
+    	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.locationCopied = function(location) {
 		if(wiSession.getData('location') == location) return true;

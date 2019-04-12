@@ -15,7 +15,8 @@
 							ng-if="md.type == 'text'"
 							ng-blur="self.updateMetaData(md.name, md.value)"
 							sp-enter="$event.currentTarget.blur();"
-							ng-change="self.checkName(md, '{{md.value}}')">
+							ng-change="self.checkName(md, '{{md.value}}')"
+							title="{{md.value}}">
 					
 					<input ng-if="md.type == 'wiref'" 
 							type="text" ng-model="md.ref"
@@ -26,7 +27,8 @@
 							class="form-control props-value"
 							ng-model="md.value"
 							ng-options="item for item in md.selections"
-							ng-change="self.onChangeSelect(md.name, md.value)">
+							ng-change="self.onChangeSelect(md.name, md.value)"
+							title="{{md.value}}">
 					</select>
 					<div ng-if="md.type=='rating'" class="quality-field">
 						<span ng-repeat="star in [1,2,3,4,5]" 
@@ -41,7 +43,8 @@
 						<input type="text" ng-model="md.value.name"
 								class="form-control props-value"
 								readonly
-								style="display: inline;">
+								title="{{md.value.name}}"
+								style="display: inline; width: 90%">
 					</div>
 				</div>
 				<div ng-if="md.name == 'location'" >
@@ -55,13 +58,18 @@
 				<div ng-if="md.type=='wilink'" >
 					<i class="fa fa-paste"
 						ng-click="self.pasteObject(md)"
-						style="padding: 0 5px; cursor: pointer;"
+						style="padding: 0 2px; cursor: pointer;"
 						title="Paste!">
 					</i>
 					<i class="fa fa-external-link"
 						ng-click="self.visitNode(md)"
-						style="padding: 0 5px; cursor: pointer;"
+						style="padding: 0 2px; cursor: pointer;"
 						title="Go!">
+					</i>
+					<i class="fa fa-remove"
+						ng-click="self.clearObject(md)"
+						style="padding: 0 2px; cursor: pointer;"
+						title="Clear!">
 					</i>
 				</div>
 			</div>

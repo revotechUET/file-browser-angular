@@ -16,6 +16,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.multiMD = true;
     self.metaData4All = {
       datatype: '',
+      quality: '5',
       description: ''
     };
     this.addForUpload = function ($files, isFolderUpload) {

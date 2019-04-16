@@ -20,8 +20,8 @@ exports.getConfigProps = function() {
             "translation": "Size",
             "option": "readonly",
             "section": "General",
-            "typeSpec": null,
-            "refSpec": null,
+            "typeSpec": "wiref",
+            "refSpec": "size",
             "choices": null
         },
         "location": {

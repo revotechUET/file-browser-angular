@@ -69,7 +69,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	function getMDProps (mdKey, configObj) {
 		if(!self.readonlyValues) self.readonlyValues = [];
 		let value = self.metaData[mdKey];
-		if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
+		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 		if(mdKey == 'relatesto') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
 		return mdProps = {
 			name: mdKey,
@@ -88,6 +88,9 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		switch(refSpec) {
 			case 'time' :  
 				ref = moment(parseInt(self.metaData[mdKey])).format('YYYY/MM/DD hh:mm:ss');
+				break;
+			case 'size' :
+				ref = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 				break;
 			default: 
 		}

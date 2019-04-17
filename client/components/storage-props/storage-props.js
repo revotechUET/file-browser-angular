@@ -231,8 +231,8 @@ function Controller($scope, $filter, ModalService, wiSession) {
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.visitNode = function(obj) {
-		if(!obj || !obj.id) return;
-		window.explorertreeview.scrollToNode(obj);
+		if(!obj || !obj.value) return;
+		window.explorertreeview.scrollToNode(obj.value);
 	}
 	this.clearObject = function(md) {
 		if(!md || !md.value) return;

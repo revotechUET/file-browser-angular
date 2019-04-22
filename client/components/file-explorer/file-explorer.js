@@ -474,6 +474,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   };
   this.updateMetaData = function (metaData) {
     self.selectedItem.metaData = metaData;
+    self.selectedItem.rootName = metaData.name;
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData

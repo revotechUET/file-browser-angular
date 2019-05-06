@@ -70,7 +70,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(!self.readonlyValues) self.readonlyValues = [];
 		let value = self.metaData[mdKey];
 		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
-		if(mdKey == 'relatesto') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+		if(mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
@@ -204,9 +204,10 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			}
 		});
 	}
-	this.pasteObject = function(md) {
+	this.pasteObject = function(md, key) {
 		let object = JSON.parse(wiSession.getData('objectNode'));
-		if(!object) return; 
+		if(!object) return;
+		if(key == 'well' && object.type !== 'well') return;
 		md.value = {
 			type: object.type,
 			name: object.properties.name,
@@ -214,17 +215,18 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			icon: object.data.icon
 		};
 		self.metaData[md.name] = JSON.stringify(md.value);
-		
-		if(md.value.type == 'well') {
-			function getWellheaderByKey(wellProps, key) {
-				let value = wellProps.wellheaders.find(wh => wh.header == key).value;
-				return value || '';
+		if(md.name == 'well') {
+			if(md.value.type == 'well') {
+				function getWellheaderByKey(wellProps, key) {
+					let value = wellProps.wellheaders.find(wh => wh.header == key).value;
+					return value || '';
+				}
+				self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
+				self.metaData.welltype = getWellheaderByKey(object.properties, 'WTYPE');
+			} else {
+				self.metaData.field = '';
+				self.metaData.welltype = '';
 			}
-			self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
-			self.metaData.welltype = getWellheaderByKey(object.properties, 'WTYPE');
-		} else {
-			self.metaData.field = '';
-			self.metaData.welltype = '';
 		}
 		setValue('field');
 		setValue('welltype');

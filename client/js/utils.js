@@ -72,6 +72,14 @@ exports.getConfigProps = function() {
             "refSpec": null,
             "choices": null
         },
+        "well": {
+            "translation": "Well",
+            "option": "use",
+            "section": "Information",
+            "typeSpec": "wilink",
+            "refSpec": null,
+            "choices": null
+        },
         "field": {
             "translation": "Field",
             "option": "readonly",

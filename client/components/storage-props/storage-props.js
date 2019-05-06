@@ -102,6 +102,11 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	}
     this.updateMetaData = function (name, value) {
     	if(self.metaData[name] == value) return;
+    	if(name == 'name' && value == '') {
+    		let findFieldIdx = self.fields['General'].findIndex(f => f.name == 'name');
+    		self.fields['General'][findFieldIdx].value = self.metaData[name];
+    		return;
+    	}
     	self.metaData[name] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	};

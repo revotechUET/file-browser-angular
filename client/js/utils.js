@@ -64,14 +64,6 @@ exports.getConfigProps = function() {
             "refSpec": "time",
             "choices": null
         },
-        "relatesto": {
-            "translation": "Relates to",
-            "option": "use",
-            "section": "Information",
-            "typeSpec": "wilink",
-            "refSpec": null,
-            "choices": null
-        },
         "well": {
             "translation": "Well",
             "option": "use",
@@ -111,6 +103,14 @@ exports.getConfigProps = function() {
             "typeSpec": "wiselect",
             "refSpec": null,
             "choices": "datatypes"
+        },
+        "relatesto": {
+            "translation": "Relates to",
+            "option": "use",
+            "section": "Information",
+            "typeSpec": "wilink",
+            "refSpec": null,
+            "choices": null
         },
         "quality": {
             "translation": "Quality",

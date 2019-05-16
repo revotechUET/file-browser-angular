@@ -29,7 +29,7 @@
                                     ng-repeat="(index, uploadFolder) in self.uploadFolderList"
                                     ng-click="self.selectFolder(uploadFolder, index)"
                                     ng-class="{'selectFile' : self.selectedFolder == uploadFolder}">
-                                    <span class="item-index">{{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
+                                    <span class="item-index">Folder {{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
                                     <p class="list-group-item-heading"
                                        title="{{uploadFolder.path}}">
                                         {{uploadFolder.path}}&nbsp;&nbsp;&nbsp;
@@ -78,6 +78,11 @@
                                         ng-click="self.overwriteAllFiles()"
                                         ng-if="self.getExistedFiles().length > 0">
                                     <i class="fa fa-refresh"></i>&nbsp;Yes to all
+                                </button>
+                                <button class="btn btn-sm btn-primary pull-right"
+                                        ng-click="self.uploadFolderList = [];self.uploadFileList = []"
+                                        ng-if="!self.getExistedFiles().length">
+                                    <i class="ti-brush-alt"></i>&nbsp;Clear
                                 </button>
                             </ul>
                         </div>

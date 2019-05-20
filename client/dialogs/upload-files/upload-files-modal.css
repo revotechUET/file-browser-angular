@@ -70,7 +70,7 @@
     border: 1px solid steelblue;
 }
 
-.upload-list .selectFile {
+.upload-list .selectRow {
     background: #fff !important;
     color: #ed4643 !important;
     border: 2px solid steelblue !important;

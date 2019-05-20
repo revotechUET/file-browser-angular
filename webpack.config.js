@@ -3,9 +3,9 @@ let path = require('path');
 
 var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
-// let OUTPUT = path.join('E:/workspace/wi-angular/build/bower_components/file-explorer/dist');
+let OUTPUT = path.join('E:/workspace/wi-angular/build/bower_components/file-explorer/dist');
 
-let OUTPUT = path.join(__dirname, 'dist');
+// let OUTPUT = path.join(__dirname, 'dist');
 
 const generalConfig = {
     entry: [

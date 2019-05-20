@@ -27,8 +27,8 @@
                             <ul class="list-files-group">
                                 <li class="list-files-group-item"
                                     ng-repeat="(index, uploadFolder) in self.uploadFolderList"
-                                    ng-click="self.selectFolder(uploadFolder, index)"
-                                    ng-class="{'selectFile' : self.selectedFolder == uploadFolder}">
+                                    ng-click="self.selectRow(uploadFolder, index, 'folder')"
+                                    ng-class="{'selectRow' : self.selectedFile == uploadFolder}">
                                     <span class="item-index">Folder {{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
                                     <p class="list-group-item-heading"
                                        title="{{uploadFolder.path}}">
@@ -41,8 +41,8 @@
                             <ul class="list-files-group">
                                 <li class="list-files-group-item"
                                     ng-repeat="(index, uploadFile) in self.uploadFileList"
-                                    ng-click="self.selectFile(uploadFile, index)"
-                                    ng-class="{'selectFile' : self.selectedFile == uploadFile}">
+                                    ng-click="self.selectRow(uploadFile, index, 'file')"
+                                    ng-class="{'selectRow' : self.selectedFile == uploadFile}">
                                     <button style="padding: 5 10px; margin-top: -3px;"
                                             class="fa fa-remove btn btn-sm btn-danger pull-right"
                                             ng-click="self.removeFromUpload(index)" title="Remove from uploadlist">
@@ -90,7 +90,9 @@
                     <div class="hr-sect-file">Meta Data</div>
                     <div class="meta-data" ng-if="self.selectedFile.metaData">
                         <div class="form-group">
-                            <label class="col-sm-2" style="text-align: right;">Edit All File: </label>
+                            <label class="col-sm-2" style="text-align: right;">
+                                Edit all {{self.typeSelect}}: 
+                            </label>
                             <div class="col-sm-4">
                                 <span class="ti-check button-checkbox checked-off"
                                       ng-class="{'checked-on':self.multiMD}"

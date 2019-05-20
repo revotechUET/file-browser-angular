@@ -140,9 +140,6 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
               for (let key in file.metaData) {
                 metaDataRequest[key] = file.metaData[key] + '';
               }
-              /*file.metaData.forEach(m => {
-                metaDataRequest[m.name.replace(/\s/g, '')] = m.value + ''
-              });*/
               fileExplorerCtrl.httpGet(fileExplorerCtrl.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), result => {
                 if (result.data.code === 409 && !file.overwrite) {
                   console.log("Vao day");
@@ -211,8 +208,12 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.addMetadata = function () {
       self.metaData4All.moreInfo[''] = '';
     };
-
-    self.selectFile = function (uploadFile, index) {
+    this.typeSelect = 'file';
+    self.selectRow = function(uploadRow, index, type) {
+      self.typeSelect = type;
+      self.selectedFile = uploadRow;
+    }
+    /*self.selectFile = function (uploadFile, index) {
       self.selectedFile = uploadFile;
       console.log("Doi ne ", self.selectedFile);
     };
@@ -220,7 +221,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.selectFolder = function (uploadFolder, index) {
       self.selectedFolder = uploadFolder;
       console.log("Doi ne ", self.selectedFolder);
-    };
+    };*/
 
     this.closeModal = function () {
       close(null);

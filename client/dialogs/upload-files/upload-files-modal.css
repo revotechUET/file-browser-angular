@@ -52,7 +52,7 @@
     position: absolute;
     overflow: hidden;
     text-overflow: ellipsis;
-    width: 85%;
+    width: 80%;
 }
 .upload-list .list-files-group li.list-files-group-item {
     list-style-type: none;

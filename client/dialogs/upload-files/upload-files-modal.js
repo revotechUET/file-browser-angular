@@ -53,12 +53,27 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         next();
       });
     };
-
-    this.removeFromUpload = function (index) {
-      if (self.uploadFileList[index].uploadingObject) self.uploadFileList[index].uploadingObject.abort();
-      self.uploadFileList.splice(index, 1);
+    this.removeFromFolder = function(folderIdx) {
+      let folderPath = self.uploadFolderList[folderIdx].path;
+      self.uploadFileList = self.uploadFileList.filter(file => file.desDirectory !== ('/' + folderPath));
+      /*self.uploadFileList.forEach((file, index) => {
+        if(file.desDirectory === ('/' + folderPath)) {
+          console.log(self.uploadFileList[index]);
+          self.uploadFileList.splice(index, 1);
+        }
+      })*/
+    }
+    this.removeFromUpload = function (index, type) {
+      if(type === 'folder') {
+        if (self.uploadFolderList[index].uploadingObject) self.uploadFolderList[index].uploadingObject.abort();
+        self.removeFromFolder(index);
+        self.uploadFolderList.splice(index, 1);
+      } else {
+        if (self.uploadFileList[index].uploadingObject) self.uploadFileList[index].uploadingObject.abort();
+        self.uploadFileList.splice(index, 1);
+      }
       self.selectedFile = null;
-      if (self.uploadFileList.length === 0) self.processing = false;
+      if (self.uploadFileList.length === 0 || self.uploadFolderList === 0) self.processing = false;
       // !$scope.$$phase && $scope.$digest();
     };
     this.folderPicked = function (files) {

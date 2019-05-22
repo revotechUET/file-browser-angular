@@ -29,6 +29,19 @@
                                     ng-repeat="(index, uploadFolder) in self.uploadFolderList"
                                     ng-click="self.selectRow(uploadFolder, index, 'folder')"
                                     ng-class="{'selectRow' : self.selectedFile == uploadFolder}">
+                                    <!-- <button ng-if="!uploadFolder.isDone"
+                                            style="padding: 5px 10px; margin-top: -3px;"
+                                            class="fa fa-remove btn btn-sm btn-danger pull-right"
+                                            ng-click="self.removeFromUpload(index, 'folder')" 
+                                            title="Remove from uploadlist">
+                                    </button> -->
+                                    <button ng-if="!uploadFolder.isDone"
+                                            style="padding: 3px 10px; margin-top: -3px;"
+                                            class="btn btn-sm btn-primary pull-right"
+                                            ng-click="self.removeFromFolder(index)"
+                                            title="Clean files">
+                                        <i class="ti-brush-alt"></i>
+                                    </button>
                                     <span class="item-index">Folder {{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
                                     <p class="list-group-item-heading"
                                        title="{{uploadFolder.path}}">

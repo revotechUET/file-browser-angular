@@ -56,12 +56,6 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     this.removeFromFolder = function(folderIdx) {
       let folderPath = self.uploadFolderList[folderIdx].path;
       self.uploadFileList = self.uploadFileList.filter(file => file.desDirectory !== ('/' + folderPath));
-      /*self.uploadFileList.forEach((file, index) => {
-        if(file.desDirectory === ('/' + folderPath)) {
-          console.log(self.uploadFileList[index]);
-          self.uploadFileList.splice(index, 1);
-        }
-      })*/
     }
     this.removeFromUpload = function (index, type) {
       if(type === 'folder') {

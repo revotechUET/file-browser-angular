@@ -247,7 +247,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   };
   this.goToByPath = function(path) {
     if(!path) return;
-    let array = path.split('/')
+    /*let array = path.split('/')
     let fileName = array[array.length-1];
     let parts = array.slice(1, array.length-1);
     parts.forEach(p => {
@@ -256,6 +256,27 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     self.goTo(parts.length-1, function(fileList) {
       let linkedFile = fileList.find(file => file.rootName == fileName);
       if(linkedFile) self.clickNode(linkedFile);
+    });*/
+    let children = [];
+    if(typeof path === 'string') children = [{location: path}];
+    if(Array.isArray(path)) {
+      children = path.map(p => {
+        return {location: p}
+      });
+    };
+    let searchPayload = {
+      content: {
+        subFolders: 'included',
+        type: 'all',
+        conditions: {
+          operator: 'or',
+          children: children
+        }
+      },
+      folder: '/'
+    }
+    self.httpPost(self.searchUrl, searchPayload, res => {
+      self.fileList = res.data.data;
     });
   }
   this.goTo = function (index, callback) {

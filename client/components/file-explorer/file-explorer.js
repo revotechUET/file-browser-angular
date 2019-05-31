@@ -260,7 +260,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     let children = [];
     if(typeof path === 'string') children = [{location: path}];
     if(Array.isArray(path)) {
-      children = path.map(p => {
+      let pathsCP = angular.copy(path);
+      _.remove(pathsCP, t => !t);
+      children = pathsCP.map(p => {
         return {location: p}
       });
     };

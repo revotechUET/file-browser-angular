@@ -64,7 +64,7 @@ exports.getConfigProps = function() {
             "refSpec": "time",
             "choices": null
         },
-        "well": {
+        /*"well": {
             "translation": "Well",
             "option": "use",
             "section": "Information",
@@ -87,7 +87,7 @@ exports.getConfigProps = function() {
             "typeSpec": null,
             "refSpec": null,
             "choices": null
-        },
+        },*/
         /*"parameter": {
             "translation": "Parameter",
             "option": "use",
@@ -104,14 +104,14 @@ exports.getConfigProps = function() {
             "refSpec": null,
             "choices": "datatypes"
         },
-        "relatesto": {
+        /*"relatesto": {
             "translation": "Relates to",
             "option": "use",
             "section": "Information",
             "typeSpec": "wilink",
             "refSpec": null,
             "choices": null
-        },
+        },*/
         "associate": {
             "translation": "Associate to",
             "option": "use",

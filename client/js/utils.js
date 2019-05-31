@@ -64,9 +64,10 @@ exports.getConfigProps = function() {
             "refSpec": "time",
             "choices": null
         },
-        /*"well": {
+        "well": {
             "translation": "Well",
-            "option": "use",
+            // "option": "use",
+            "option" : "notuse",
             "section": "Information",
             "typeSpec": "wilink",
             "refSpec": null,
@@ -74,7 +75,8 @@ exports.getConfigProps = function() {
         },
         "field": {
             "translation": "Field",
-            "option": "readonly",
+            // "option": "readonly",
+            "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
@@ -82,12 +84,13 @@ exports.getConfigProps = function() {
         },
         "welltype": {
             "translation": "Well Type",
-            "option": "readonly",
+            // "option": "readonly",
+            "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
             "choices": null
-        },*/
+        },
         /*"parameter": {
             "translation": "Parameter",
             "option": "use",
@@ -104,14 +107,15 @@ exports.getConfigProps = function() {
             "refSpec": null,
             "choices": "datatypes"
         },
-        /*"relatesto": {
+        "relatesto": {
             "translation": "Relates to",
-            "option": "use",
+            // "option": "use",
+            "option" : "notuse",
             "section": "Information",
             "typeSpec": "wilink",
             "refSpec": null,
             "choices": null
-        },*/
+        },
         "associate": {
             "translation": "Associate to",
             "option": "use",

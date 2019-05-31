@@ -17,7 +17,6 @@
 							sp-enter="$event.currentTarget.blur();"
 							ng-change="self.checkName(md, '{{md.value}}')"
 							title="{{md.value}}">
-					
 					<input ng-if="md.type == 'wiref'" 
 							type="text" ng-model="md.ref"
 							class="form-control props-value"
@@ -45,6 +44,13 @@
 								readonly
 								title="{{md.value.name}}"
 								style="display: inline; width: 90%">
+					</div>
+					<div ng-if="md.type=='wiassociate'">
+						<button class="btn btn-default"
+								ng-click="self.associateToNodes(md)"
+								style="padding: 3px 10px;">
+							<i class="fa fa-external-link"></i>
+						</button>
 					</div>
 				</div>
 				<div ng-if="md.name == 'location'" >

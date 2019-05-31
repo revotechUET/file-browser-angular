@@ -50,6 +50,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			obj[section] = arr;
 			obj['More Information'] = undefinedArr;
 		});
+		obj['Information'].push(getMDProps('associate', config['associate']));
 		return obj;
 	};
 	function mapOrder (array, order, key) {
@@ -71,6 +72,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		let value = self.metaData[mdKey];
 		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 		if(mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+		if(mdKey == 'associate') value = self.metaData;
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
@@ -240,6 +242,9 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.visitNode = function(obj) {
 		if(!obj || !obj.value) return;
 		window.explorertreeview.scrollToNode(obj.value);
+	}
+	this.associateToNodes = function (md) {
+		window.explorertree.filterByFile(md.value.location);
 	}
 	this.clearObject = function(md) {
 		if(!md || !md.value) return;

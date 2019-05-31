@@ -112,6 +112,14 @@ exports.getConfigProps = function() {
             "refSpec": null,
             "choices": null
         },
+        "associate": {
+            "translation": "Associate to",
+            "option": "use",
+            "section": "Information",
+            "typeSpec": "wiassociate",
+            "refSpec": null,
+            "choices": null
+        },
         "quality": {
             "translation": "Quality",
             "option": null,
@@ -155,7 +163,7 @@ exports.getSelections = function () {
 			"Core",
 			"Core Image, Thin Sections and SEM",
 			"SCAL (Scalar and Array)",
-			"Zone",
+			"Zone & Marker",
 			"PVT (Fluid Analysis)",
 			"DST (Formation Pressure Test)",
 			"MDT (Formation Pressure Test)",
@@ -183,7 +191,18 @@ exports.getSelections = function () {
 			"Directional Surveys and Well Paths",
 			"Drilling Reports",
 			"Text",
-			"Others"
+			"Others",
+            "Cutting Percentage",
+            "Composite Log",
+            "Oil & Gas Data",
+            "Drilling Data",
+            "Oil Show",
+            "Advanced Rock Properties",
+            "Deposition Environment and Seq-Stratigraphy",
+            "Petrographic",
+            "Geochemical",
+            "Geomechanic",
+            "Well completion Report"
 	  	]
 	};
 }

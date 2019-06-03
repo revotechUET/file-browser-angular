@@ -2,7 +2,7 @@
   <nav class="navbar navbar-inverse dir-nav-bar" style="margin-bottom: 0;">
     <div style="padding-left: 0;" class="container-fluid">
       <div class="row" style="margin-left: 0px;">
-        <div style="padding-left: 0;" class="col-sm-7 col-md-8">
+        <div style="padding-left: 0;" class="col-sm-6 col-md-7">
           <ol class="breadcrumb">
             <li>
               <a ng-show="self.currentPath.length > 0" href="" ng-click="self.goTo(-1)">{{
@@ -26,7 +26,7 @@
                 <i class="fa fa-search"></i>
                 <input type='text' ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}"
                   size='10' placeholder="[Search]">
-                <i class="ti-close" ng-click="self.filter = ''; self.search()"
+                <i class="ti-close" ng-click="self.filter = ''; self.modeFilter = 'all'; self.search()"
                     ng-style="{color: self.filter != '' ? '#c00' : '#eee'}"></i>
                 <i class="fa fa-filter" ng-click="self.advancedSearch()"
                     title="Advanced search"></i>
@@ -37,6 +37,10 @@
       </div>
     </div>
   </nav>
+  <div class="row" style="text-transform: uppercase; padding: 5px 30px;">
+    <span>Filter: {{self.modeFilter}} mode</span>
+    <span class="delete-16x16" ng-click="self.allFilesMode()" style="cursor: pointer;"></span>
+  </div>
 
   <div class="navbar-collapse">
     <div style="float: none!important; padding-left: 0;" class="navbar-form navbar-right">
@@ -92,7 +96,7 @@
       <div class="btn-group">
         <button class="btn btn-flat btn-sm" type="button" 
               aria-expanded="true" 
-              ng-click="self.goTo(-999); self.filter = ''; self.propOrder='rootName'; self.reverse=false">
+              ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">
           <i class="fa fa-refresh"></i>&nbsp;Refresh
         </button>
       </div>

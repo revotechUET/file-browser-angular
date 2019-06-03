@@ -132,14 +132,6 @@ exports.getConfigProps = function() {
             "refSpec": null,
             "choices": null 
         },
-        /*"relatesto": {
-            "translation": "Relates to",
-            "option": "use",
-            "section": "Hyperlink",
-            "typeSpec": null,
-            "refSpec": null,
-            "choices": null
-        },*/
         "description": {
             "translation": "Description",
             "option": "use",

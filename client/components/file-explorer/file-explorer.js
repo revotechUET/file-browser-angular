@@ -74,7 +74,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     self.searchUrl = self.url + SEARCH_PATH;
     self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
     self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
-
+    self.modeFilter = 'all';
     let searchQuery = {
       conditions: {
         operator: "and",
@@ -279,6 +279,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     }
     self.httpPost(self.searchUrl, searchPayload, res => {
       self.fileList = res.data.data;
+      self.modeFilter = 'related';
     });
   }
   this.goTo = function (index, callback) {
@@ -418,6 +419,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   this.advancedSearch = function () {
     newAdvancedSearchDialog(ModalService, self, function (isSearching) {
       if (isSearching) {
+        self.modeFilter = 'custom search';
         self.filter = '[Custom search]';
         let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}&`;
 
@@ -490,9 +492,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   this.saveObject = function (payload, cb) {
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
-      self.goTo(-999, function(fileList) {
+      /*self.goTo(-999, function(fileList) {
         cb && cb(fileList);
-      });
+      });*/
     });
   };
   this.updateMetaData = function (metaData) {
@@ -525,6 +527,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     });
     $scope.addName = "";
     $scope.addValue = "";
+  }
+  this.allFilesMode = function() {
+    if(self.modeFilter !== 'all') self.goTo(-999);
   }
   this.$onDestroy = function () {
     delete window.fileBrowser;

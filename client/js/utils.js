@@ -66,8 +66,8 @@ exports.getConfigProps = function() {
         },
         "well": {
             "translation": "Well",
-            // "option": "use",
-            "option" : "notuse",
+            "option": "use",
+            // "option" : "notuse",
             "section": "Information",
             "typeSpec": "wilink",
             "refSpec": null,
@@ -75,8 +75,8 @@ exports.getConfigProps = function() {
         },
         "field": {
             "translation": "Field",
-            // "option": "readonly",
-            "option" : "notuse",
+            "option": "readonly",
+            // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
@@ -84,8 +84,8 @@ exports.getConfigProps = function() {
         },
         "welltype": {
             "translation": "Well Type",
-            // "option": "readonly",
-            "option" : "notuse",
+            "option": "readonly",
+            // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,

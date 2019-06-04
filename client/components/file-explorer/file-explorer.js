@@ -20,7 +20,7 @@ const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
 const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
 const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advanced-search-modal');
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
-
+const confirmDialog = require('../../dialogs/confirm/confirm-modal');
 
 
 const moduleName = 'file-explorer';
@@ -312,16 +312,21 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
   this.removeNodes = function () {
     if (!self.selectedList)
       return;
-    async.each(self.selectedList, (node, next) => {
-      self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
-        console.log(result);
-        next();
-      })
-    }, err => {
-      if (!err) {
-        self.goTo(self.currentPath.length - 1);
+    let mess = "Are you sure you want to delete "+ (self.selectedList.length > 1 ? self.selectedList.length + ' items?' : ' this item?');
+    confirmDialog(ModalService, mess, function(ret) {
+      if(ret) {
+        async.each(self.selectedList, (node, next) => {
+          self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
+            console.log(result);
+            next();
+          })
+        }, err => {
+          if (!err) {
+            self.goTo(self.currentPath.length - 1);
+          }
+        })
       }
-    })
+    });
   };
   this.bulkEdit = function(items) {
     bulkEditDialog(ModalService, function(res) {

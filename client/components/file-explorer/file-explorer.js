@@ -19,6 +19,8 @@ const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal'
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
 const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
 const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advanced-search-modal');
+const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
+
 
 
 const moduleName = 'file-explorer';
@@ -172,9 +174,12 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
         self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
+        self.filter = '';
+        self.modeFilter = 'all';
       })
     } else {
       self.filter = '';
+      self.modeFilter = 'all';
       self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
         let data = {title: item.rootName};
@@ -206,7 +211,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     }
   };
 
-  this.downloadFile = function (item) {
+  this.downloadFile = function (items) {
+    if(items.length > 1) return;
+    let item = items[0];
     console.log("Donwload naaaaaaaaaa");
     if (!item || !item.rootIsFile)
       return;
@@ -316,7 +323,19 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
       }
     })
   };
-
+  this.bulkEdit = function(items) {
+    bulkEditDialog(ModalService, function(res) {
+      if(res) {
+        items.forEach(item => {
+          item.metaData = Object.assign(item.metaData, res);
+          self.saveObject({
+            key: item.rootIsFile ? item.path : item.path + '/',
+            metaData: item.metaData
+          });
+        })
+      }
+    });
+  }
   this.paste = function () {
     if (!(self.pasteList))
       return;
@@ -411,6 +430,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
       };
       self.httpPost(self.searchUrl, payload, res => {
         self.fileList = res.data.data;
+        self.modeFilter = 'seach';
       });
     } else if (self.filter != '[Custom search]') {
       self.goTo(self.currentPath.length - 1);

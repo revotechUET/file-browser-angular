@@ -50,9 +50,10 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			obj[section] = arr;
 			obj['More Information'] = undefinedArr;
 		});
-		obj['Information'].push(getMDProps('associate', config['associate']));
+		if(getMDProps('associate', config['associate'])) obj['Information'].push(getMDProps('associate', config['associate']));
 		return obj;
 	};
+	
 	function mapOrder (array, order, key) {
 		array.sort( function (a, b) {
 		    var A = a[key], B = b[key];
@@ -69,6 +70,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	};
 	function getMDProps (mdKey, configObj) {
 		if(!self.readonlyValues) self.readonlyValues = [];
+		if(!self.metaData || (mdKey == 'associate' && !self.enableAssociate)) return;
 		let value = self.metaData[mdKey];
 		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 		if(mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
@@ -239,6 +241,11 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		setValue('welltype');
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
+	this.onChangeBox = function(check, md) {
+		if(md.name != 'well') return;
+		self.chooseBox.field = check;
+		self.chooseBox.welltype = check;
+	}
 	this.visitNode = function(obj) {
 		if(!obj || !obj.value) return;
 		window.explorertreeview.scrollToNode(obj.value);
@@ -276,8 +283,11 @@ app.component(componentName, {
     bindings: {
         metaData : '<',
         updateMetadatFunc : '<',
-        hideHeader: '@',
-        readonlyValues: '<'
+        hideHeader: '<',
+        readonlyValues: '<',
+        shortView: '<',
+        chooseBox: '<',
+        enableAssociate: '<'
     }
 });
 app.directive('spEnter', function ($parse) {

@@ -1,11 +1,20 @@
 <form class="form-horizontal storage-props">
 	<!-- <div ng-if="!self.checkMDObj()">no info</div> -->
 	<div ng-repeat="section in self.sections" ng-if="self.checkMDObj()">
-		<div class="heading" ng-if="!self.hideHeader || section=='More Information'">{{section}}</div>
+		<div class="heading" 
+			ng-if="!self.hideHeader 
+					|| section=='More Information' 
+					|| (!self.shortView && self.fields[section].length>0)">{{section}}</div>
 		<div ng-repeat="md in self.fields[section]"
 			class="form-group props-group"
 			ng-if="section!='More Information' && md.use">
-			<label class="col-sm-5">{{md.label}}</label>
+			<label class="col-sm-5">
+				<input type="checkbox" 
+						ng-if="self.chooseBox && (md.name != 'field' && md.name != 'welltype')"
+						ng-model="self.chooseBox[md.name]"
+						ng-change="self.onChangeBox(self.chooseBox[md.name], md)">
+				{{md.label}}
+			</label>
 			<div class="col-sm-7"
 				style="border-left: 1px solid #ddd; padding: 0; display: flex; background: #eee; align-items: center;">
 				<div style="flex: 1">
@@ -108,6 +117,7 @@
 			</div>
 			<p>{{self.warning}}</p>
 			<button class="btn btn-flat add-mdata" title="Add Meta Data"
+					ng-if="!self.shortView"
 					ng-click="self.addMetaData()">
 				<i class="fa fa-plus"></i> Add Meta Data
 			</button>

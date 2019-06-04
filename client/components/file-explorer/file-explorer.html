@@ -5,12 +5,12 @@
         <div style="padding-left: 0;" class="col-sm-6 col-md-7">
           <ol class="breadcrumb">
             <li>
-              <a ng-show="self.currentPath.length > 0" href="" ng-click="self.goTo(-1)">{{
+              <a ng-show="self.currentPath.length > 0" href="" ng-click="self.goTo(-1); self.filter='';self.modeFilter='all'">{{
                 'Root'}}</a>
               <span style="color: #fff;" ng-show="self.currentPath.length < 1">{{ 'Root' }}</span>
             </li>
             <li ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}" class="animated fast fadeIn">
-              <a href="" ng-show="!$last" ng-click="self.goTo(key)">
+              <a href="" ng-show="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='all'">
                 {{dir.rootName | strLimit : 8}}
               </a>
               <span ng-show="$last">
@@ -37,9 +37,12 @@
       </div>
     </div>
   </nav>
-  <div class="row" style="text-transform: uppercase; padding: 5px 30px;">
-    <span>Filter: {{self.modeFilter}} mode</span>
-    <span class="delete-16x16" ng-click="self.allFilesMode()" style="cursor: pointer;"></span>
+  <div class="row" style="text-transform: uppercase; padding: 5px 30px; text-align: center;background: #0077be44;">
+    <span style="margin-right: 10px;">Filter: {{self.modeFilter}} mode</span>
+    <span class="delete-16x16" 
+          ng-click="self.allFilesMode()" 
+          style="cursor: pointer; vertical-align: bottom"
+          ng-if="self.modeFilter!='all'"></span>
   </div>
 
   <div class="navbar-collapse">
@@ -80,7 +83,7 @@
               <i class="fa fa-paste">&nbsp;&nbsp;Paste</i>
             </a>
           </li>
-          <li role="presentation" ng-click="self.downloadFile(self.selectedList[0])">
+          <li role="presentation" ng-click="self.downloadFile(self.selectedList)">
             <a href="" ng-class="{inactive: !(self.selectedList.length == 1) || !self.selectedList[0].rootIsFile}" role="menuitem"
               tabindex="-1">
               <i class="fa fa-download">&nbsp;&nbsp;Download</i>
@@ -89,6 +92,13 @@
           <li role="presentation" ng-click="self.removeNodes()">
             <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
               <i class="fa fa-trash">&nbsp;&nbsp;Remove</i>
+            </a>
+          </li>
+          <li role="presentation" ng-click="self.bulkEdit(self.selectedList)">
+            <a ng-class="{inactive: self.selectedList.length <= 1}" 
+                role="menuitem"
+                tabindex="-1">
+              <i class="fa fa-edit">&nbsp;&nbsp;Bulk Edit</i>
             </a>
           </li>
         </ul>
@@ -196,7 +206,10 @@
               style="border-right: 1px solid #dedede;" 
               ng-if="self.selectedItem.metaData">
       <div class="right-panel">
-        <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"></storage-props>
+        <storage-props meta-data="self.selectedItem.metaData" 
+                        update-metadat-func="self.updateMetaData"
+                        enable-associate="true">
+        </storage-props>
       </div>
     </side-bar>
   </div>

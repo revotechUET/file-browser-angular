@@ -47,9 +47,9 @@ const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 
-Controller.$inject = ['$scope', '$filter', '$element', '$http', 'ModalService', 'Upload'];
+Controller.$inject = ['$scope', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession'];
 
-function Controller($scope, $filter, $element, $http, ModalService, Upload) {
+function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSession) {
   let self = this;
   window.fileBrowser = self;
   this.$onInit = function () {
@@ -341,6 +341,10 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
       }
     });
   }
+  this.copyMultiLocation = function(items) {
+    let locations = items.map(item => item.metaData.location);
+    wiSession.putData('location', JSON.stringify({option: 'multi', value: locations}));
+  }
   this.paste = function () {
     if (!(self.pasteList))
       return;
@@ -554,7 +558,12 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload) {
     $scope.addValue = "";
   }
   this.allFilesMode = function() {
-    if(self.modeFilter !== 'all') self.goTo(-999);
+    if(self.modeFilter !== 'all') {
+      self.goTo(-999, function() {
+        self.modeFilter = 'all';
+        self.filter = '';
+      });
+    }
   }
   this.$onDestroy = function () {
     delete window.fileBrowser;

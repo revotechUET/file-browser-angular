@@ -101,6 +101,13 @@
               <i class="fa fa-edit">&nbsp;&nbsp;Bulk Edit</i>
             </a>
           </li>
+          <li role="presentation" ng-click="self.copyMultiLocation(self.selectedList)">
+            <a ng-class="{inactive: self.selectedList.length <= 1}" 
+                role="menuitem"
+                tabindex="-1">
+              <i class="fa fa-clone">&nbsp;&nbsp;Copy Locations</i>
+            </a>
+          </li>
         </ul>
       </div>
       <div class="btn-group">

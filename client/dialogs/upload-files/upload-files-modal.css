@@ -22,6 +22,10 @@
     border: 1px solid steelblue;
     font-style: italic;
 }
+.upload-files-modal .meta-data {
+    max-height: 200px;
+    overflow-y: auto;
+}
 .upload-files-modal .meta-data .button-checkbox {
     width: 16px;
     height: 16px;
@@ -40,7 +44,7 @@
     color: #000;
 }
 .upload-list {
-    max-height: 300px;
+    max-height: 200px;
     overflow-y: auto;
 }
 .upload-list .list-files-group {
@@ -56,9 +60,9 @@
 }
 .upload-list .list-files-group li.list-files-group-item {
     list-style-type: none;
-    padding: 8px;
+    padding: 6px 8px;
     border: 1px solid #ccc;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     border-radius: 5px;
     background: #f5f5f5;
     color: #333;

@@ -204,7 +204,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.copyLocation = function(value) {
-		wiSession.putData('location', value);
+		wiSession.putData('location', JSON.stringify({option: 'single', value: value}));
 	}
 	function setValue (key) {
 		self.fields['Information'].forEach(md => {
@@ -264,7 +264,8 @@ function Controller($scope, $filter, ModalService, wiSession) {
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
 	this.locationCopied = function(location) {
-		if(wiSession.getData('location') == location) return true;
+		let locations = JSON.parse(wiSession.getData('location'));
+		if(locations.value == location) return true;
 		else return false;
 	};
 	this.doRating = function (md, index) {

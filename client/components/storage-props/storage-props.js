@@ -265,7 +265,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	}
 	this.locationCopied = function(location) {
 		let locations = JSON.parse(wiSession.getData('location'));
-		if(locations.value == location) return true;
+		if(locations && locations.value == location) return true;
 		else return false;
 	};
 	this.doRating = function (md, index) {

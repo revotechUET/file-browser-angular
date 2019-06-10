@@ -37,7 +37,9 @@
       </div>
     </div>
   </nav>
-  <div class="row" style="text-transform: uppercase; padding: 5px 30px; text-align: center;background: #0077be44;">
+  <div class="row" 
+        style="text-transform: uppercase; padding: 5px 30px; text-align: center;" 
+        ng-class="{highlightBg: self.modeFilter!='all'}">
     <span style="margin-right: 10px;">Filter: {{self.modeFilter}} mode</span>
     <span class="delete-16x16" 
           ng-click="self.allFilesMode()" 

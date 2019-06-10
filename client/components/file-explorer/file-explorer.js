@@ -441,9 +441,10 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
         self.fileList = res.data.data;
         self.modeFilter = 'seach';
       });
-    } else if (self.filter != '[Custom search]') {
-      self.goTo(self.currentPath.length - 1);
-    }
+    } else if (!self.filter || self.filter === '') {
+      self.modeFilter = 'all';
+      self.goTo(-999);
+    } else if (self.filter != '[Custom search]') self.goTo(self.currentPath.length - 1);
   }
   this.advancedSearch = function () {
     newAdvancedSearchDialog(ModalService, self, function (isSearching) {

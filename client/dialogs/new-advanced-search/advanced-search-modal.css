@@ -12,11 +12,15 @@
 	background: steelblue;
 }
 .advanced-search .btn-area {
-	margin-bottom: 20px;
+	display: flex;
+	flex-wrap: wrap;
+}
+.advanced-search .btn-area .btn-item {
+	margin-bottom: 15px;
 	display: inline-block;
 }
-.advanced-search .btn-area span {
-	padding: 4px 8px 6px;
+.advanced-search .btn-area .btn-item span {
+	padding: 4px 6px 6px;
 	border: 1px solid #ddd;
 	border-radius: 15px;
 	margin: 2px;
@@ -25,7 +29,7 @@
 	position: relative;
 	color: #888;
 }
-.advanced-search .btn-area span:hover {
+.advanced-search .btn-area .btn-item span:hover {
 	color: #000;
 	background: #eee;
 }
@@ -37,7 +41,7 @@
 .advanced-search .has-item:hover {
 	background: #026dac !important;
 }
-.advanced-search .btn-area span p {
+.advanced-search .btn-area .btn-item span p {
 	display: inherit;
     position: absolute;
     top: -8px;

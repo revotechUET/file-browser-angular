@@ -39,7 +39,11 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       "datatype" : {
         type: 'select',
         label: "Data Type"
-      }
+      }/*,
+      "custom" : {
+        type: 'custom', 
+        label: "Custom"
+      }*/
     }
     this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';
@@ -96,13 +100,21 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       selectedArr[idx] = true;
 
     }
+    this.customArr = [];
     this.insertMetaDataKey = function (key) {
       let idx = self.conditions.findIndex(d => d.mdtype == key);
+      if(key == 'custom') {
+        self.customArr.push({key: '', value: ''});
+        return;
+      }
       if(idx > -1) {
         if(key != 'uploaded') self.conditions[idx].children.push({[key] : ''});
       }
       else {
-        let children = (key == 'uploaded') ? [{[key] : {from: '', to: ''}}] : [{[key] : ''}]
+        let children = (key == 'uploaded') ? [{[key] : {from: '', to: ''}}] : [{[key] : ''}];
+        /*if (key == 'uploaded') children = [{[key] : {from: '', to: ''}}]
+        else if (key == 'custom') children = [{'' : ''}]
+        else children = [{[key] : ''}];*/
         self.conditions.push({
           mdtype: key,
           inputtype: self.mapKey[key].type,
@@ -110,7 +122,11 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         });
       }
     };
-
+    this.changeCustomFields = function(row, oPart, index) {
+      self.customArr[index].key = row.key;
+      self.customArr[index].value = row.value;
+      console.log(self.customArr);
+    }
     this.removeMetaData = function (key, child) {
       let mdSelect = self.conditions.find(d => d.mdtype == key);
       let  idx = self.conditions.findIndex(d => d.mdtype == key);
@@ -123,13 +139,22 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       self.conditions[idx].children
                           .splice(childIdx, 1);
     }
-    this.countMDRow = function (key) {
-      let metadata = self.conditions.find(c => c.mdtype == key);
-      if (metadata && metadata.children && metadata.children.length) 
-        return metadata.children.length;
-      else return 0;
+    this.removeCustom = function(index) {
+      self.customArr.splice(index, 1);
     }
-    function conditionsToSearchQuery (conditions) {
+    this.countMDRow = function (key) {
+      if(key == 'custom') {
+        if (self.customArr && self.customArr.length) 
+          return self.customArr.length;
+        else return 0;
+      } else {
+        let metadata = self.conditions.find(c => c.mdtype == key);
+        if (metadata && metadata.children && metadata.children.length) 
+          return metadata.children.length;
+        else return 0;
+      }
+    }
+    function conditionsToSearchQuery (conditions, customArr) {
       let searchQuery = {
         type: self.searchQuery.type,
         subFolders: (self.subFolders) ? 'included' : 'excluded',
@@ -146,35 +171,47 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
               children: getChildren(c)
             });
         }
-        function getChildren (condition) {
-          let children = [];
-          condition.children
-                    .forEach(item => {
-                      let rObj = {};
-                      let mdtype = condition.mdtype;
-                      if(item[mdtype] && item[mdtype] != '') {
-                        if(condition.inputtype == 'date') {
-                          rObj[mdtype] = {};
-                          if((item[mdtype].from != '') && (item[mdtype].to != '')) {
-                            rObj[mdtype].from = new Date(item[mdtype].from).getTime();
-                            rObj[mdtype].to = new Date(item[mdtype].to).getTime();
-                          } else if ((item[mdtype].from != '') && (item[mdtype].to == '')) {
-                            rObj[mdtype].from = new Date(item[mdtype].from).getTime();
-                            rObj[mdtype].to = new Date(item[mdtype].from).getTime();
-                          } else {}
-                        } 
-                        else rObj[condition.mdtype] = item[condition.mdtype];
-                        if (rObj != {}) children.push(rObj);
-                      };
-                    });
-          return children;
-        };
       });
+      // get custom fields to search
+      let keys = _.uniq(customArr.map(item=>item.key)).filter(k => k!='');
+      keys.forEach(field => {
+        let children = [];
+        for(let i=0; i < customArr.length; i++) {
+          if(customArr[i].key == field) children.push({[field] : customArr[i].value})
+        };
+        searchQuery.conditions.children.push({
+          operator: 'or',
+          children: children
+        });
+      })
+      function getChildren (condition) {
+        let children = [];
+        condition.children
+                  .forEach(item => {
+                    let rObj = {};
+                    let mdtype = condition.mdtype;
+                    if(item[mdtype] && item[mdtype] != '') {
+                      if(condition.inputtype == 'date') {
+                        rObj[mdtype] = {};
+                        if((item[mdtype].from != '') && (item[mdtype].to != '')) {
+                          rObj[mdtype].from = new Date(item[mdtype].from).getTime();
+                          rObj[mdtype].to = new Date(item[mdtype].to).getTime();
+                        } else if ((item[mdtype].from != '') && (item[mdtype].to == '')) {
+                          rObj[mdtype].from = new Date(item[mdtype].from).getTime();
+                          rObj[mdtype].to = new Date(item[mdtype].from).getTime();
+                        } else {}
+                      } 
+                      else rObj[condition.mdtype] = item[condition.mdtype];
+                      if (rObj != {}) children.push(rObj);
+                    };
+                  });
+        return children;
+      };
       return searchQuery;
     };
     function onSearch() {
       self.searchQuery.subFolders = (self.subFolders) ? 'included' : 'excluded';
-      fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions);
+      fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions, self.customArr);
     }
     this.applySearch = function () {
       onSearch();

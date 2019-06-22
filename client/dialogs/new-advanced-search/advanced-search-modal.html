@@ -68,10 +68,10 @@
                                          style="padding-right: 5px;">
                                         <select class="form-control" style="padding: 0" 
                                                 ng-model="child[self.getKeyObj(child)]"
-                                                ng-options="item for item in self.datatypes"></select>
+                                                ng-options="item for item in self.getSelections(md.mdtype)"></select>
                                     </div>
                                     <div class="col-sm-1" style="padding-left: 0;">
-                                        <span style="height: 24px" 
+                                        <span style="height: 24px; cursor: pointer;" 
                                             ng-click="self.removeMetaData(self.getKeyObj(child), child)">
                                             <i class="fa fa-close"></i>
                                         </span>
@@ -93,7 +93,7 @@
                                                 ng-change="self.changeCustomFields(field, 'value', $index)">
                                     </div>
                                     <div class="col-sm-1" style="padding-left: 0;">
-                                        <span style="height: 24px" 
+                                        <span style="height: 24px; cursor: pointer;" 
                                             ng-click="self.removeCustom($index)">
                                             <i class="fa fa-close"></i>
                                         </span>

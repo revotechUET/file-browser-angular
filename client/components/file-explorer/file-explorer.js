@@ -17,7 +17,6 @@ const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
-const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
 const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advanced-search-modal');
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
 const confirmDialog = require('../../dialogs/confirm/confirm-modal');
@@ -52,6 +51,7 @@ Controller.$inject = ['$scope', '$filter', '$element', '$http', 'ModalService', 
 function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSession) {
   let self = this;
   window.fileBrowser = self;
+  this.wiSession = wiSession;
   this.$onInit = function () {
     self.imgResource = {};
     self.currentPath = [];

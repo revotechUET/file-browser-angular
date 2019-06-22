@@ -29,7 +29,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         label: "Field"
       },
       "well" : {
-        type: 'text',
+        type: 'select',
         label: "Well"
       },
       "welltype" : {
@@ -39,16 +39,26 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       "datatype" : {
         type: 'select',
         label: "Data Type"
-      }/*,
-      "custom" : {
-        type: 'custom', 
-        label: "Custom"
-      }*/
+      }
     }
-    this.datatypes = utils.getSelections()['datatypes'];
+    this.getSelections = function (mdkey) {
+      let selections = [];
+      switch(mdkey) {
+        case 'datatype': 
+          selections = utils.getSelections()['datatypes'];
+          break;
+        case 'well': 
+          selections = JSON.parse(fileExplorerCtrl.wiSession.getData('wells')).map(w => w.properties.name);
+          selections.unshift('');
+          break;
+        default:
+          break;
+      }
+      return selections;
+    }
+    // this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';
     this.searchQuery = angular.copy(fileExplorerCtrl.searchQuery);
-    console.log('**', getTableConditions(this.searchQuery));
     this.conditions = getTableConditions(this.searchQuery);
     this.subFolders = this.searchQuery.subFolders == 'included' ? true : false;
     this.getKeyObj = function (obj) {

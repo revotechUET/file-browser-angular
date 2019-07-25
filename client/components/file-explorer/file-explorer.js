@@ -213,7 +213,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
 
   this.downloadFile = function (items) {
     if(items.length > 1) return;
-    let item = items[0];
+    let item = Array.isArray(items)? items[0] :items  ;
     console.log("Donwload naaaaaaaaaa");
     if (!item || !item.rootIsFile)
       return;

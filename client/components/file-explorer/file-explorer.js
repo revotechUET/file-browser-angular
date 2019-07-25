@@ -11,7 +11,7 @@ const async = require('../../vendor/js/async.min');
 // const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
-const imgPreview = require('../img-preview/img-preview').name;
+// const imgPreview = require('../img-preview/img-preview').name;
 const storageProps = require('../storage-props/storage-props').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
@@ -571,7 +571,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession']);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, 'img-preview', storageProps, 'sideBar', 'wiSession']);
 
 app.component(componentName, {
   template: require('./file-explorer.html'),

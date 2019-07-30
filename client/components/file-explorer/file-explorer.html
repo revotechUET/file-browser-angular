@@ -123,7 +123,15 @@
   </div>
 
   <div id="img-container" style="display: none">
-    <img-preview data="self.imgResource.fileContent" parent-elem="self.imgResource.parentElem" fx-ctrl="self" file-item="self.selectedList[0]"></img-preview>
+    <img-preview 
+      data="self.imgResource.fileContent" 
+      parent-elem="self.imgResource.parentElem" 
+      fx-ctrl="self" 
+      file-item="self.selectedList[0]"
+      get-download-link="self.getDownloadLink"
+      get-download-file-name="self.getDownloadFileName"
+      >
+    </img-preview>
   </div>
 
   <div class="main-content">

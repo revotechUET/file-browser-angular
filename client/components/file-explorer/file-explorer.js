@@ -12,6 +12,7 @@ const async = require('../../vendor/js/async.min');
 const textViewer = require('../text-viewer/text-viewer').name;
 const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 // const imgPreview = require('../img-preview/img-preview').name;
+const imgPreview = 'img-preview'
 const storageProps = require('../storage-props/storage-props').name;
 const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
@@ -84,7 +85,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
           {
             operator: "or",
             children: [
-              {name: ""}
+              { name: "" }
             ]
           }
         ]
@@ -95,7 +96,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
     self.searchQuery = searchQuery;
     $scope.$watch(() => self.storageDatabase, () => {
       if (self.storageDatabase) {
-        if(self.linkedFile) {
+        if (self.linkedFile) {
           self.goToByPath(self.linkedFile);
         } else {
           self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
@@ -119,8 +120,8 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
   this.isSelected = function (item) {
     return self.selectedList.indexOf(item) !== -1;
   };
-  function getFileListOrder (fileList, propOrder, reverse) {
-    if(!fileList) return;
+  function getFileListOrder(fileList, propOrder, reverse) {
+    if (!fileList) return;
     let orderBy = $filter('orderBy');
     return orderBy(fileList, propOrder, reverse);
   };
@@ -173,7 +174,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
-        self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
+        self.currentPath.push({ rootName: item.rootName, displayName: item.displayName });
         self.filter = '';
         self.modeFilter = 'all';
       })
@@ -182,7 +183,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       self.modeFilter = 'all';
       self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
-        let data = {title: item.rootName};
+        let data = { title: item.rootName };
         let resource = result.data.data;
         data.fileContent = resource;
         switch (true) {
@@ -211,10 +212,27 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
     }
   };
 
+  this.getDownloadLink = function (items) {
+    if (items.length > 1) return '';
+    let item = Array.isArray(items) ? items[0] : items;
+    if (!item || !item.rootIsFile)
+      return '';
+
+    return self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}&storage_database=${JSON.stringify(self.storageDatabase)}`;
+  }
+
+  this.getDownloadFileName = function(items) {
+    if (items.length > 1) return '';
+    let item = Array.isArray(items) ? items[0] : items;
+    if (!item || !item.rootIsFile)
+      return '';
+    
+    return item.rootName || 'untitled';
+  }
+
   this.downloadFile = function (items) {
-    if(items.length > 1) return;
-    let item = Array.isArray(items)? items[0] :items  ;
-    console.log("Donwload naaaaaaaaaa");
+    if (items.length > 1) return;
+    let item = Array.isArray(items) ? items[0] : items;
     if (!item || !item.rootIsFile)
       return;
 
@@ -252,8 +270,8 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
     //   a.parentNode.removeChild(a);
     // })
   };
-  this.goToByPath = function(path) {
-    if(!path) return;
+  this.goToByPath = function (path) {
+    if (!path) return;
     /*let array = path.split('/')
     let fileName = array[array.length-1];
     let parts = array.slice(1, array.length-1);
@@ -265,12 +283,12 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       if(linkedFile) self.clickNode(linkedFile);
     });*/
     let children = [];
-    if(typeof path === 'string') children = [{location: path}];
-    if(Array.isArray(path)) {
+    if (typeof path === 'string') children = [{ location: path }];
+    if (Array.isArray(path)) {
       let pathsCP = angular.copy(path);
       _.remove(pathsCP, t => !t);
       children = pathsCP.map(p => {
-        return {location: p}
+        return { location: p }
       });
     };
     let searchPayload = {
@@ -312,9 +330,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
   this.removeNodes = function () {
     if (!self.selectedList)
       return;
-    let mess = "Are you sure you want to delete "+ (self.selectedList.length > 1 ? self.selectedList.length + ' items?' : ' this item?');
-    confirmDialog(ModalService, mess, function(ret) {
-      if(ret) {
+    let mess = "Are you sure you want to delete " + (self.selectedList.length > 1 ? self.selectedList.length + ' items?' : ' this item?');
+    confirmDialog(ModalService, mess, function (ret) {
+      if (ret) {
         async.each(self.selectedList, (node, next) => {
           self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
             console.log(result);
@@ -328,9 +346,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       }
     });
   };
-  this.bulkEdit = function(items) {
-    bulkEditDialog(ModalService, function(res) {
-      if(res) {
+  this.bulkEdit = function (items) {
+    bulkEditDialog(ModalService, function (res) {
+      if (res) {
         items.forEach(item => {
           item.metaData = Object.assign(item.metaData, res);
           self.saveObject({
@@ -341,9 +359,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       }
     });
   }
-  this.copyMultiLocation = function(items) {
+  this.copyMultiLocation = function (items) {
     let locations = items.map(item => item.metaData.location);
-    wiSession.putData('location', JSON.stringify({option: 'multi', value: locations}));
+    wiSession.putData('location', JSON.stringify({ option: 'multi', value: locations }));
   }
   this.paste = function () {
     if (!(self.pasteList))
@@ -411,7 +429,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
           {
             operator: "or",
             children: [
-              {name: ""}
+              { name: "" }
             ]
           }
         ]
@@ -430,7 +448,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
         folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
         content: {
           conditions: {
-            children: [{name: self.filter}],
+            children: [{ name: self.filter }],
             operator: "or"
           },
           type: "all",
@@ -533,7 +551,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData
-    }, function(fileList) {
+    }, function (fileList) {
       let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
       self.clickNode(item);
     });
@@ -558,9 +576,9 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
     $scope.addName = "";
     $scope.addValue = "";
   }
-  this.allFilesMode = function() {
-    if(self.modeFilter !== 'all') {
-      self.goTo(-999, function() {
+  this.allFilesMode = function () {
+    if (self.modeFilter !== 'all') {
+      self.goTo(-999, function () {
         self.modeFilter = 'all';
         self.filter = '';
       });
@@ -571,7 +589,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, 'img-preview', storageProps, 'sideBar', 'wiSession']);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession']);
 
 app.component(componentName, {
   template: require('./file-explorer.html'),
@@ -630,154 +648,3 @@ app.filter('humanReadableFileSize', ['$filter', function ($filter) {
 }]);
 
 module.exports.name = moduleName;
-
-// // Load js
-// require('../libs/jsTree-directive/jsTree.directive');
-// require('../libs/jsTree/jstree.min');
-
-// // Load css
-// require('./file-explorer.less');
-// require('../libs/jsTree/style.min.css');
-
-// const moduleName = 'file-explorer';
-// const componentName = 'fileExplorer';
-
-// function Controller($scope, $element, $http, $timeout) {
-//     let self = this;
-
-//     this.$onInit = function () {
-//         this.fileViewer = 'Please select a file to view its contents';
-//     }
-
-//     $scope.fileList = this.fileList || function (e, data) {
-//         let node = data.node.li_attr;
-//         if (node.isLeaf) {
-//             $http.get('/api/resource?resource=' + encodeURIComponent(node.base)).then(function (result) {
-//                 let fileContent = result.data;
-//                 if (typeof fileContent == 'object') {
-//                     fileContent = JSON.stringify(fileContent, undefined, 2);
-//                 }
-//                 self.fileViewer = fileContent;
-//                 self.pdfData = atob(fileContent);
-//                 loadingTask = pdfjsLib.getDocument({
-//                     data: self.pdfData
-//                 });
-
-//                 loadingTask.promise.then((pdfDoc_) => {
-//                     pdfDoc = pdfDoc_;
-//                     document.getElementById('page_count').textContent = pdfDoc.numPages;
-
-//                     renderPage(pageNum);
-//                 })
-
-//             })
-//         } else {
-//             self.fileViewer = 'Please select a file to view its contents';
-//         }
-//     }
-//     let pdfjsLib = require('pdfjs-dist');
-//     pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
-
-
-//     this.pdfData = atob(
-//         'JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog' +
-//         'IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv' +
-//         'TWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0K' +
-//         'Pj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAg' +
-//         'L1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+' +
-//         'PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9u' +
-//         'dAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2Jq' +
-//         'Cgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJU' +
-//         'CjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVu' +
-//         'ZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4g' +
-//         'CjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAw' +
-//         'MDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9v' +
-//         'dCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G');
-
-//     let pdfDoc = null;
-//     let pageNum = 1;
-//     let pageRendering = false;
-//     let pageNumPending = null;
-//     let scale = 0.8;
-//     let canvas = document.getElementById('pdfViewer');
-//     let ctx = canvas.getContext('2d');
-
-//     function renderPage(num) {
-//         pageRendering = true;
-
-//         pdfDoc.getPage(num).then((page) => {
-//             let viewport = page.getViewport(scale);
-//             canvas.height = viewport.height;
-//             canvas.width = viewport.width;
-
-//             let renderContext = {
-//                 canvasContext: ctx,
-//                 viewport: viewport
-//             };
-
-//             let renderTask = page.render(renderContext);
-
-//             renderTask.promise.then(() => {
-//                 pageRendering = false;
-//                 if (pageNumPending !== null) {
-//                     renderPage(pageNumPending);
-//                     pageNumPending = null;
-//                 }
-//             })
-//         })
-//     }
-
-//     function queueRenderPage(num) {
-//         if (pageRendering) {
-//             pageNumPending = num;
-//         } else {
-//             renderPage(num);
-//         }
-//     }
-
-//     function onPrevPage() {
-//         if (pageNum <= 1) {
-//             return;
-//         }
-//         pageNum--;
-//         document.getElementById('page_num').textContent = pageNum;
-//         queueRenderPage(pageNum);
-//     }
-//     document.getElementById('prev').addEventListener('click', onPrevPage);
-
-//     function onNextPage() {
-//         if (pageNum >= pdfDoc.numPages) {
-//             return;
-//         }
-//         pageNum++;
-//         document.getElementById('page_num').textContent = pageNum;
-//         queueRenderPage(pageNum);
-//     }
-//     document.getElementById('next').addEventListener('click', onNextPage);
-
-//     let loadingTask = pdfjsLib.getDocument({
-//         data: self.pdfData
-//     });
-
-//     loadingTask.promise.then((pdfDoc_) => {
-//         pdfDoc = pdfDoc_;
-//         document.getElementById('page_num').textContent = pageNum;
-//         document.getElementById('page_count').textContent = pdfDoc.numPages;
-
-//         renderPage(pageNum);
-//     })
-// }
-
-// let app = angular.module(moduleName, ['jsTree.directive']);
-
-// app.component(componentName, {
-//     template: require('./file-explorer.html'),
-//     controller: Controller,
-//     controllerAs: 'self',
-//     bindings: {
-//         fileViewer: '<',
-//         fileList: '<'
-//     }
-// })
-
-// module.exports.name = moduleName;

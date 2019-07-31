@@ -600,7 +600,8 @@ app.component(componentName, {
     url: '@',
     rawDataUrl: '@',
     storageDatabase: '<',
-    linkedFile: '@'
+    linkedFile: '@',
+    idProject: '<'
   }
 });
 

@@ -3,10 +3,16 @@ require('./advanced-search-modal.css');
 const utils = require('../../js/utils');
 
 module.exports = function (ModalService, fileExplorerCtrl, callback) {
-  modalController.$inject = ['$scope', 'close'];
+  modalController.$inject = ['$scope', 'close', 'wiApi'];
 
-  function modalController($scope, close) {
+  function modalController($scope, close, wiApi) {
     let self = this;
+    this.$onInit = function () {
+      let idProject = fileExplorerCtrl.idProject ? fileExplorerCtrl.idProject : wiSession.getData('idProject');
+      (async() => {
+        self.wellsSelection = await wiApi.getWellsPromise(idProject);
+      })();
+    }
     this.mapKey = {
       "name" : {
         type: 'text',
@@ -48,7 +54,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           selections = utils.getSelections()['datatypes'];
           break;
         case 'well': 
-          selections = JSON.parse(fileExplorerCtrl.wiSession.getData('wells')).map(w => w.properties.name);
+          // selections = wells.map(w => w.properties.name);
+          selections = self.wellsSelection ? self.wellsSelection.map(w => w.name) : [];
+          // selections = JSON.parse(fileExplorerCtrl.wiSession.getData('wells')).map(w => w.properties.name);
           selections.unshift('');
           break;
         default:

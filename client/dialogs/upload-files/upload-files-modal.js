@@ -158,6 +158,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                   self.uploadFileList[index].overwrite = false;
                   next();
                 } else {
+                  if (self.processingName.findIndex(f => _.isEqual(f, file)) === -1) self.processingName.push(file);
                   self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + file.desDirectory) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
                   file.uploadingObject = Upload.upload({
                     url: self.uploadUrl,
@@ -181,9 +182,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                     let percentage = event.loaded / event.total * 100;
                     if (event.type === "load") {
                       file.uploadingProgress.status = "Uploaded ...";
-                      self.processingName.splice(self.processingName.findIndex(f => _.isEqual(f, file)));
+                      self.processingName.splice(self.processingName.findIndex(f => _.isEqual(f, file)), 1);
                     }
-                    self.processingName.push(file);
                     file.uploadingProgress = {
                       progress: percentage,
                       status: "Uploading ..."

@@ -13,6 +13,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.selectedFile = null;
     self.selectedFolder = null;
     self.processing = false;
+    self.processingName = [];
     self.multiMD = true;
     self.metaData4All = {
       datatype: '',
@@ -151,7 +152,6 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
               }
               fileExplorerCtrl.httpGet(fileExplorerCtrl.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), result => {
                 if (result.data.code === 409 && !file.overwrite) {
-                  console.log("Vao day");
                   let index = self.uploadFileList.findIndex(f => _.isEqual(f, file));
                   self.uploadFileList[index].existed = true;
                   self.uploadFileList[index].uploadingProgress = null;
@@ -173,7 +173,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                   });
                   file.uploadingObject.then(resp => {
                     self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
-                    console.log(resp);
+                    // console.log(resp);
                     next();
                   }, err => {
                     console.log('Error status: ' + err);
@@ -181,7 +181,9 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                     let percentage = event.loaded / event.total * 100;
                     if (event.type === "load") {
                       file.uploadingProgress.status = "Uploaded ...";
+                      self.processingName.splice(self.processingName.findIndex(f => _.isEqual(f, file)));
                     }
+                    self.processingName.push(file);
                     file.uploadingProgress = {
                       progress: percentage,
                       status: "Uploading ..."

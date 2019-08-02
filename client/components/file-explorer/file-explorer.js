@@ -180,7 +180,7 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       })
     } else {
       self.filter = '';
-      self.modeFilter = 'all';
+      // self.modeFilter = 'all';
       self.selectedList.push(item);
       self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
         let data = { title: item.rootName };

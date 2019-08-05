@@ -8,6 +8,7 @@ var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 let OUTPUT = path.join(__dirname, 'dist');
 
 const generalConfig = {
+    mode : 'development',
     entry: [
         './client/components/file-explorer/file-explorer.js'
         ,'./node_modules/pdfjs-dist/build/pdf.worker.entry.js',

@@ -67,47 +67,47 @@
         <ul class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
           <li role="presentation" ng-click="self.dblClickNode(self.selectedList[0])">
             <a href="" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
-              <i class="fa fa-folder-open">&nbsp;&nbsp;Open</i>
+              <i class="fa fa-folder-open"></i>&nbsp;&nbsp;Open
             </a>
           </li>
           <li role="presentation" ng-click="self.copyOrCut('copy')">
             <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
-              <i class="fa fa-copy">&nbsp;&nbsp;Copy</i>
+              <i class="fa fa-copy"></i>&nbsp;&nbsp;Copy
             </a>
           </li>
           <li role="presentation" ng-click="self.copyOrCut('cut')">
             <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
-              <i class="fa fa-cut">&nbsp;&nbsp;Cut</i>
+              <i class="fa fa-cut"></i>&nbsp;&nbsp;Cut
             </a>
           </li>
           <li role="presentation" ng-click="self.paste()">
             <a href="" ng-class="{inactive: !(self.pasteList.length > 0)}" role="menuitem" tabindex="-1">
-              <i class="fa fa-paste">&nbsp;&nbsp;Paste</i>
+              <i class="fa fa-paste"></i>&nbsp;&nbsp;Paste
             </a>
           </li>
           <li role="presentation" ng-click="self.downloadFile(self.selectedList)">
             <a href="" ng-class="{inactive: !(self.selectedList.length == 1) || !self.selectedList[0].rootIsFile}" role="menuitem"
               tabindex="-1">
-              <i class="fa fa-download">&nbsp;&nbsp;Download</i>
+              <i class="fa fa-download"></i>&nbsp;&nbsp;Download
             </a>
           </li>
           <li role="presentation" ng-click="self.removeNodes()">
             <a href="" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
-              <i class="fa fa-trash">&nbsp;&nbsp;Remove</i>
+              <i class="fa fa-trash"></i>&nbsp;&nbsp;Remove
             </a>
           </li>
           <li role="presentation" ng-click="self.bulkEdit(self.selectedList)">
             <a ng-class="{inactive: self.selectedList.length <= 1}" 
                 role="menuitem"
                 tabindex="-1">
-              <i class="fa fa-edit">&nbsp;&nbsp;Bulk Edit</i>
+              <i class="fa fa-edit"></i>&nbsp;&nbsp;Bulk Edit
             </a>
           </li>
           <li role="presentation" ng-click="self.copyMultiLocation(self.selectedList)">
             <a ng-class="{inactive: self.selectedList.length <= 1}" 
                 role="menuitem"
                 tabindex="-1">
-              <i class="fa fa-clone">&nbsp;&nbsp;Copy Locations</i>
+              <i class="fa fa-clone"></i>&nbsp;&nbsp;Copy Locations
             </a>
           </li>
         </ul>

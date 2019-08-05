@@ -64,7 +64,50 @@
           aria-expanded="true" ng-disabled="self.selectedList.length < 1 && self.pasteList.length < 1">More&nbsp;&nbsp;
           <i class="fa fa-ellipsis-v"></i>
         </button>
-        <ul class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
+        <!-- new dropdown -->
+        <div class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
+          <div role="presentation" ng-click="self.dblClickNode(self.selectedList[0])" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
+            <span class="lm-new-windows-16x16" style="margin-right: 10px; color: #0077be;"></span>
+            <span class="name">Open</span>
+          </div>
+          <div role="presentation" ng-click="self.copyOrCut('copy')" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
+            <span class="copy-16x16" style="margin-right: 10px; color: #0077be;"></span>
+            <span class="name">Copy</span>
+          </div>
+          <div role="presentation" ng-click="self.copyOrCut('cut')" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
+            <span class="zone-split-16x16" style="margin-right: 10px; color: #0077be"></span>
+            <span class="name">Cut</span>
+          </div>
+          <div role="presentation" ng-click="self.paste()" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
+            <span class="summation-16x16" style="margin-right: 10px; color: #0077be"></span>
+            <span class="name">Paste</span>
+          </div>
+          <div role="presentation" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 1) || !self.selectedList[0].rootIsFile}" role="menuitem"
+          tabindex="-1">
+            <span class="expand-16x16" style="margin-right: 10px; color: #0077be"></span>
+            <span class="name">Download</span>
+          </div>
+          <div role="presentation" ng-click="self.removeNodes()" ng-class="{inactive: !(self.selectedList.length > 0)}" role="menuitem" tabindex="-1">
+            <span class="purge-16x16" style="margin-right: 10px; color: #d44747"></span>
+            <span class="name">Remove</span>
+          </div>
+          <div role="presentation" ng-click="self.bulkEdit(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}" 
+          role="menuitem"
+          tabindex="-1">
+            <span class="properties2-16x16" style="margin-right: 10px; color: #0077be"></span>
+            <span class="name">Bulk Edit</span>
+          </div>
+          <div role="presentation" ng-click="self.copyMultiLocation(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}" 
+          role="menuitem"
+          tabindex="-1">
+            <span class="copy-16x16" style="margin-right: 10px; color: #0077be"></span>
+            <span>Copy Locations</span>
+          </div>
+
+        </div>
+        <!-- new dropdown -->
+
+        <ul style="display: none;" class="dropdown-menu scrollable-menu animated fast fadeIn pull-right" role="menu" aria-labelledby="more">
           <li role="presentation" ng-click="self.dblClickNode(self.selectedList[0])">
             <a href="" ng-class="{inactive: !(self.selectedList.length == 1)}" role="menuitem" tabindex="-1">
               <i class="fa fa-folder-open"></i>&nbsp;&nbsp;Open

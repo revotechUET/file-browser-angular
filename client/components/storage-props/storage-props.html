@@ -16,7 +16,7 @@
 				{{md.label}}
 			</label>
 			<div class="col-sm-7"
-				style="border-left: 1px solid #ddd; padding: 0; display: flex; background: #eee; align-items: center;">
+				style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
 				<div style="flex: 1">
 					<input type="text" ng-model="md.value" 
 							class="form-control props-value"
@@ -55,15 +55,11 @@
 								style="display: inline; width: 90%">
 					</div>
 					<div ng-if="md.type=='wiassociate'">
-						<button class="btn btn-default"
-								ng-click="self.associateToNodes(md)"
-								style="padding: 3px 10px;">
-							<i class="fa fa-external-link"></i>
-						</button>
+						<div class="ti ti-arrow-top-right" style="cursor: pointer;" ng-click="self.associateToNodes(md)"></div>
 					</div>
 				</div>
 				<div ng-if="md.name == 'location'" >
-					<i class="fa fa-copy"
+					<i class="ti ti-files"
 						ng-class="{copied: self.locationCopied(md.value)}"
 						ng-click="self.copyLocation(md.value)"
 						style="padding: 0 5px; cursor: pointer;"
@@ -71,7 +67,7 @@
 					</i>
 				</div>
 				<div ng-if="md.type=='wilink'" >
-					<i class="fa fa-paste"
+					<i class="ti ti-clipboard"
 						ng-click="self.pasteObject(md, md.name)"
 						style="padding: 0 2px; cursor: pointer;"
 						title="Paste!">
@@ -81,7 +77,7 @@
 						style="padding: 0 2px; cursor: pointer;"
 						title="Go!">
 					</i> -->
-					<i class="fa fa-remove"
+					<i class="ti ti-close"
 						ng-click="self.clearObject(md)"
 						style="padding: 0 2px; cursor: pointer;"
 						title="Clear!">
@@ -89,10 +85,11 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="form-group props-group more-info"
-			ng-if="section=='More Information'">
+			ng-if="section=='More Information'" style="display: none;">
 			<div ng-repeat="md in self.fields[section]">
-				<div class="col-sm-5">
+				<div class="col-sm-5" style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
 					<input type="text" class="form-control props-value"
 							ng-model="md.label"
 							ng-blur="self.updateMDName(md.label, md.name, md.value)"
@@ -100,27 +97,65 @@
 							ng-change="self.warning = ''"
 							readonly="">
 				</div>
-				<div class="col-sm-6"
+				<div class="col-sm-6" style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;"
 					style="border-left: 1px solid #ddd;">
 					<input type="text" class="form-control props-value"
 							ng-model="md.value"
 							ng-blur="self.updateMetaData(md.name, md.value)"
 							sp-enter="$event.currentTarget.blur();">
 				</div>
-				<div class="col-sm-1">
-					<button type="text" class="btn btn-flat pull-right"
+				<div class="col-sm-1" style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
+					<div type="text" class=" ti ti-close"
 							ng-click="self.removeDataMeta(md.name)"
 							style="width: 100%; background: none;">
-						<i class="fa fa-close"></i>
-					</button>
+					</div>
 				</div>
 			</div>
-			<p>{{self.warning}}</p>
-			<button class="btn btn-flat add-mdata" title="Add Meta Data"
+			<p>{{self.warning}} hhh</p>
+			<div class="btn btn-flat add-mdata" title="Add Meta Data"
 					ng-if="!self.shortView"
 					ng-click="self.addMetaData()">
-				<i class="fa fa-plus"></i> Add Meta Data
-			</button>
+				<i class="ti ti-plus"></i> Add Meta Data
+			</div>
+		</div>
+
+		<div class="form-group props-group more-info"
+			ng-if="section=='More Information'" ng-repeat="md in self.fields[section]">
+			<div>
+				<label class="col-sm-5">
+					<input type="text" class="form-control props-value" style="direction: ltr;"
+						ng-model="md.label"
+						ng-blur="self.updateMDName(md.label, md.name, md.value)"
+						sp-enter="$event.currentTarget.blur();"
+						ng-change="self.warning = ''"
+						readonly="">
+				</label>
+				<div class="col-sm-7"
+					style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
+					<div style="flex: 1">
+						<input type="text" class="form-control props-value"
+							ng-model="md.value"
+							ng-blur="self.updateMetaData(md.name, md.value)"
+							sp-enter="$event.currentTarget.blur();">
+						<div ng-if="md.type=='rating'" class="quality-field">
+							<span ng-click="self.removeDataMeta(md.name)">
+								<i class="ti ti-close"></i>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group props-group more-info"
+			ng-if="section=='More Information'"
+			style="margin: 20px;">
+			<div>
+				<label ng-if="self.warning" style="width: 100%; text-align: center; background: #ffe7b8;">{{self.warning}}</label>
+				<div class="add-mdata" title="Add Meta Data"
+						ng-if="!self.shortView"
+						ng-click="self.addMetaData()">Add Meta Data
+				</div>
+			</div>
 		</div>
 	</div>
 </form>

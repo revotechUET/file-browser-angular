@@ -1,5 +1,5 @@
 // Load css
-require('./file-explorer.less');
+require('./new-file-explorer.less');
 
 // Load js
 /*
@@ -47,11 +47,13 @@ const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 
-Controller.$inject = ['$scope', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession'];
+Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession'];
 
-function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSession) {
+function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession) {
   let self = this;
   window.fileBrowser = self;
+  self.widthArray = [];
+  self.headerArray = ['Name', 'Data type', 'Size', 'Data modified'];
   this.wiSession = wiSession;
   this.$onInit = function () {
     self.imgResource = {};
@@ -111,6 +113,17 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
       }
     });
   };
+  this.changeWidth = function (leftColIdx, leftColWidth, rightColIdx, rightColWidth) {
+    $timeout(() => {
+        self.widthArray[leftColIdx] = leftColWidth;
+        self.widthArray[rightColIdx] = rightColWidth;
+    });
+  }
+  this.tableInit = function(tableWidthArray) {
+      $timeout(() => {
+          self.widthArray = tableWidthArray;
+      });
+  }
 
   this.orderBy = function (propOrder) {
     self.reverse = (self.propOrder === propOrder) ? !self.reverse : false;
@@ -589,10 +602,10 @@ function Controller($scope, $filter, $element, $http, ModalService, Upload, wiSe
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession']);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable']);
 
 app.component(componentName, {
-  template: require('./file-explorer.html'),
+  template: require('./new-file-explorer.html'),
   controller: Controller,
   controllerAs: 'self',
   bindings: {

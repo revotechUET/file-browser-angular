@@ -68,8 +68,23 @@
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     ng-class="{selected: self.isSelected(item)}">
                     <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}">
-                        <i class="ti ti-file" ng-show="item.rootIsFile" style="margin-right: 5px;"></i>
-                        <i class="ti ti-folder" ng-show="!item.rootIsFile" style="margin-right: 5px;"></i>
+                        <i class="folder-icon-16x16" ng-show="!item.rootIsFile" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="svg-icon-16x16" ng-show="item.metaData.type === 'image/svg+xml'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="csv-icon-16x16" ng-show="item.metaData.type === 'text/csv'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="jpg-icon-16x16" ng-show="item.metaData.type === 'image/jpeg'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="jpg-icon-16x16" ng-show="item.metaData.type === 'image/png'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="docx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="docx-icon-16x16" ng-show="item.metaData.type === 'application/msword'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="xlsx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" style="margin-right: 5px; margin-bottom: -4px;">
+                            
+                        </i>
+                        <i class="pptx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.ms-powerpoint'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="pptx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="pdf-icon-16x16" ng-show="item.metaData.type === 'application/pdf'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="zip-icon-16x16" ng-show="item.metaData.type === 'application/zip'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="zip-icon-16x16" ng-show="item.metaData.type === 'application/x-rar'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="file-icon-16x16" ng-show="item.metaData.type === 'Unknown'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+
                         {{item.rootName}}
                     </div>
                     <div ng-style='{"width": self.widthArray[1]}' title="{{item.metaData.datatype}}" class="data-type">{{item.metaData.datatype}}</div>

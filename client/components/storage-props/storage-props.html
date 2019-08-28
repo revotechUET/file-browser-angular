@@ -46,13 +46,13 @@
 						</span>
 					</div>
 					<div ng-if="md.type=='wilink'">
-						<span class="{{md.value.icon}}" title="{{md.value.type}}"
-								style="vertical-align: middle;margin-left: 2px"></span>
+						<!-- <span class="{{md.value.icon}}" title="{{md.value.type}}"
+								style="vertical-align: middle;margin-left: 2px"></span> -->
 						<input type="text" ng-model="md.value.name"
 								class="form-control props-value"
 								readonly
 								title="{{md.value.name}}"
-								style="display: inline; width: 90%">
+								style="display: inline;">
 					</div>
 					<div ng-if="md.type=='wiassociate'">
 						<div class="ti ti-arrow-top-right" style="cursor: pointer;" ng-click="self.associateToNodes(md)"></div>

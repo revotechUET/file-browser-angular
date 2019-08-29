@@ -87,7 +87,14 @@
                         {{item.rootName}}
                     </div>
                     <div ng-style='{"width": self.widthArray[1]}' title="{{item.metaData.datatype}}" class="data-type">{{item.metaData.datatype}}</div>
-                    <div ng-style='{"width": self.widthArray[2]}' title="{{item.size | humanReadableFileSize}}" class="size">{{item.size | humanReadableFileSize}}</div>
+                    <div ng-style='{"width": self.widthArray[2]}' title="{{item.size | humanReadableFileSize}}" class="size">
+                        <span ng-if="item.rootIsFile">
+                            {{item.size | humanReadableFileSize}}
+                          </span>
+                          <span ng-if="!item.rootIsFile">
+                            --
+                          </span>
+                    </div>
                     <div ng-style='{"width": self.widthArray[3]}' title="{{item.modifiedDate | formatDate}}" class="date">{{item.modifiedDate | formatDate}}</div>
                 </div>
             </wi-table-resizeable>

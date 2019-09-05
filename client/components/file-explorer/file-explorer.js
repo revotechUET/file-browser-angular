@@ -54,6 +54,69 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   window.fileBrowser = self;
   self.widthArray = [];
   self.headerArray = ['Name', 'Data type', 'Size', 'Data modified'];
+  self.fileTypeList = [
+    {
+      type: 'image/svg+xml',
+      class: 'svg-icon-16x16'
+    },{
+      type: 'application/json',
+      class: 'json-icon-16x16'
+    },{
+      type: 'text/html',
+      class: 'json-icon-16x16'
+    },{
+      type: 'text/x-python-script',
+      class: 'json-icon-16x16'
+    },{
+      type: 'image/bmp',
+      class: 'jpg-icon-16x16'
+    },{
+      type: 'image/tiff',
+      class: 'jpg-icon-16x16'
+    },{
+      type: 'text/csv',
+      class: 'csv-icon-16x16'
+    },{
+      type: 'image/jpeg',
+      class: 'jpg-icon-16x16'
+    },{
+      type: 'image/png',
+      class: 'jpg-icon-16x16'
+    },{
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      class: 'docx-icon-16x16'
+    },{
+      type: 'application/msword',
+      class: 'docx-icon-16x16'
+    },{
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      class: 'xlsx-icon-16x16'
+    },{
+      type: 'application/vnd.ms-excel',
+      class: 'xlsx-icon-16x16'
+    },{
+      type: 'application/vnd.ms-powerpoint',
+      class: 'pptx-icon-16x16'
+    },{
+      type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      class: 'pptx-icon-16x16'
+    },{
+      type: 'application/pdf',
+      class: 'pdf-icon-16x16'
+    },{
+      type: 'application/zip',
+      class: 'zip-icon-16x16'
+    },{
+      type: 'application/x-rar',
+      class: 'zip-icon-16x16'
+    },{
+      type: 'text/plain',
+      class: 'file-icon-16x16'
+    },{
+      type: 'Unknown',
+      class: 'file-icon-16x16'
+    }
+  ]
   this.wiSession = wiSession;
   this.$onInit = function () {
     self.imgResource = {};
@@ -113,6 +176,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
   };
+  this.setIconFile = function(typeFile) {
+    let found = self.fileTypeList.find(f => f.type === typeFile)
+    return found ? found.class : "file-icon-16x16";
+  }
   this.changeWidth = function (leftColIdx, leftColWidth, rightColIdx, rightColWidth) {
     $timeout(() => {
         self.widthArray[leftColIdx] = leftColWidth;

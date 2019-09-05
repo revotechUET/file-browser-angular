@@ -63,27 +63,13 @@
                 headers="self.headerArray" 
                 on-table-init="self.tableInit" 
                 on-header-width-changed="self.changeWidth"
-                default-widths="[150,300,100,150]">
+                default-widths="[250,300,100,150]">
                 <div class="table-row" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     ng-class="{selected: self.isSelected(item)}">
                     <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}">
-                        <i class="folder-icon-16x16" ng-show="!item.rootIsFile" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="svg-icon-16x16" ng-show="item.metaData.type === 'image/svg+xml'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="json-icon-16x16" ng-show="item.metaData.type === 'application/json'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="csv-icon-16x16" ng-show="item.metaData.type === 'text/csv'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="jpg-icon-16x16" ng-show="item.metaData.type === 'image/jpeg'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="jpg-icon-16x16" ng-show="item.metaData.type === 'image/png'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="docx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="docx-icon-16x16" ng-show="item.metaData.type === 'application/msword'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="xlsx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || item.metaData.type ===  'application/vnd.ms-excel'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="pptx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.ms-powerpoint'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="pptx-icon-16x16" ng-show="item.metaData.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="pdf-icon-16x16" ng-show="item.metaData.type === 'application/pdf'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="zip-icon-16x16" ng-show="item.metaData.type === 'application/zip'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="zip-icon-16x16" ng-show="item.metaData.type === 'application/x-rar'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="file-icon-16x16" ng-show="item.metaData.type === 'Unknown'" style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="file-icon-16x16" ng-show="item.metaData.type === 'text/plain'" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="folder-icon-16x16" ng-show="!item.rootIsFile" style="margin-right: 5px; margin-bottom: -4px;"></i>      
+                        <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}" style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
                     <div ng-style='{"width": self.widthArray[1]}' title="{{item.metaData.datatype}}" class="data-type">{{item.metaData.datatype}}</div>

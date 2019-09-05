@@ -63,7 +63,7 @@
                 headers="self.headerArray" 
                 on-table-init="self.tableInit" 
                 on-header-width-changed="self.changeWidth"
-                default-widths="[250,300,100,150]">
+                default-widths="[300,250,100,150]">
                 <div class="table-row" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     ng-class="{selected: self.isSelected(item)}">

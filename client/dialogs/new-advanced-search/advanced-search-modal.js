@@ -141,7 +141,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       }
     };
     this.changeCustomFields = function(row, oPart, index) {
-      self.customArr[index].key = row.key;
+      self.customArr[index].key = encodeURI(row.key).toLowerCase();
       self.customArr[index].value = row.value;
       console.log(self.customArr);
     }

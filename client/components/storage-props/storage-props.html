@@ -111,7 +111,7 @@
 					</div>
 				</div>
 			</div>
-			<p>{{self.warning}} hhh</p>
+			<p>{{self.warning}}</p>
 			<div class="btn btn-flat add-mdata" title="Add Metadata"
 					ng-if="!self.shortView"
 					ng-click="self.addMetaData()">
@@ -132,7 +132,7 @@
 				</label>
 				<div class="col-sm-7"
 					style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
-					<div style="flex: 1">
+					<div style="flex: 1 ;display: flex; align-items: center;">
 						<input type="text" class="form-control props-value"
 							ng-model="md.value"
 							ng-blur="self.updateMetaData(md.name, md.value)"
@@ -142,6 +142,8 @@
 								<i class="ti ti-close"></i>
 							</span>
 						</div>
+						<div class="ti ti-close" ng-click="self.removeDataMeta(md.name)" style="margin-left: 10px; color: red;"></div>
+					
 					</div>
 				</div>
 			</div>
@@ -153,7 +155,7 @@
 				<label ng-if="self.warning" style="width: 100%; text-align: center; background: #ffe7b8;">{{self.warning}}</label>
 				<div class="add-mdata" title="Add Metadata"
 						ng-if="!self.shortView"
-						ng-click="self.addMetaData()">Add Metadata
+						ng-click="self.addMetaData()"><i class="ti ti-plus"></i>Add Metadata
 				</div>
 			</div>
 		</div>

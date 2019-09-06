@@ -228,8 +228,12 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       return searchQuery;
     };
     function onSearch() {
+      let newCustomArr = angular.copy(self.customArr);
+      newCustomArr.forEach(custom => {
+          custom.key = encodeURI(custom.key.toLowerCase());
+      })
       self.searchQuery.subFolders = (self.subFolders) ? 'included' : 'excluded';
-      fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions, self.customArr);
+      fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions, newCustomArr);
     }
     this.applySearch = function () {
       onSearch();

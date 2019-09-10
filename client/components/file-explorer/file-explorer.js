@@ -669,7 +669,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable']);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService']);
 
 app.component(componentName, {
   template: require('./new-file-explorer.html'),

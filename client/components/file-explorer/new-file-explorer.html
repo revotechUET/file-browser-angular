@@ -9,7 +9,8 @@
                 <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
                 <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
                 <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()" ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
-                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 1) || !self.selectedList[0].rootIsFile}"></div>
+<!--                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 0) || !self.selectedList[0].rootIsFile}"></div>-->
+                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: self.selectedList.length === 0}"></div>
                 <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()" ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
                 <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}"></div>
                 <div title="Copy Location" class="button-fn ti ti-receipt" ng-click="self.copyMultiLocation(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}"></div>

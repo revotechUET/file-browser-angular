@@ -120,6 +120,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     ]
     this.wiSession = wiSession;
     this.$onInit = function () {
+        if(typeof self.setContainer === 'function') self.setContainer(self);
+
         self.imgResource = {};
         self.currentPath = [];
         self.selectedList = [];
@@ -729,7 +731,8 @@ app.component(componentName, {
         rawDataUrl: '@',
         storageDatabase: '<',
         linkedFile: '@',
-        idProject: '<'
+        idProject: '<',
+        setContainer: '<'
     }
 });
 

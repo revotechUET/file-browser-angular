@@ -166,7 +166,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                       'Content-Type': 'application/json',
                       'Referrer-Policy': 'no-referrer',
                       'Authorization': window.localStorage.getItem('token'),
-                      'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase)
+                      'Storage-Database': JSON.stringify(fileExplorerCtrl.storageDatabase),
+                      'Service': "WI_PROJECT_STORAGE"
                     },
                     data: {
                       'upload-file': file

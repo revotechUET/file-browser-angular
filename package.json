@@ -30,6 +30,6 @@
     "pdfjs-dist": "^2.0.943",
     "popper.js": "^1.14.5",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.6"
+    "webpack": "^4.39.3"
   }
 }

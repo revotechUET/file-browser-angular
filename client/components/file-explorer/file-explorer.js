@@ -35,7 +35,7 @@ const componentName = 'fileExplorer';
 //   'Authorization': window.localStorage.getItem('token'),
 //   'Storage-Database': window.localStorage.getItem('storage_database')
 // };
-const RAW_DATA_PATH = '/read-file?file_path=';
+const RAW_DATA_PATH = '/read-file/preview?file_path=';
 const EXPLORE_PATH = '/file-explorer/shallow?dir=';
 const UPLOAD_PATH = '/upload?location=';
 const DOWNLOAD_PATH = '/download?file_path=';
@@ -269,32 +269,36 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.filter = '';
             // self.modeFilter = 'all';
             self.selectedList.push(item);
-            self.httpGet(self.rawDataUrl + encodeURIComponent(item.path), result => {
+            
+            self.httpGet("http://127.0.0.1:5000/filepreview?file_path=" + encodeURIComponent(item.path), result => {
+                console.log(result.data)
                 let data = {title: item.rootName};
                 let resource = result.data.data;
-                data.fileContent = resource;
-                switch (true) {
-                    case !resource.isReadable:
-                        console.log("Can't preview this file");
-                        data.fileContent = "No preview available";
-                        textViewerDialog(ModalService, self, data, item);
-                        // self.downloadFile(item);
-                        break;
-                    case /\.pdf$/.test(self.getExtFile(item)):
-                        data.fileContent = resource.base64;
-                        pdfViewerDialog(ModalService, self, data, item);
-                        break;
-                    case /\.(jpg|JPG|png|PNG|jpeg|JPEG|gif|GIF|bmp|BMP|svg|SVG)$/.test(self.getExtFile(item)):
-                        self.imgResource.title = item.rootName;
-                        self.imgResource.fileContent = resource.base64;
-                        let imgCtnElm = document.getElementById('img-container');
-                        self.imgResource.parentElem = imgCtnElm;
-                        imgCtnElm.style.display = 'block';
-                        break;
-                    default:
-                        data.fileContent = resource.utf8;
-                        textViewerDialog(ModalService, self, data, item);
-                }
+                data.fileContent = result.data;
+                pdfViewerDialog(ModalService, self, data, item);
+               // data.fileContent = resource;
+                // switch (true) {
+                //     case !resource.isReadable:
+                //         console.log("Can't preview this file");
+                //         data.fileContent = "No preview available";
+                //         textViewerDialog(ModalService, self, data, item);
+                //         // self.downloadFile(item);
+                //         break;
+                //     case /\.pdf$/.test(self.getExtFile(item)):
+                //         data.fileContent = resource.base64;
+                //         pdfViewerDialog(ModalService, self, data, item);
+                //         break;
+                //     case /\.(jpg|JPG|png|PNG|jpeg|JPEG|gif|GIF|bmp|BMP|svg|SVG)$/.test(self.getExtFile(item)):
+                //         self.imgResource.title = item.rootName;
+                //         self.imgResource.fileContent = resource.base64;
+                //         let imgCtnElm = document.getElementById('img-container');
+                //         self.imgResource.parentElem = imgCtnElm;
+                //         imgCtnElm.style.display = 'block';
+                //         break;
+                //     default:
+                //         data.fileContent = resource.utf8;
+                //         textViewerDialog(ModalService, self, data, item);
+                // }
             })
         }
     };
@@ -613,11 +617,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
     this.httpGet = function (url, cb) {
         self.requesting = !self.requesting;
+        console.log(self.storageDatabase);
         let reqOptions = {
             method: 'GET',
             url: url,
             headers: {
                 'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': 'http://127.0.0.1:5000',
+                'Access-Control-Allow-Credentials': 'true',
                 'Referrer-Policy': 'no-referrer',
                 'Authorization': window.localStorage.getItem('token'),
                 'Storage-Database': JSON.stringify(self.storageDatabase)

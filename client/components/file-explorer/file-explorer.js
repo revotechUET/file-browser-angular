@@ -350,7 +350,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 'Authorization': window.localStorage.getItem('token'),
                 'Storage-Database': JSON.stringify(self.storageDatabase),
                 'Content-Type': 'application/json',
-                'Referrer-Policy': 'no-referrer'
+                'Referrer-Policy': 'no-referrer',
+                'Service': 'WI_PROJECT_STORAGE'
             },
             data: {
                 // 'files': ["/I2G/aa8f3445dd87fb273dfc4f862ee8b917f2de1088/01-97-Ho Xam-1X.las"]
@@ -627,7 +628,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 'Access-Control-Allow-Credentials': 'true',
                 'Referrer-Policy': 'no-referrer',
                 'Authorization': window.localStorage.getItem('token'),
-                'Storage-Database': JSON.stringify(self.storageDatabase)
+                'Storage-Database': JSON.stringify(self.storageDatabase),
+                'Service': 'WI_PROJECT_STORAGE'
             }
         };
         $http(reqOptions).then(result => {
@@ -648,7 +650,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 'Content-Type': 'application/json',
                 'Referrer-Policy': 'no-referrer',
                 'Authorization': window.localStorage.getItem('token'),
-                'Storage-Database': JSON.stringify(self.storageDatabase)
+                'Storage-Database': JSON.stringify(self.storageDatabase),
+                'Service': 'WI_PROJECT_STORAGE'
             },
             data: payload
         };

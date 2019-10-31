@@ -7,7 +7,7 @@
     "start": "node server/app.js",
     "build": "webpack --mode=production",
     "build-dev": "webpack --mode=development",
-    "dev": "webpack -w --mode=development",
+    "dev": "webpack -w --mode=development --config webpack.local.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -30,6 +30,6 @@
     "pdfjs-dist": "^2.0.943",
     "popper.js": "^1.14.5",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.6"
+    "webpack": "^4.39.3"
   }
 }

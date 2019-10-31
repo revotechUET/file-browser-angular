@@ -5,3 +5,5 @@ bower_components
 /public/
 .eslintrc.json
 /.vscode/
+yarn.lock
+webpack.local.js

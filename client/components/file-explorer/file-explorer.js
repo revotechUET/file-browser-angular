@@ -269,7 +269,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.filter = '';
             // self.modeFilter = 'all';
             self.selectedList.push(item);
-            self.httpGet("http://127.0.0.1:5000/filepreview?file_path=" + encodeURIComponent(item.path), result => {
+            self.httpGet(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`, result => {
                 let data = {title: item.rootName};
                 data.fileContent = result.data;
                 pdfViewerDialog(ModalService, self, data, item);
@@ -735,6 +735,7 @@ app.component(componentName, {
     bindings: {
         rootFolder: '@',
         url: '@',
+        previewUrl: '@',
         rawDataUrl: '@',
         storageDatabase: '<',
         linkedFile: '@',

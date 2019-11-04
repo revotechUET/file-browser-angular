@@ -269,7 +269,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.filter = '';
             // self.modeFilter = 'all';
             self.selectedList.push(item);
-            self.httpGet(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`, result => {
+            self.httpGet(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}&service=WI_FILE_PREVIEW`, result => {
                 let data = {title: item.rootName};
                 data.fileContent = result.data;
                 pdfViewerDialog(ModalService, self, data, item);

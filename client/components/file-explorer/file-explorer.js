@@ -269,7 +269,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.filter = '';
             // self.modeFilter = 'all';
             self.selectedList.push(item);
-            self.httpGet(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}&service=WI_FILE_PREVIEW`, result => {
+            self.httpGet(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`, result => {
                 let data = {title: item.rootName};
                 data.fileContent = result.data;
                 pdfViewerDialog(ModalService, self, data, item);
@@ -296,7 +296,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 //         data.fileContent = resource.utf8;
                 //         textViewerDialog(ModalService, self, data, item);
                 // }
-            })
+            }, {service: "WI_FILE_PREVIEW"})
         }
     };
 
@@ -613,7 +613,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             }
         });
     }
-    this.httpGet = function (url, cb) {
+    this.httpGet = function (url, cb, options) {
         self.requesting = !self.requesting;
         console.log(self.storageDatabase);
         let reqOptions = {
@@ -626,7 +626,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 'Referrer-Policy': 'no-referrer',
                 'Authorization': window.localStorage.getItem('token'),
                 'Storage-Database': JSON.stringify(self.storageDatabase),
-                'Service': 'WI_PROJECT_STORAGE'
+                'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
             }
         };
         $http(reqOptions).then(result => {

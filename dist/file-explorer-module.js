@@ -284,6 +284,17 @@ eval("const async = __webpack_require__(/*! ../../vendor/js/async.min */ \"./cli
 
 /***/ }),
 
+/***/ "./client/dialogs/confirm/confirm-modal.html":
+/*!***************************************************!*\
+  !*** ./client/dialogs/confirm/confirm-modal.html ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = \"<div class='modal fade' data-backdrop=\\\"static\\\" data-keyboard=\\\"false\\\">\\n    <div class='modal-dialog'>\\n        <div class=\\\"modal-content\\\" ng-form=\\\"form\\\">\\n            <div class=\\\"modal-header\\\">\\n                <button type=\\\"button\\\" class=\\\"close\\\" aria-hidden=\\\"true\\\" ng-click=\\\"self.close(false)\\\">&times;</button>\\n                <h4 class=\\\"modal-title\\\">Confirmation</h4>\\n            </div>\\n            <div class=\\\"modal-body text-center\\\">\\n                <span style=\\\"font-style: italic; color: #281D1B; white-space: normal;\\\" ng-bind-html=\\\"wiModal.confirmMsg\\\"></span>\\n            </div>\\n            <div class=\\\"modal-footer\\\">\\n                <button type=\\\"submit\\\" class=\\\"btn btn-default\\\"\\n                        ng-click=\\\"self.close(true)\\\">\\n                    <span class=\\\"ok-16x16\\\"></span>&nbsp;Ok\\n                </button>\\n                <button type=\\\"button\\\" class=\\\"btn btn-default\\\" ng-click=\\\"self.close(false)\\\">\\n                    <span class=\\\"close-16x16\\\"></span>&nbsp;Cancel\\n                </button>\\n            </div>\\n        </div>\\n    </div>\\n</div>\";\n\n//# sourceURL=webpack:///./client/dialogs/confirm/confirm-modal.html?");
+
+/***/ }),
+
 /***/ "./client/dialogs/confirm/confirm-modal.js":
 /*!*************************************************!*\
   !*** ./client/dialogs/confirm/confirm-modal.js ***!
@@ -291,7 +302,7 @@ eval("const async = __webpack_require__(/*! ../../vendor/js/async.min */ \"./cli
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const async = __webpack_require__(/*! ../../vendor/js/async.min */ \"./client/vendor/js/async.min.js\");\nconst helper = __webpack_require__(/*! ../dialog-helper */ \"./client/dialogs/dialog-helper.js\");\n\nmodule.exports = async function (ModalService, confirmMessage, callback) {\n    function ModalController($scope, close) {\n        this.confirmMsg = confirmMessage;\n        this.close = function (ret) {\n            close(ret);\n        }\n    }\n\n    const modal = await ModalService.showModal({\n        templateUrl: \"confirm-modal.html\",\n        controller: ModalController,\n        controllerAs: 'wiModal'\n    });\n    helper.initModal(modal);\n    modal.close.then(function (ret) {\n        helper.removeBackdrop();\n        callback && callback(ret);\n    });\n    return modal;\n}\n\n//# sourceURL=webpack:///./client/dialogs/confirm/confirm-modal.js?");
+eval("const async = __webpack_require__(/*! ../../vendor/js/async.min */ \"./client/vendor/js/async.min.js\");\nconst helper = __webpack_require__(/*! ../dialog-helper */ \"./client/dialogs/dialog-helper.js\");\n\nmodule.exports = async function (ModalService, confirmMessage, callback) {\n    function ModalController($scope, close) {\n        this.confirmMsg = confirmMessage;\n        this.close = function (ret) {\n            close(ret);\n        }\n    }\n\n    const modal = await ModalService.showModal({\n        // templateUrl: \"confirm-modal.html\",\n        template: __webpack_require__(/*! ./confirm-modal.html */ \"./client/dialogs/confirm/confirm-modal.html\"),\n        controller: ModalController,\n        controllerAs: 'wiModal'\n    });\n    helper.initModal(modal);\n    modal.close.then(function (ret) {\n        helper.removeBackdrop();\n        callback && callback(ret);\n    });\n    return modal;\n}\n\n//# sourceURL=webpack:///./client/dialogs/confirm/confirm-modal.js?");
 
 /***/ }),
 

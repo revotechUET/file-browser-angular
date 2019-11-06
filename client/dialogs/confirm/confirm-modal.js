@@ -10,7 +10,8 @@ module.exports = async function (ModalService, confirmMessage, callback) {
     }
 
     const modal = await ModalService.showModal({
-        templateUrl: "confirm-modal.html",
+        // templateUrl: "confirm-modal.html",
+        template: require('./confirm-modal.html'),
         controller: ModalController,
         controllerAs: 'wiModal'
     });

@@ -272,7 +272,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.httpGet(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`, result => {
                 let data = {title: item.rootName};
                 data.fileContent = result.data;
-                pdfViewerDialog(ModalService, self, data, item);
+                // pdfViewerDialog(ModalService, self, data, item); Hoang comment
+
                // data.fileContent = resource;
                 // switch (true) {
                 //     case !resource.isReadable:

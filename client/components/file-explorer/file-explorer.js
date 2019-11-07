@@ -47,6 +47,8 @@ const NEW_FOLDER_PATH = '/action/create-folder?';
 const SEARCH_PATH = '/search';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
+const RESTORE_REVISION = '/action/restore';
+const REMOVE_REVISION = '/action/remove-revision';
 
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession'];
 
@@ -145,6 +147,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.searchUrl = self.url + SEARCH_PATH;
         self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
         self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
+        self.restoreRevisionUrl = self.url + RESTORE_REVISION;
+        self.removeRevisionUrl = self.url + REMOVE_REVISION;
         self.modeFilter = 'all';
         let searchQuery = {
             conditions: {
@@ -178,6 +182,18 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 self.fileList = [];
             }
         });
+    };
+    this.removeRevision = function (revision) {
+        let url = self.removeRevisionUrl + '?file_path=' + encodeURIComponent(self.selectedItem.path) + '&revision=' + revision.name;
+        self.httpGet(url, function (rs) {
+            self.goTo(-999)
+        })
+    };
+    this.restoreVersion = function (revision) {
+        let url = self.restoreRevisionUrl + '?file_path=' + encodeURIComponent(self.selectedItem.path) + '&revision=' + revision.name;
+        self.httpGet(url, function (rs) {
+            self.goTo(-999)
+        })
     };
     this.setIconFile = function (typeFile) {
         let found = self.fileTypeList.find(f => f.type === typeFile)
@@ -423,7 +439,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 return {location: p}
             });
         }
-        ;
         let searchPayload = {
             content: {
                 subFolders: 'included',
@@ -693,8 +708,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
             metaData: metaData
         }, function (fileList) {
+            self.goTo(-999)
             let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
             self.clickNode(item);
+
         });
     };
     this.removeMetaData = function (name) {
@@ -704,6 +721,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
             metaData: self.selectedItem.metaData
         });
+        self.goTo(-999)
     };
     this.addMetaData = function (name, value) {
         console.log("add", name, value);

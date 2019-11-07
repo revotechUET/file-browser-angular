@@ -13,7 +13,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
-  	this.sections = ['General', 'Information', 'Description', 'More Information'];
+  	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
 	};
@@ -21,12 +21,6 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.wells = [];
 	this.$onChanges = function(changeObj) {
 		if(changeObj.metaData) {
- 			/*console.log(self.getMDObj());
- 			wiApiService.listWells({idProject: idProject}, function(wells) {
- 				self.wells = wells;
- 				self.selections.wells = wells.map(w => w.name);
- 				self.selections.wells.unshift("");
- 			});*/
  			self.fields = self.getMDObj();
 		}
 	};
@@ -45,15 +39,28 @@ function Controller($scope, $filter, ModalService, wiSession) {
 					readonly: false,
 					value: self.metaData[key]
 				});
-			};
+			}
 			arr = mapOrder(arr, Object.keys(config), 'name');
 			obj[section] = arr;
 			obj['More Information'] = undefinedArr;
 		});
-		if(getMDProps('associate', config['associate'])) obj['Information'].push(getMDProps('associate', config['associate']));
-		return obj;
+        obj['Version History'] = self.revision ? self.revision.map(rev => {
+            return {
+                name: rev.time,
+                label: moment(parseInt(rev.time)).format('YYYY/MM/DD hh:mm'),
+                type: 'wirevision',
+                value: $filter('humanReadableFileSize')(rev.size),
+                readonly: true,
+                use: true
+            }
+        }) : [];
+        if (getMDProps('associate', config['associate'])) obj['Information'].push(getMDProps('associate', config['associate']));
+        return obj;
 	};
-	
+    self.removeRevision = function (revision) {
+        self.revision = self.revision ? self.revision.filter(v => v.time !== revision.name) : [];
+        self.fields = self.getMDObj();
+    };
 	function mapOrder (array, order, key) {
 		array.sort( function (a, b) {
 		    var A = a[key], B = b[key];
@@ -283,7 +290,10 @@ app.component(componentName, {
     transclude: true,
     bindings: {
         metaData : '<',
+        revision : '<',
         updateMetadatFunc : '<',
+        removeRevisionFunc: '<',
+        restoreRevisionFunc: '<',
         hideHeader: '<',
         readonlyValues: '<',
         shortView: '<',

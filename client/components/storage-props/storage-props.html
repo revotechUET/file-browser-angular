@@ -72,17 +72,25 @@
 						style="padding: 0 2px; cursor: pointer;"
 						title="Paste!">
 					</i>
-					<!-- <i class="fa fa-external-link"
-						ng-click="self.visitNode(md)"
-						style="padding: 0 2px; cursor: pointer;"
-						title="Go!">
-					</i> -->
 					<i class="ti ti-close"
 						ng-click="self.clearObject(md)"
 						style="padding: 0 2px; cursor: pointer;"
 						title="Clear!">
 					</i>
 				</div>
+                <div ng-if="md.type=='wirevision'" >
+                    {{md.value}}
+                    <i class="ti ti-back-left"
+                       ng-click="self.restoreRevisionFunc(md); self.removeRevision(md)"
+                       style="padding: 0 2px; cursor: pointer;"
+                       title="Restore to this version!">
+                    </i>
+                    <i class="ti ti-close"
+                       ng-click="self.removeRevisionFunc(md); self.removeRevision(md)"
+                       style="padding: 0 2px; cursor: pointer;"
+                       title="Remove this version!">
+                    </i>
+                </div>
 			</div>
 		</div>
 

@@ -273,6 +273,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 let data = {title: item.rootName};
                 data.fileContent = result.data;
                 pdfViewerDialog(ModalService, self, data, item);
+
                // data.fileContent = resource;
                 // switch (true) {
                 //     case !resource.isReadable:

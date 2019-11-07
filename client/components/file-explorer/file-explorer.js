@@ -446,6 +446,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 self.fileList = [...data.files, ...data.folders];
                 callback && callback(self.fileList);
             })
+            self.httpGet(`${self.previewUrl}/refresh-cache`, result => {
+                //console.log(result.data)
+            }, {service: "WI_FILE_PREVIEW"})
         } else {
             self.selectedList = [];
             self.currentPath = self.currentPath.slice(0, index + 1);

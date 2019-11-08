@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-horizontal">
-                    <div class="form-group" ng-show="self.processing">
+                    <div class="form-group" ng-show="self.processing" style="overflow: auto; max-height: 200px;">
                         <img style="width:16px;height:16px" src="https://python.i2g.cloud/assets/spinner.gif">
                         <i>Your files/folders are uploading: </i> <i ng-repeat="f in self.processingName track by $index">{{f.name}},&nbsp;</i>
                     </div>

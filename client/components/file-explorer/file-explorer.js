@@ -49,10 +49,12 @@ const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 const RESTORE_REVISION = '/action/restore';
 const REMOVE_REVISION = '/action/remove-revision';
+const UPLOAD_FILES = '/upload/lases';
+const UPLOAD_DLIS = '/upload/dlis';
 
-Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession'];
+Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
-function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession) {
+function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
     let self = this;
     window.fileBrowser = self;
     self.widthArray = [];
@@ -746,9 +748,159 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     this.$onDestroy = function () {
         delete window.fileBrowser;
     }
+    this.importCSV = function(items) {
+        wiDialog.csvImportDialog();
+    }
+    this.importFilesToInventory = function(items) {
+        if (items.length === 0) return;
+        // self.requesting = true;
+        let downloadFiles = items.map((item) => {
+            if (item.rootIsFile) {
+                return item.path
+            } else {
+                return item.path + '/'
+            }
+        });
+        $http({
+            url: self.url + DOWNLOAD_PATH_POST,
+            method: 'POST',
+            headers: {
+                'Authorization': window.localStorage.getItem('token'),
+                'Storage-Database': JSON.stringify(self.storageDatabase),
+                'Content-Type': 'application/json',
+                'Referrer-Policy': 'no-referrer',
+                'Service': 'WI_PROJECT_STORAGE'
+            },
+            data: {
+                'files': downloadFiles,
+                'skipCompressFile': "true"
+            },
+            responseType: 'arraybuffer',
+        }).then(response => {
+            let files = [new Blob([response.data], {
+                type: 'file'
+            })];
+            files = files.map((i, idx) => {
+                i.name = items[idx].rootName;
+                return i;
+            });
+            if(files[0].name.split('.').length > 1) {
+                switch(files[0].name.split('.').pop()) {
+                    case 'las': wiApi.uploadFilesToInventory({ file: files, override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
+                        break;
+                    case 'dlis': wiApi.uploadFilesToInventory({ file: files, override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
+                        break;
+                    case 'csv': wiDialog.csvImportDialog(files[0]);
+                        break;
+                    default: break;
+                }
+            }
+        });
+    }
+    function callbackImportLAS(response) {
+        if (!response) return;
+        if (response === 'UPLOAD FILES FAILED') {
+            console.log("Some errors while uploading file");
+        } else {
+            if (response.errFiles.length) {
+                console.log(response.errFiles.map(f => f.filename).join(', '), 'Error uploading files');
+            }
+            if (response.successFiles.length) {
+                console.log(_.uniq(response.successFiles).join(', '), 'Following files uploaded successfully');
+            } else if (response.successFiles.length === files.length) {
+                console.log('All files uploaded successfully');
+            }
+            if (response.successWells.length) {
+                console.log(_.uniq(response.successWells.map(w => w.name)).join(', '), 'Following wells uploaded successfully');
+            }
+            // $timeout(function () {
+            //     // oUtils.updateInventory();
+            //     self.refreshInventory();
+            //     self.getWiiItems().emptyItems();
+            //     self.getWiiItems().getWiiProperties().emptyList();
+            // }, 500);
+        }
+    }
+    function callbackImportDLIS(response) {
+        // removeProgressItem(progressObj);
+        if (!response) return;
+        if (response === 'UPLOAD FILES FAILED') {
+            console.log("Some errors while uploading file");
+        } else {
+            return console.log('DLIS file are being processed');
+        }
+    }
+    // this.postWithFile = function (route, dataPayload, options = {}) {
+    //     var self = this;
+    //     let serviceHeader = null;
+    //     switch (options.service) {
+    //         case 'auth':
+    //             serviceHeader = "WI_AUTH";
+    //             break;
+    //         case 'processing':
+    //             serviceHeader = "WI_PROCESSING";
+    //             break;
+    //         default:
+    //             serviceHeader = "WI_INVENTORY";
+    //             break;
+    //     }
+    //     return new Promise(function (resolve, reject) {
+    //         let configUpload = {
+    //             url: self.url + route,
+    //             headers: {
+    //                 'Referrer-Policy': 'no-referrer',
+    //                 'Authorization': window.localStorage.getItem('token'),
+    //                 'Service': serviceHeader
+    //             },
+    //             arrayKey: '',
+    //             data: dataPayload
+    //         };
+    //         const upload = Upload.upload(configUpload);
+    //         upload.then(
+    //             function (responseSuccess) {
+    //                 if (responseSuccess.data && responseSuccess.data.code === 200 && responseSuccess.data.content) {
+    //                     return resolve(responseSuccess.data.content);
+    //                 } else if (responseSuccess.data && responseSuccess.data.code === 401) {
+    //                     window.localStorage.removeItem('token');
+    //                     window.localStorage.removeItem('username');
+    //                     window.localStorage.removeItem('password');
+    //                     window.localStorage.removeItem('rememberAuth');
+    //                     location.reload();
+    //                 } else if (responseSuccess.data && responseSuccess.data.reason) {
+    //                     return reject(responseSuccess.data.reason);
+    //                 } else {
+    //                     return reject('Response is invalid!');
+    //                 }
+    //             },
+    //             function (responseError) {
+    //                 if (responseError.data && responseError.data.content) {
+    //                     return reject(responseError.data.reason);
+    //                 } else {
+    //                     return reject(null);
+    //                 }
+    //             },
+    //             function (evt) {
+    //                 // let progress = Math.round(100.0 * evt.loaded / evt.total);
+    //                 // progressCb && progressCb(progress, upload);
+    //                 // console.log('evt upload', progress);
+    //             }
+    //         );
+    //     });
+    // }
+    // this.uploadFilesToInventory = function (payload, callback, url, options) {
+    //     let self = this;
+    //     this.postWithFile(url, payload, options)
+    //         .then(function (response) {
+    //             if (callback) callback(response);
+    //         })
+    //         .catch(function (err) {
+    //             console.log(err);
+    //             callback(err);
+    //         })
+    // }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService']);
+let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService', 'wiDialog']);
 
 app.component(componentName, {
     template: require('./new-file-explorer.html'),

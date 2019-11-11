@@ -800,18 +800,18 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     function callbackImportLAS(response) {
         if (!response) return;
         if (response === 'UPLOAD FILES FAILED') {
-            console.log("Some errors while uploading file");
+            __toastr.error("Some errors while uploading file");
         } else {
             if (response.errFiles.length) {
-                console.log(response.errFiles.map(f => f.filename).join(', '), 'Error uploading files');
+                __toastr.error(response.errFiles.map(f => f.filename).join(', '), 'Error uploading files');
             }
             if (response.successFiles.length) {
-                console.log(_.uniq(response.successFiles).join(', '), 'Following files uploaded successfully');
+                __toastr.success(_.uniq(response.successFiles).join(', '), 'Following files uploaded successfully');
             } else if (response.successFiles.length === files.length) {
-                console.log('All files uploaded successfully');
+                __toastr.success('All files uploaded successfully');
             }
             if (response.successWells.length) {
-                console.log(_.uniq(response.successWells.map(w => w.name)).join(', '), 'Following wells uploaded successfully');
+                __toastr.success(_.uniq(response.successWells.map(w => w.name)).join(', '), 'Following wells uploaded successfully');
             }
             // $timeout(function () {
             //     // oUtils.updateInventory();
@@ -825,9 +825,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         // removeProgressItem(progressObj);
         if (!response) return;
         if (response === 'UPLOAD FILES FAILED') {
-            console.log("Some errors while uploading file");
+            __toastr.error("Some errors while uploading file");
         } else {
-            return console.log('DLIS file are being processed');
+            return __toastr.info('DLIS file are being processed');
         }
     }
     // this.postWithFile = function (route, dataPayload, options = {}) {

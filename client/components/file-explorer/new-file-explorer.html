@@ -18,7 +18,7 @@
             <div title="Reload" class="button-fn ti ti-reload"
                 ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">
             </div>
-            <div title="Import To Inventory" ng-if="self.hideImportToInventory" class="button-fn ti ti-import" ng-click="self.importFilesToInventory(self.selectedList)"></div>
+            <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import" ng-click="self.importFilesToInventory(self.selectedList)"></div>
 
             <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
             <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>

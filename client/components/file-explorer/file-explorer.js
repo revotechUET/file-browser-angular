@@ -753,14 +753,40 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
     this.importFilesToInventory = function(items) {
         if (items.length === 0) return;
-        // self.requesting = true;
-        let downloadFiles = items.map((item) => {
-            if (item.rootIsFile) {
-                return item.path
-            } else {
-                return item.path + '/'
+        self.requesting = true;
+        // let downloadFiles = items.map((item) => {
+        //     if (item.rootIsFile) {
+        //         return item.path
+        //     } else {
+        //         return item.path + '/'
+        //     }
+        // });
+        if(items.length == 1) {
+            if(items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
+                downloadFileToUpload(items[0]);
+            }else {
+                self.requesting = false;
+                __toastr.error("Only accept file las, dlis, csv", "Error");
             }
-        });
+        }else {
+            let isAllLas = true;
+            for(let i in items) {
+                if(items[i].rootName.split('.').length > 1 && items[i].rootName.split('.').pop() != 'las') {
+                    isAllLas = false;
+                    break;
+                }
+            }
+            if(isAllLas) {
+                items.forEach(item => {
+                    downloadFileToUpload(item);
+                });
+            }else {
+                self.requesting = false;
+                __toastr.error("Only accept multiple file las", "Error");
+            }
+        }
+    }
+    function downloadFileToUpload(item) {
         $http({
             url: self.url + DOWNLOAD_PATH_POST,
             method: 'POST',
@@ -772,25 +798,27 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 'Service': 'WI_PROJECT_STORAGE'
             },
             data: {
-                'files': downloadFiles,
+                'files': [item.rootIsFile ? item.path : item.path + '/'],
                 'skipCompressFile': "true"
             },
             responseType: 'arraybuffer',
         }).then(response => {
-            let files = [new Blob([response.data], {
+            let file = new Blob([response.data], {
                 type: 'file'
-            })];
-            files = files.map((i, idx) => {
-                i.name = items[idx].rootName;
-                return i;
             });
-            if(files[0].name.split('.').length > 1) {
-                switch(files[0].name.split('.').pop()) {
-                    case 'las': wiApi.uploadFilesToInventory({ file: files, override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
+            // files = files.map((i, idx) => {
+            //     i.name = items[idx].rootName;
+            //     return i;
+            // });
+            self.requesting = false;
+            file.name = item.rootName;
+            if(file.name.split('.').length > 1) {
+                switch(file.name.split('.').pop()) {
+                    case 'las': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
                         break;
-                    case 'dlis': wiApi.uploadFilesToInventory({ file: files, override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
+                    case 'dlis': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
                         break;
-                    case 'csv': wiDialog.csvImportDialog(files[0]);
+                    case 'csv': wiDialog.csvImportDialog(file);
                         break;
                     default: break;
                 }
@@ -813,12 +841,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             if (response.successWells.length) {
                 __toastr.success(_.uniq(response.successWells.map(w => w.name)).join(', '), 'Following wells uploaded successfully');
             }
-            // $timeout(function () {
-            //     // oUtils.updateInventory();
-            //     self.refreshInventory();
-            //     self.getWiiItems().emptyItems();
-            //     self.getWiiItems().getWiiProperties().emptyList();
-            // }, 500);
         }
     }
     function callbackImportDLIS(response) {

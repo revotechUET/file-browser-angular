@@ -19,6 +19,7 @@
                 ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">
             </div>
             <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import" ng-click="self.importFilesToInventory(self.selectedList)"></div>
+            <div title="Submit to company database" ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory" class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
 
             <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
             <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
@@ -61,8 +62,8 @@
     </div>
     <div class="main-content">
         <div class="list-file">
-            <wi-table-resizeable 
-                headers="self.headerArray" 
+            <wi-table-resizeable
+                headers="self.headerArray"
                 on-table-init="self.tableInit" 
                 on-header-width-changed="self.changeWidth"
                 default-widths="[300,250,100,150]">

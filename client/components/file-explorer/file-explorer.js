@@ -51,7 +51,7 @@ const RESTORE_REVISION = '/action/restore';
 const REMOVE_REVISION = '/action/remove-revision';
 const UPLOAD_FILES = '/upload/lases';
 const UPLOAD_DLIS = '/upload/dlis';
-
+const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
@@ -151,6 +151,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
         self.restoreRevisionUrl = self.url + RESTORE_REVISION;
         self.removeRevisionUrl = self.url + REMOVE_REVISION;
+        self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
         self.modeFilter = 'all';
         let searchQuery = {
             conditions: {
@@ -184,6 +185,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 self.fileList = [];
             }
         });
+    };
+    this.submitToCompanyDatabase = function (files) {
+        files = files.map(f => f.path);
+        self.httpPost(self.submitToCompanyDatabaseUrl, {file_paths: files}, res => {
+            self.goTo(-999)
+        })
     };
     this.removeRevision = function (revision) {
         let url = self.removeRevisionUrl + '?file_path=' + encodeURIComponent(self.selectedItem.path) + '&revision=' + revision.name;

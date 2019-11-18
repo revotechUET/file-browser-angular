@@ -58,7 +58,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     let self = this;
     window.fileBrowser = self;
     self.widthArray = [];
-    self.headerArray = ['Name', 'Data type', 'Size', 'Data modified'];
+    self.headerArray = ['Name', 'CODB Status', 'Data type', 'Size', 'Data modified'];
     self.fileTypeList = [
         {
             type: 'image/svg+xml',
@@ -188,7 +188,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     };
     this.submitToCompanyDatabase = function (files) {
         files = files.map(f => f.path);
-        self.httpPost(self.submitToCompanyDatabaseUrl, {file_paths: files}, res => {
+        self.httpPost(self.submitToCompanyDatabaseUrl, {file_paths: files, project: window.localStorage.getItem('LProject')}, res => {
             self.goTo(-999)
         })
     };

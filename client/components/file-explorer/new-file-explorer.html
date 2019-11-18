@@ -66,7 +66,7 @@
                 headers="self.headerArray"
                 on-table-init="self.tableInit" 
                 on-header-width-changed="self.changeWidth"
-                default-widths="[300,250,100,150]">
+                default-widths="[300,200,250,100,150]">
                 <div class="table-row" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     ng-class="{selected: self.isSelected(item)}">
@@ -75,8 +75,12 @@
                         <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}" style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
-                    <div ng-style='{"width": self.widthArray[1]}' title="{{item.metaData.datatype}}" class="data-type">{{item.metaData.datatype}}</div>
-                    <div ng-style='{"width": self.widthArray[2]}' title="{{item.size | humanReadableFileSize}}" class="size">
+                    <div ng-style='{"width": self.widthArray[1]}'
+                         title="{{item.codbStatus}}"
+                         class="data-type">{{item.codbStatus}}
+                    </div>
+                    <div ng-style='{"width": self.widthArray[2]}' title="{{item.metaData.datatype}}" class="data-type">{{item.metaData.datatype}}</div>
+                    <div ng-style='{"width": self.widthArray[3]}' title="{{item.size | humanReadableFileSize}}" class="size">
                         <span ng-if="item.rootIsFile">
                             {{item.size | humanReadableFileSize}}
                           </span>
@@ -84,7 +88,7 @@
                             --
                           </span>
                     </div>
-                    <div ng-style='{"width": self.widthArray[3]}' title="{{item.modifiedDate | formatDate}}" class="date">{{item.modifiedDate | formatDate}}</div>
+                    <div ng-style='{"width": self.widthArray[4]}' title="{{item.modifiedDate | formatDate}}" class="date">{{item.modifiedDate | formatDate}}</div>
                 </div>
             </wi-table-resizeable>
             <!-- <div class="table-header">

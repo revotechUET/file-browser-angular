@@ -71,7 +71,10 @@
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     ng-class="{selected: self.isSelected(item)}">
                     <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}">
-                        <i class="folder-icon-16x16" ng-show="!item.rootIsFile" style="margin-right: 5px; margin-bottom: -4px;"></i>      
+                        <i class="folder-icon-16x16" ng-show="!item.rootIsFile && item.metaData.issyncfolder === 'false'"
+                           style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i class="" ng-show="item.metaData.issyncfolder === 'true' && !item.rootIsFile"
+                           style="margin-right: 5px; margin-bottom: -4px;">Hung Icon</i>
                         <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}" style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>

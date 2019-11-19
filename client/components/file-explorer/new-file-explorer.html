@@ -74,8 +74,8 @@
                         <i class="fa fa-check-circle" aria-hidden="true" style=" position: absolute; color: #4CAF50; left: 23px; top: 18px; " ng-show="item.metaData.issyncfolder === 'true' && !item.rootIsFile"></i>
                         <i class="folder-icon-16x16" ng-show="!item.rootIsFile"
                            style="margin-right: 5px; margin-bottom: -4px;"></i>
-                        <i class="folder-icon-16x16" ng-show="!item.rootIsFile && item.metaData.issyncfolder === 'false'"
-                           style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <!-- <i class="folder-icon-16x16" ng-show="!item.rootIsFile && item.metaData.issyncfolder === 'false'"
+                           style="margin-right: 5px; margin-bottom: -4px;"></i> -->
                         <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}" style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>

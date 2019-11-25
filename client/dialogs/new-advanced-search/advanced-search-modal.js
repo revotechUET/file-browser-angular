@@ -246,6 +246,16 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     this.closeModal = function () {
       close();
     }
+    this.loadFilter = function() {
+      console.log("load filter");
+      fileExplorerCtrl.searchQuery = JSON.parse('{"type":"all","subFolders":"included","conditions":{"operator":"and","children":[{"operator":"or","children":[{"name":"1_1.las"}]}]}}');
+      callback('Ok');
+    }
+    this.saveFilter = function() {
+      console.log("save filter");
+      onSearch();
+      console.log(JSON.stringify(fileExplorerCtrl.searchQuery));
+    }
   }
   ModalService.showModal({
     template: require('./advanced-search-modal.html'),

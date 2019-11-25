@@ -1,3 +1,18 @@
+<div ng-show="self.isDatabase" class="outside" style="align-items: center;justify-content: center;">
+    <div style="display: flex; flex-direction: column; position: relative;">
+        <div>
+            <div class="project-normal-32x32" style="transform: scale(2) translateX(42px); position: absolute; bottom: 80px;"> </div>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <div style="font-size: 20px; font-weight: bold;">
+                DRAG & DROP
+            </div>
+            <div>
+                <span style="color: #2d7eff;">once project</span> here to show database
+            </div>
+    </div>
+    </div>
+</div>
 <div class="outside">
     <div class="toolbar">
         <!-- Button -->
@@ -5,21 +20,33 @@
             <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
             <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"></div>
             <!-- more -->
-                <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
-                <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
-                <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
-                <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()" ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
-<!--                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 0) || !self.selectedList[0].rootIsFile}"></div>-->
-                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: self.selectedList.length === 0}"></div>
-                <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()" ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
-                <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}"></div>
-                <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-click="self.copyMultiLocation(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}"></div>
+            <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])"
+                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+            <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"
+                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+            <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')"
+                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+            <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()"
+                ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
+            <!--                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 0) || !self.selectedList[0].rootIsFile}"></div>-->
+            <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)"
+                ng-class="{inactive: self.selectedList.length === 0}"></div>
+            <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()"
+                ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
+            <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)"
+                ng-class="{inactive: self.selectedList.length <= 1}"></div>
+            <div title="Copy Location" class="button-fn ti ti-layers-alt"
+                ng-click="self.copyMultiLocation(self.selectedList)"
+                ng-class="{inactive: self.selectedList.length <= 1}"></div>
             <!-- more -->
             <div title="Reload" class="button-fn ti ti-reload"
                 ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">
             </div>
-            <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import" ng-click="self.importFilesToInventory(self.selectedList)"></div>
-            <div title="Submit to company database" ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory" class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
+            <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"
+                ng-click="self.importFilesToInventory(self.selectedList)"></div>
+            <div title="Submit to company database"
+                ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"
+                class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
 
             <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
             <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
@@ -31,7 +58,7 @@
                 ng-click="self.goTo(-1); self.filter='';self.modeFilter='all'">{{'Home'}}
             </div>
             <div ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}"
-            style="color: #000; display: flex; align-items: center; margin-left: -10px; margin-right: 10px;">
+                style="color: #000; display: flex; align-items: center; margin-left: -10px; margin-right: 10px;">
                 <div class="button-fn ti ti-angle-right" style="margin: 0 10px; font-size: 9px;"></div>
                 <div ng-show="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='all'">
                     {{dir.rootName | strLimit : 8}}
@@ -44,55 +71,64 @@
         <!-- Filler -->
         <div class="right">
             <div class="search-box">
-                <input style="width: 150px; background: #f4f4f4; padding: 4px 10px; margin-right: 20px" type='text' ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}" size='10' placeholder="[Search]">
-                <div style="margin-right: 20px;  cursor: pointer;" class="ti ti-close" ng-click="self.filter = ''; self.modeFilter = 'all'; self.search()" ng-style="{color: self.filter != '' ? '#c00' : '#eee'}"></div>
-                <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()" style="margin-right: 0;"></div>
+                <input style="width: 150px; background: #f4f4f4; padding: 4px 10px; margin-right: 20px" type='text'
+                    ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}" size='10'
+                    placeholder="[Search]">
+                <div style="margin-right: 20px;  cursor: pointer;" class="ti ti-close"
+                    ng-click="self.filter = ''; self.modeFilter = 'all'; self.search()"
+                    ng-style="{color: self.filter != '' ? '#c00' : '#eee'}"></div>
+                <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()"
+                    style="margin-right: 0;"></div>
             </div>
             <div style=" border-right: 1px solid #e8e8e8; height: 40px; margin: 0 20px;"></div>
             <div class="filter-mode" ng-class="{highlightBg: self.modeFilter!='all'}">
                 <span>FILTER: {{self.modeFilter}} mode</span>
-                <span class="ti ti-close" ng-click="self.allFilesMode()" ng-if="self.modeFilter!='all'" style="margin-left: 10px; color: #fff; cursor: pointer;"></span>
+                <span class="ti ti-close" ng-click="self.allFilesMode()" ng-if="self.modeFilter!='all'"
+                    style="margin-left: 10px; color: #fff; cursor: pointer;"></span>
             </div>
         </div>
     </div>
     <div ng-show="self.requesting" class="loading">
-            <div class="loading-bar">
+        <div class="loading-bar">
             <span class="bar-animation"></span>
-            </div>
+        </div>
     </div>
     <div class="main-content">
         <div class="list-file">
-            <wi-table-resizeable
-                headers="self.headerArray"
-                on-table-init="self.tableInit" 
-                on-header-width-changed="self.changeWidth"
-                default-widths="[300,200,250,100,150]">
+            <wi-table-resizeable headers="self.headerArray" on-table-init="self.tableInit"
+                on-header-width-changed="self.changeWidth" default-widths="[300,200,250,100,150]">
                 <div class="table-row" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     ng-class="{selected: self.isSelected(item)}">
-                    <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}" style="position: relative;">
-                        <i class="fa fa-check-circle" aria-hidden="true" style=" position: absolute; color: #4CAF50; left: 23px; top: 18px; " ng-show="item.metaData.issyncfolder === 'true' && !item.rootIsFile"></i>
+                    <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}"
+                        style="position: relative;">
+                        <i class="fa fa-check-circle" aria-hidden="true"
+                            style=" position: absolute; color: #4CAF50; left: 23px; top: 18px; "
+                            ng-show="item.metaData.issyncfolder === 'true' && !item.rootIsFile"></i>
                         <i class="folder-icon-16x16" ng-show="!item.rootIsFile"
-                           style="margin-right: 5px; margin-bottom: -4px;"></i>
+                            style="margin-right: 5px; margin-bottom: -4px;"></i>
                         <!-- <i class="folder-icon-16x16" ng-show="!item.rootIsFile && item.metaData.issyncfolder === 'false'"
                            style="margin-right: 5px; margin-bottom: -4px;"></i> -->
-                        <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}" style="margin-right: 5px; margin-bottom: -4px;"></i>
+                        <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}"
+                            style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
-                    <div ng-style='{"width": self.widthArray[1]}'
-                         title="{{item.codbStatus}}"
-                         class="data-type">{{item.codbStatus}}
+                    <div ng-style='{"width": self.widthArray[1]}' title="{{item.codbStatus}}" class="data-type">
+                        {{item.codbStatus}}
                     </div>
-                    <div ng-style='{"width": self.widthArray[2]}' title="{{item.metaData.datatype}}" class="data-type">{{item.metaData.datatype}}</div>
-                    <div ng-style='{"width": self.widthArray[3]}' title="{{item.size | humanReadableFileSize}}" class="size">
+                    <div ng-style='{"width": self.widthArray[2]}' title="{{item.metaData.datatype}}" class="data-type">
+                        {{item.metaData.datatype}}</div>
+                    <div ng-style='{"width": self.widthArray[3]}' title="{{item.size | humanReadableFileSize}}"
+                        class="size">
                         <span ng-if="item.rootIsFile">
                             {{item.size | humanReadableFileSize}}
-                          </span>
-                          <span ng-if="!item.rootIsFile">
+                        </span>
+                        <span ng-if="!item.rootIsFile">
                             --
-                          </span>
+                        </span>
                     </div>
-                    <div ng-style='{"width": self.widthArray[4]}' title="{{item.modifiedDate | formatDate}}" class="date">{{item.modifiedDate | formatDate}}</div>
+                    <div ng-style='{"width": self.widthArray[4]}' title="{{item.modifiedDate | formatDate}}"
+                        class="date">{{item.modifiedDate | formatDate}}</div>
                 </div>
             </wi-table-resizeable>
             <!-- <div class="table-header">
@@ -102,10 +138,28 @@
                 <div class="date">Date modified</div>
             </div> -->
         </div>
-        <side-bar my-default-width="300" collapsed="false "orientation="w" class="sidebar-properties">
-            <div ng-if="!self.selectedItem.metaData" class="no-file-select"  style=" opacity: 0.5; ">
+        <side-bar my-default-width="300" collapsed="false " orientation="w" class="sidebar-properties">
+            <div ng-if="!self.selectedItem.metaData" class="no-file-select" style=" opacity: 0.5; ">
                 <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="-101 -21 682 682.66669" width="200px"><g fill="#c6c5ca"><path d="m35 200h-40v-68.28125l131.71875-131.71875h68.28125v40h-51.71875l-108.28125 108.28125zm0 0"></path><path d="m355 40h-40v-40h40zm-80 0h-40v-40h40zm0 0"></path><path d="m475 80h-40v-40h-40v-40h80zm0 0"></path><path d="m475 480h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0 0"></path><path d="m475 640h-120v-40h80v-80h40zm0 0"></path><path d="m315 640h-40v-40h40zm-80 0h-40v-40h40zm-80 0h-40v-40h40zm0 0"></path><path d="m75 640h-80v-80h40v40h40zm0 0"></path><path d="m35 520h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0 0"></path></g><path d="m127.003906 0h-.285156l-131.71875 131.71875v.28125h132.003906zm0 0" fill="#2196F3"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="-101 -21 682 682.66669"
+                        width="200px">
+                        <g fill="#c6c5ca">
+                            <path
+                                d="m35 200h-40v-68.28125l131.71875-131.71875h68.28125v40h-51.71875l-108.28125 108.28125zm0 0">
+                            </path>
+                            <path d="m355 40h-40v-40h40zm-80 0h-40v-40h40zm0 0"></path>
+                            <path d="m475 80h-40v-40h-40v-40h80zm0 0"></path>
+                            <path
+                                d="m475 480h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0 0">
+                            </path>
+                            <path d="m475 640h-120v-40h80v-80h40zm0 0"></path>
+                            <path d="m315 640h-40v-40h40zm-80 0h-40v-40h40zm-80 0h-40v-40h40zm0 0"></path>
+                            <path d="m75 640h-80v-80h40v40h40zm0 0"></path>
+                            <path d="m35 520h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0-80h-40v-40h40zm0 0"></path>
+                        </g>
+                        <path d="m127.003906 0h-.285156l-131.71875 131.71875v.28125h132.003906zm0 0" fill="#2196F3">
+                        </path>
+                    </svg>
                 </div>
                 <div style="font-size: 20px; font-weight: bold; margin-top: 20px;">
                     Properties
@@ -116,20 +170,16 @@
             </div>
             <div class="right-panel">
                 <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"
-                    enable-associate="true" revision="self.selectedItem.revision" remove-revision-func="self.removeRevision" restore-revision-func="self.restoreVersion">
+                    enable-associate="true" revision="self.selectedItem.revision"
+                    remove-revision-func="self.removeRevision" restore-revision-func="self.restoreVersion">
                 </storage-props>
             </div>
         </side-bar>
     </div>
     <div id="img-container" style="display: none; position: absolute;">
-        <img-preview 
-            data="self.imgResource.fileContent" 
-            parent-elem="self.imgResource.parentElem" 
-            fx-ctrl="self" 
-            file-item="self.selectedList[0]"
-            get-download-link="self.getDownloadLink"
-            get-download-file-name="self.getDownloadFileName"
-            >
+        <img-preview data="self.imgResource.fileContent" parent-elem="self.imgResource.parentElem" fx-ctrl="self"
+            file-item="self.selectedList[0]" get-download-link="self.getDownloadLink"
+            get-download-file-name="self.getDownloadFileName">
         </img-preview>
     </div>
 </div>

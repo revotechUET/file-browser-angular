@@ -944,7 +944,8 @@ app.component(componentName, {
         linkedFile: '@',
         idProject: '<',
         setContainer: '<',
-        hideImportToInventory: '<'
+        hideImportToInventory: '<',
+        isDatabase: '<'
     }
 });
 

@@ -3,9 +3,9 @@ require('./advanced-search-modal.css');
 const utils = require('../../js/utils');
 
 module.exports = function (ModalService, fileExplorerCtrl, callback) {
-  modalController.$inject = ['$scope', 'close', 'wiApi'];
+  modalController.$inject = ['$scope', 'close', 'wiApi', 'wiDialog', '$timeout'];
 
-  function modalController($scope, close, wiApi) {
+  function modalController($scope, close, wiApi, wiDialog, $timeout) {
     let self = this;
     this.$onInit = function () {
       let idProject = fileExplorerCtrl.idProject ? fileExplorerCtrl.idProject : wiSession.getData('idProject');
@@ -248,13 +248,71 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     }
     this.loadFilter = function() {
       console.log("load filter");
-      fileExplorerCtrl.searchQuery = JSON.parse('{"type":"all","subFolders":"included","conditions":{"operator":"and","children":[{"operator":"or","children":[{"name":"1_1.las"}]}]}}');
-      callback('Ok');
+      // fileExplorerCtrl.searchQuery = JSON.parse('{"type":"all","subFolders":"included","conditions":{"operator":"and","children":[{"operator":"or","children":[{"name":"1_1.las"}]}]}}');
+      wiApi.listStorageFilterPromise()
+      .then((res) => {
+        console.log(res);
+        let selectionList = res.map(i => {
+          return {
+            data: {
+              label: i.name,
+              idFilter: i.idFilter
+            },
+            properties: i.content
+          }
+        })
+        let config = {
+          title: "Select filter",
+          inputName: "Name",
+          selectionList: selectionList,
+          onCtrlBtnClick: function(item, e, wiDropdown) {
+            console.log(item, e, wiDropdown);
+            let index = wiDropdown.items.indexOf(item);
+            wiDialog.confirmDialog("Delete filter?", "Are you sure?", function(res) {
+              if(res) {
+                wiApi.deleteStorageFilterPromise({idFilter: item.data.idFilter})
+                .then(() => {
+                  $timeout(() => {
+                    wiDropdown.items.splice(index, 1);
+                    wiDropdown.selectedItem = wiDropdown.items.length ? wiDropdown.items[0] : null
+                  })
+                })
+              }
+            })
+          },
+          hideButtonDelete: false,
+          iconBtn: 'fa fa-times-circle line-height-1_5'
+        }
+        wiDialog.promptListDialog(config, function(selectItem) {
+          console.log(selectItem);
+          fileExplorerCtrl.searchQuery = JSON.parse(selectItem).query;
+          self.conditions = JSON.parse(selectItem).conditions;
+          self.customArr = JSON.parse(selectItem).customArr
+          callback('Ok');
+        });
+      });
     }
     this.saveFilter = function() {
       console.log("save filter");
       onSearch();
-      console.log(JSON.stringify(fileExplorerCtrl.searchQuery));
+      let config = {
+        title: "Name filter",
+        inputName: "Name",
+        input: ""
+      }
+      wiDialog.promptDialog(config, function(name) {
+        wiApi.createStorageFilterPromise({
+          name: name,
+          content: JSON.stringify({
+            query: fileExplorerCtrl.searchQuery,
+            conditions: self.conditions,
+            customArr: self.customArr 
+          })
+        })
+        .then((res) => {
+          console.log(res);
+        })
+      })
     }
   }
   ModalService.showModal({

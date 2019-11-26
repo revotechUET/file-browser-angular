@@ -945,7 +945,8 @@ app.component(componentName, {
         idProject: '<',
         setContainer: '<',
         hideImportToInventory: '<',
-        isDatabase: '<'
+        isDatabase: '<',
+        hideActionFilter: '<'
     }
 });
 

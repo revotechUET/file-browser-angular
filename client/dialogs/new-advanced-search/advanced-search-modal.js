@@ -314,7 +314,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         })
       })
     }
-    this.hideButtonDelete = fileExplorerCtrl.hideButtonDelete;
+    this.hideActionFilter = fileExplorerCtrl.hideActionFilter;
   }
   ModalService.showModal({
     template: require('./advanced-search-modal.html'),

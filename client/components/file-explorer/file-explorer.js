@@ -672,7 +672,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   };
 
-  this.httpPost = function (url, payload, cb) {
+  this.httpPost = function (url, payload, cb, options) {
     self.requesting = !self.requesting;
     let reqOptions = {
       method: 'POST',
@@ -682,7 +682,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
         'Storage-Database': JSON.stringify(self.storageDatabase),
-        'Service': 'WI_PROJECT_STORAGE'
+        'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
       },
       data: payload
     };

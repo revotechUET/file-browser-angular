@@ -8,7 +8,6 @@ module.exports = function (ModalService, fileExplorerCtrl, data, item, callback)
         self.body = $element.find('#body');
         self.body.bind('scroll', () => {
             if (self.body[0].scrollTop + self.body[0].offsetHeight >= self.body[0].scrollHeight) {
-                console.log('bottom');
                 self.pdfViewerCtrl.loadMore();
             }
         })
@@ -23,7 +22,6 @@ module.exports = function (ModalService, fileExplorerCtrl, data, item, callback)
 
         this.getPdfViewerCtrl = function (ctrl) {
             self.pdfViewerCtrl = ctrl;
-            console.log('bind');
         }
 
         this.closeModal = function () {

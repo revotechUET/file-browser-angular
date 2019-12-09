@@ -50,16 +50,26 @@ function Controller($scope) {
     })
   }
 
+  this.zoomIn = function() {
+    if (self.options.scale + 0.1 > 10) return;
+    self.options.scale += 0.1;
+    reRenderPDF();
+  }
+
+  this.zoomOut = function() {
+    if (self.options.scale - 0.1 < 0.1) return;
+    self.options.scale -= 0.1;
+    reRenderPDF();
+  }
+
   this.loadMore = function () {
-    self.PDFJS.getDocument({
-      data: self.pdfEncoded
-    }).then(pdfDoc => {
-      let totalPages = self.totalPages;
-      self.totalPages += 10;
-      for (let i = totalPages + 1; i <= totalPages + 10 && i <= self.pdfPages; i++) {
-        pdfDoc.getPage(i).then(renderPage);
-      }
-    });
+    let totalPages = self.totalPages;
+    self.totalPages += 10;
+    for (let i = totalPages + 1; i <= totalPages + 10 && i <= self.pdfPages; i++) {
+      self.pdfDoc.getPage(i).then((page) => {
+        renderPage(page, i);
+      });
+    }
   }
 
   function renderPDF(pdfEncoded) {
@@ -67,16 +77,26 @@ function Controller($scope) {
     self.PDFJS.getDocument({
       data: pdfEncoded
     }).then(pdfDoc => {
+      self.pdfDoc = pdfDoc;
       self.pdfPages = pdfDoc.numPages;
       self.pagesToShow = self.pagesToShow || self.pdfPages;
-      renderPages(pdfDoc);
+      renderPages();
     });
   }
 
-  function renderPage(page) {
+  function renderPage(page, num) {
     let viewport = page.getViewport(self.options.scale);
-    let div = document.createElement('div');
-    let canvas = document.createElement('canvas');
+    let div = document.getElementById(`pdf-div-${num}`);
+    let canvas = document.getElementById(`pdf-canvas-${num}`);
+    if (!div) {
+      div = document.createElement('div');
+      div.setAttribute("id", `pdf-div-${num}`);
+    }
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      canvas.setAttribute("id", `pdf-canvas-${num}`);
+      div.appendChild(canvas);
+    }
     let ctx = canvas.getContext('2d');
     let renderContext = {
       canvasContext: ctx,
@@ -85,17 +105,26 @@ function Controller($scope) {
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
-    div.appendChild(canvas);
     self.pdfHolder.appendChild(div);
 
     page.render(renderContext);
   }
 
-  function renderPages(pdfDoc) {
+  function renderPages() {
     let totalPages = self.totalPages;
     self.totalPages += self.pagesToShow;
     for (let i = totalPages + 1; i <= totalPages + self.pagesToShow && i <= self.pdfPages; i++) {
-      pdfDoc.getPage(i).then(renderPage);
+      self.pdfDoc.getPage(i).then((page) => {
+        renderPage(page, i);
+      });
+    }
+  }
+
+  function reRenderPDF() {
+    for (let i = 1; i <= self.totalPages && i <= self.pdfPages; i++) {
+      self.pdfDoc.getPage(i).then((page) => {
+        renderPage(page, i);
+      });
     }
   }
 

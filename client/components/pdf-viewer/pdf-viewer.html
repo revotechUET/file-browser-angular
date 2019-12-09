@@ -1,9 +1,11 @@
 <div>
-    <!-- <div style="margin: 0 0 5px 0;">
-        <button type="button" ng-click="self.onPrevPage()" class="btn btn-default btn-xs">Previous</button>
-        <button type="button" ng-click="self.onNextPage()" class="btn btn-default btn-xs">Next</button>
-        <span>Page: <span>{{ self.pageNum }}</span>/<span>{{ self.totalPage }}</span></span>
-    </div> -->
+    <div style="position: sticky; top: 0; background: #ccc; margin: 0 0 5px 0;">
+        <!--<button type="button" ng-click="self.onPrevPage()" class="btn btn-default btn-xs">Previous</button>-->
+        <!--<button type="button" ng-click="self.onNextPage()" class="btn btn-default btn-xs">Next</button>-->
+        <!--<span>Page: <span>{{ self.pageNum }}</span>/<span>{{ self.totalPage }}</span></span>-->
+        <button type="button" ng-click="self.zoomIn()" class="btn btn-default btn-xs">Zoom In</button>
+        <button type="button" ng-click="self.zoomOut()" class="btn btn-default btn-xs">Zoom Out</button>
+    </div>
     <div>
         <div id="holder"></div>
         <!-- <canvas id="pdfViewer" style="border: 1px solid #ccc"></canvas> -->

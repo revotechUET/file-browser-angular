@@ -443,6 +443,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       //     document.body.removeChild(anchor);
       //     url.revokeObjectURL(anchor.href);
       // }, 1};
+    })
+    .catch(err => {
+      console.error("file browser error", err);
+      if (err.data.code === 401) location.reload();
     });
   };
   this.goToByPath = function (path) {
@@ -669,6 +673,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.requesting = !self.requesting;
       cb(result);
     }, err => {
+      console.error("file browser error", err);
+      if (err.data.code === 401) location.reload();
       self.requesting = !self.requesting;
       console.log(err);
     });
@@ -692,6 +698,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.requesting = !self.requesting;
       cb(result);
     }, err => {
+      console.error("file browser request", err);
       self.requesting = !self.requesting;
       console.log(err);
     })
@@ -843,6 +850,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           default: break;
         }
       }
+    })
+    .catch(err => {
+      console.error("file browser error", err);
+      if (err.data.code === 401) location.reload();
     });
   }
   function callbackImportLAS(response) {

@@ -80,7 +80,11 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(!self.metaData || (mdKey == 'associate' && !self.enableAssociate)) return;
 		let value = self.metaData[mdKey];
 		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
-		if(mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+		try {
+			if (mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+		} catch (e) {
+			console.warn("JSON.parse error when get MD props. Consider to fix it later", e);
+		}
 		if(mdKey == 'associate') value = self.metaData;
 		return mdProps = {
 			name: mdKey,

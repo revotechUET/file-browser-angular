@@ -47,6 +47,7 @@ const generalConfig = {
 module.exports = (env, argv) => {
     const config = Object.assign({}, generalConfig, {
         mode: argv.mode,
+        devtool: argv.devtool
     });
     return config;
 };

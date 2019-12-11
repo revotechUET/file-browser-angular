@@ -497,7 +497,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (!self.selectedList)
       return;
     let mess = "Are you sure you want to delete " + (self.selectedList.length > 1 ? self.selectedList.length + ' items?' : ' this item?');
-    confirmDialog(ModalService, mess, function (ret) {
+    confirmDialog(ModalService, "Delete Confirmation", mess, function (ret) {
       if (ret) {
         async.each(self.selectedList, (node, next) => {
           self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {

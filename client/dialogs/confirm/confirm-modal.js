@@ -1,8 +1,9 @@
 const async = require('../../vendor/js/async.min');
 const helper = require('../dialog-helper');
 
-module.exports = async function (ModalService, confirmMessage, callback) {
+module.exports = async function (ModalService, confirmTitle, confirmMessage, callback) {
     function ModalController($scope, close) {
+        this.title = confirmTitle || "Confirm Action";
         this.confirmMsg = confirmMessage;
         this.close = function (ret) {
             close(ret);

@@ -43,6 +43,7 @@
                 ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">
             </div>
             <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"
+                style="transform: rotate(-90deg);"
                 ng-click="self.importFilesToInventory(self.selectedList)"></div>
             <div title="Submit to company database"
                 ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"

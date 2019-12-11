@@ -9,7 +9,7 @@ module.exports = function (ModalService, fileExplorerCtrl, data, item, callback)
         this.title = data.title;
 
         this.download = function () {
-            fileExplorerCtrl.downloadFile(item);
+            fileExplorerCtrl.downloadFile([item]);
         };
 
         this.closeModal = function () {

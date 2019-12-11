@@ -17,7 +17,7 @@ module.exports = function (ModalService, fileExplorerCtrl, data, item, callback)
         this.pagesToShow = 10;
 
         this.download = function () {
-            fileExplorerCtrl.downloadFile(item);
+            fileExplorerCtrl.downloadFile([item]);
         };
 
         this.getPdfViewerCtrl = function (ctrl) {

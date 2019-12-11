@@ -202,3 +202,7 @@ exports.getSelections = function () {
 	  	]
 	};
 }
+
+exports.validateNodeName = function(name) {
+    return !['/', '\\', ':', '*', '?', '\"', '<', '>', '|'].some(c => name.includes(c));
+}

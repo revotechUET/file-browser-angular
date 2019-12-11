@@ -1,4 +1,5 @@
 const helper = require('../dialog-helper');
+const utils = require('../../js/utils');
 require('./new-folder-modal.css');
 
 module.exports = function (ModalService, fileExplorerCtrl, callback) {
@@ -38,6 +39,10 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let data = {};
       for (let key in self.metaData) {
         data[key] = self.metaData[key] + '';
+      }
+      if (!utils.validateNodeName(self.folderName)) {
+        toastr.error("a file/folder can't contain any of the following characters / \\ : * ? \" < > | ");
+        return;
       }
       let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
 

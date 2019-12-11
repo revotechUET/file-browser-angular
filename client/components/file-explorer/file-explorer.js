@@ -22,6 +22,8 @@ const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advan
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
 const confirmDialog = require('../../dialogs/confirm/confirm-modal');
 
+const utils = require('../../js/utils');
+
 
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
@@ -441,6 +443,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       //     document.body.removeChild(anchor);
       //     url.revokeObjectURL(anchor.href);
       // }, 1};
+    })
+    .catch(err => {
+      console.error("file browser error", err);
+      if (err.data.code === 401) location.reload();
     });
   };
   this.goToByPath = function (path) {
@@ -667,6 +673,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.requesting = !self.requesting;
       cb(result);
     }, err => {
+      console.error("file browser error", err);
+      if (err.data.code === 401) location.reload();
       self.requesting = !self.requesting;
       console.log(err);
     });
@@ -690,6 +698,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.requesting = !self.requesting;
       cb(result);
     }, err => {
+      console.error("file browser request", err);
       self.requesting = !self.requesting;
       console.log(err);
     })
@@ -709,6 +718,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     return crypted;
   // }
   this.saveObject = function (payload, cb) {
+    if (typeof(payload.metaData.name) == 'string' && !utils.validateNodeName(payload.metaData.name)) {
+        toastr.error("a file/folder can't contain any of the following characters / \\ : * ? \" < > | ");
+        return;
+    }
+
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
       /*self.goTo(-999, function(fileList) {
@@ -836,6 +850,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           default: break;
         }
       }
+    })
+    .catch(err => {
+      console.error("file browser error", err);
+      if (err.data.code === 401) location.reload();
     });
   }
   function callbackImportLAS(response) {

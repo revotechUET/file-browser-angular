@@ -22,6 +22,8 @@ const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advan
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
 const confirmDialog = require('../../dialogs/confirm/confirm-modal');
 
+const utils = require('../../js/utils');
+
 
 const moduleName = 'file-explorer';
 const componentName = 'fileExplorer';
@@ -709,6 +711,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     return crypted;
   // }
   this.saveObject = function (payload, cb) {
+    if (typeof(payload.metaData.name) == 'string' && !utils.validateNodeName(payload.metaData.name)) {
+        toastr.error("a file/folder can't contain any of the following characters / \\ : * ? \" < > | ");
+        return;
+    }
+
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
       /*self.goTo(-999, function(fileList) {

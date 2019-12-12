@@ -970,7 +970,8 @@ app.component(componentName, {
     setContainer: '<',
     hideImportToInventory: '<',
     isDatabase: '<',
-    hideActionFilter: '<'
+    hideActionFilter: '<',
+    hideAssociate: '<'
   }
 });
 

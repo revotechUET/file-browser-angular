@@ -54,11 +54,11 @@
 								title="{{md.value.name}}"
 								style="display: inline; text-align: left;">
 					</div>
-					<div ng-if="md.type=='wiassociate'">
+					<div ng-if="md.type=='wiassociate'" ng-hide="self.hideAssociate">
 						<div class="ti ti-arrow-top-right" style="cursor: pointer;" ng-click="self.associateToNodes(md)"></div>
 					</div>
 				</div>
-				<div ng-if="md.name == 'location'" >
+				<div ng-if="md.name == 'location'" ng-hide="self.hideAssociate">
 					<i class="ti ti-layers-alt"
 						ng-class="{copied: self.locationCopied(md.value)}"
 						ng-click="self.copyLocation(md.value)"
@@ -66,7 +66,7 @@
 						title="Copy!">
 					</i>
 				</div>
-				<div ng-if="md.type=='wilink'" >
+				<div ng-if="md.type=='wilink'" ng-hide="self.hideAssociate">
 					<i class="ti ti-clipboard"
 						ng-click="self.pasteObject(md, md.name)"
 						style="padding: 0 2px; cursor: pointer;"

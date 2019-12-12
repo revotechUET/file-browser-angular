@@ -302,7 +302,8 @@ app.component(componentName, {
         readonlyValues: '<',
         shortView: '<',
         chooseBox: '<',
-        enableAssociate: '<'
+		enableAssociate: '<',
+		hideAssociate: '<'
     }
 });
 app.directive('spEnter', function ($parse) {

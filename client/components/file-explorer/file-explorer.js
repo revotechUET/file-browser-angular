@@ -298,37 +298,42 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
-          if (result.data.isTooBig) {
-            __toastr ? __toastr.error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
-              : console.error(`"${item.rootName}" exceeds the maximum file size that we can preview`);
+          if (result.data.isNotReadable) {
+            __toastr ? __toastr.error(`Previewing "${item.rootName}" is not available`)
+              : console.error(`Previewing "${item.rootName}" is not available`);
           } else {
-            let data = {title: item.rootName};
-            data.fileContent = result.data;
-            pdfViewerDialog(ModalService, self, data, item);
+            if (result.data.isTooBig) {
+              __toastr ? __toastr.error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
+                : console.error(`"${item.rootName}" exceeds the maximum file size that we can preview`);
+            } else {
+              let data = {title: item.rootName};
+              data.fileContent = result.data;
+              pdfViewerDialog(ModalService, self, data, item);
 
-            // data.fileContent = resource;
-            // switch (true) {
-            //     case !resource.isReadable:
-            //         console.log("Can't preview this file");
-            //         data.fileContent = "No preview available";
-            //         textViewerDialog(ModalService, self, data, item);
-            //         // self.downloadFile(item);
-            //         break;
-            //     case /\.pdf$/.test(self.getExtFile(item)):
-            //         data.fileContent = resource.base64;
-            //         pdfViewerDialog(ModalService, self, data, item);
-            //         break;
-            //     case /\.(jpg|JPG|png|PNG|jpeg|JPEG|gif|GIF|bmp|BMP|svg|SVG)$/.test(self.getExtFile(item)):
-            //         self.imgResource.title = item.rootName;
-            //         self.imgResource.fileContent = resource.base64;
-            //         let imgCtnElm = document.getElementById('img-container');
-            //         self.imgResource.parentElem = imgCtnElm;
-            //         imgCtnElm.style.display = 'block';
-            //         break;
-            //     default:
-            //         data.fileContent = resource.utf8;
-            //         textViewerDialog(ModalService, self, data, item);
-            // }
+              // data.fileContent = resource;
+              // switch (true) {
+              //     case !resource.isReadable:
+              //         console.log("Can't preview this file");
+              //         data.fileContent = "No preview available";
+              //         textViewerDialog(ModalService, self, data, item);
+              //         // self.downloadFile(item);
+              //         break;
+              //     case /\.pdf$/.test(self.getExtFile(item)):
+              //         data.fileContent = resource.base64;
+              //         pdfViewerDialog(ModalService, self, data, item);
+              //         break;
+              //     case /\.(jpg|JPG|png|PNG|jpeg|JPEG|gif|GIF|bmp|BMP|svg|SVG)$/.test(self.getExtFile(item)):
+              //         self.imgResource.title = item.rootName;
+              //         self.imgResource.fileContent = resource.base64;
+              //         let imgCtnElm = document.getElementById('img-container');
+              //         self.imgResource.parentElem = imgCtnElm;
+              //         imgCtnElm.style.display = 'block';
+              //         break;
+              //     default:
+              //         data.fileContent = resource.utf8;
+              //         textViewerDialog(ModalService, self, data, item);
+              // }
+            }
           }
         }, {service: "WI_FILE_PREVIEW"})
     }

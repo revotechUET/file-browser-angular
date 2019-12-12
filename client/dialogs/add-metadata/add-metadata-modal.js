@@ -1,4 +1,5 @@
 const helper = require('../dialog-helper');
+const utils = require('../../js/utils');
 require('./add-metadata-modal.css');
 
 module.exports = function (ModalService, metadata, callback) {
@@ -12,6 +13,10 @@ module.exports = function (ModalService, metadata, callback) {
     self.value = '';
     let fixKeys = ['name', 'type', 'size', 'location', 'author', 'uploaded', 'modifided', 'source', 'parameter', 'quality', 'relatesto'];
     this.onOk = function () {
+      if(!utils.validateKey(self.name)) {
+        self.warning = "A key can't contain any of the following characters / \\ : * ? \" < > | ";
+        return;
+      };
       let name = self.name.replace(/ /g, "%20");
       for(key in metadata) {
         if(name.toLowerCase() == key.toLowerCase()

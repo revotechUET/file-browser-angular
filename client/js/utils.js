@@ -204,5 +204,14 @@ exports.getSelections = function () {
 }
 
 exports.validateNodeName = function(name) {
-    return !['/', '\\', ':', '*', '?', '\"', '<', '>', '|'].some(c => name.includes(c));
+    return validateSpecialCharacter(name);
+}
+exports.validateKey = function(key) {
+    return validateSpecialCharacter(key) && validateUnicodeCharacter(key);
+}
+function validateSpecialCharacter(str) {
+    return !['/', '\\', ':', '*', '?', '\"', '<', '>', '|'].some(c => str.includes(c));
+}
+function validateUnicodeCharacter(str) {
+    return !_.some(str, c => c.charCodeAt(0) >= 128);
 }

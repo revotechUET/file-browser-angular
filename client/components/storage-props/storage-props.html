@@ -128,7 +128,7 @@
 
 		<div class="form-group props-group more-info"
 			ng-if="section=='More Information'" ng-repeat="md in self.fields[section]">
-			<div>
+			<div ng-if="md.name !== 'issyncfolder'">
 				<label class="col-sm-5">
 					<input type="text" class="form-control props-value" style="direction: ltr;"
 						ng-model="md.label"

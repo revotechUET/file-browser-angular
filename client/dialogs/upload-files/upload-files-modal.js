@@ -223,8 +223,9 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       self.selectedFile.metaData = metaData;
     };
     self.updateMD4All = function (metaData) {
-      if(self.typeSelect === 'file') uploadList = self.uploadFileList;
-      if(self.typeSelect === 'folder') uploadList = self.uploadFolderList;
+      // if(self.typeSelect === 'file') uploadList = self.uploadFileList;
+      // if(self.typeSelect === 'folder') uploadList = self.uploadFolderList;
+      uploadList = self.uploadFileList.concat(self.uploadFolderList);
       uploadList.forEach(file => {
         file.metaData = Object.assign(file.metaData, metaData);
       });

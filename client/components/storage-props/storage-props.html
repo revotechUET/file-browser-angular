@@ -7,7 +7,9 @@
 					|| (!self.shortView && self.fields[section].length>0)">{{section}}</div>
 		<div ng-repeat="md in self.fields[section]"
 			class="form-group props-group"
-			ng-if="section!='More Information' && md.use">
+			ng-if="section!='More Information' && md.use"
+      ng-style="md.readonly && {background: '#ccc'}"
+      >
 			<label class="col-sm-5">
 				<input type="checkbox" 
 						ng-if="self.chooseBox && (md.name != 'field' && md.name != 'welltype')"
@@ -16,7 +18,8 @@
 				{{md.label}}
 			</label>
 			<div class="col-sm-7"
-				style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
+				style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;"
+        ng-style="md.readonly && {background: '#ccc'}">
 				<div style="flex: 1">
 					<input type="text" ng-model="md.value" 
 							class="form-control props-value"
@@ -50,9 +53,9 @@
 								style="vertical-align: middle;margin-left: 2px"></span>
 						<input type="text" ng-model="md.value.name"
 								class="form-control props-value"
-								readonly
 								title="{{md.value.name}}"
-								style="display: inline; text-align: left;">
+                ng-readonly="true"
+								style="display: inline; text-align: left; cursor: not-allowed; background: #fff;">
 					</div>
 					<div ng-if="md.type=='wiassociate'" ng-hide="self.hideAssociate">
 						<div class="ti ti-arrow-top-right" style="cursor: pointer;" ng-click="self.associateToNodes(md)"></div>

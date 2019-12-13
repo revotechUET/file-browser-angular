@@ -725,6 +725,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.saveObject = function (payload, cb) {
     if (typeof(payload.metaData.name) == 'string' && !utils.validateNodeName(payload.metaData.name)) {
         toastr.error("a file/folder can't contain any of the following characters / \\ : * ? \" < > | ");
+        self.goTo(-999);
         return;
     }
 

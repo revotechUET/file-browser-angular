@@ -172,13 +172,15 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	$scope.flag = true;
 	self.checkName = function (md, oldValue) {
 		if(md.name == 'name') {
-			let format = /[\/:*?"><|]/;
-			if(format.test(md.value)) {
+			// let format = /[\/:*?"><|]/;
+			// if(format.test(md.value)) {
+			if(!utils.validateNodeName(md.value)) {
 				self.checkNameMess = "A file name can't contain any of the following characters: \/:*?\"><|";
-				setTimeout(function() {
+				toastr.error("A file name can't contain any of the following characters: \/:*?\"><|");
+				// setTimeout(function() {
 					md.value = oldValue;
 					self.checkNameMess = '';
-				}, 3000)
+				// }, 500);
 			} else self.checkNameMess = '';
 		}
 	}

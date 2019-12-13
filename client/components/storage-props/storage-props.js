@@ -25,6 +25,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		}
 	};
 	this.getMDObj = function() {
+		Object.assign(config, self.customConfigs || {});
 		let obj = {};
 		self.sections.forEach(function(section) {
 			let arr = [];
@@ -305,7 +306,8 @@ app.component(componentName, {
         shortView: '<',
         chooseBox: '<',
 		enableAssociate: '<',
-		hideAssociate: '<'
+		hideAssociate: '<',
+		customConfigs: '<'
     }
 });
 app.directive('spEnter', function ($parse) {

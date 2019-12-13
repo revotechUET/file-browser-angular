@@ -8,6 +8,16 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
   function modalController($scope, close) {
     let self = this;
 
+    this.customConfigs = {
+        "name": {
+            "translation": "Name",
+            "option": "readonly",
+            "section": "General",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null
+        }
+    }
     this.uploadFileList = [];
     this.uploadFolderList = [];
     self.selectedFile = null;

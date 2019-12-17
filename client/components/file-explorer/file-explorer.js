@@ -58,7 +58,7 @@ Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'Mod
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
   let self = this;
-  let _toastr = __toastr || toastr;
+  let _toastr = window.__toastr || window.toastr;
   window.fileBrowser = self;
   self.widthArray = [];
   self.headerArray = ['Name', 'CODB Status', 'Data type', 'Size', 'Data modified'];

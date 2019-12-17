@@ -46,7 +46,7 @@ const generalConfig = {
 // webpack.config.js
 module.exports = (env, argv) => {
     const config = Object.assign({}, generalConfig, {
-        mode: argv.mode,
+        mode: 'development' || argv.mode,
         devtool: argv.devtool
     });
     return config;

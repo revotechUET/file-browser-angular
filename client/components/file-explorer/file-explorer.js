@@ -299,11 +299,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.httpPost(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
           if (result.data.isNotReadable) {
-            __toastr ? __toastr.error(`Previewing "${item.rootName}" is not available`)
+            let _toastr = __toastr || toastr;
+            _toastr ? _toastr.error(`Previewing "${item.rootName}" is not available`)
               : console.error(`Previewing "${item.rootName}" is not available`);
           } else {
             if (result.data.isTooBig) {
-              __toastr ? __toastr.error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
+              _toastr ? _toastr.error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
                 : console.error(`"${item.rootName}" exceeds the maximum file size that we can preview`);
             } else {
               let data = {title: item.rootName};
@@ -731,6 +732,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
+      cb && cb();
       /*self.goTo(-999, function(fileList) {
               cb && cb(fileList);
             });*/
@@ -742,10 +744,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData
-    }, function (fileList) {
-      self.goTo(-999)
-      let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
-      self.clickNode(item);
+    }, function () {
+      self.goTo(-999, (fileList) => {
+        let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
+        self.clickNode(item);
+      })
 
     });
   };
@@ -784,82 +787,166 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.importCSV = function(items) {
     wiDialog.csvImportDialog();
   }
+  // this.importFilesToInventory = function(items) {
+  //   if (items.length === 0) return;
+  //   self.requesting = true;
+  //   if(items.length == 1) {
+  //     if(items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
+  //       downloadFileToUpload(items[0]);
+  //     }else {
+  //       self.requesting = false;
+  //       __toastr.error("Only accept file las, dlis, csv", "Error");
+  //     }
+  //   }else {
+  //     let isAllLas = true;
+  //     for(let i in items) {
+  //       if(items[i].rootName.split('.').length > 1 && items[i].rootName.split('.').pop() != 'las') {
+  //         isAllLas = false;
+  //         break;
+  //       }
+  //     }
+  //     if(isAllLas) {
+  //       items.forEach(item => {
+  //         downloadFileToUpload(item);
+  //       });
+  //     }else {
+  //       self.requesting = false;
+  //       __toastr.error("Only accept multiple file las", "Error");
+  //     }
+  //   }
+  // }
   this.importFilesToInventory = function(items) {
-    if (items.length === 0) return;
-    self.requesting = true;
-    // let downloadFiles = items.map((item) => {
-    //     if (item.rootIsFile) {
-    //         return item.path
-    //     } else {
-    //         return item.path + '/'
-    //     }
-    // });
-    if(items.length == 1) {
-      if(items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
-        downloadFileToUpload(items[0]);
+      if (items.length === 0) return;
+      self.requesting = true;
+      if(items.length == 1) {
+        if(items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
+          importCurves(items[0]);
+        }else {
+          self.requesting = false;
+          __toastr.error("Only accept file las, dlis, csv", "Error");
+        }
       }else {
-        self.requesting = false;
-        __toastr.error("Only accept file las, dlis, csv", "Error");
-      }
-    }else {
-      let isAllLas = true;
-      for(let i in items) {
-        if(items[i].rootName.split('.').length > 1 && items[i].rootName.split('.').pop() != 'las') {
-          isAllLas = false;
-          break;
+        let isAllLas = true;
+        for(let i in items) {
+          if(items[i].rootName.split('.').length > 1 && items[i].rootName.split('.').pop() != 'las') {
+            isAllLas = false;
+            break;
+          }
+        }
+        if(isAllLas) {
+          items.forEach(item => {
+            importCurves(item);
+          });
+        }else {
+          self.requesting = false;
+          __toastr.error("Only accept multiple file las", "Error");
         }
       }
-      if(isAllLas) {
-        items.forEach(item => {
-          downloadFileToUpload(item);
-        });
-      }else {
-        self.requesting = false;
-        __toastr.error("Only accept multiple file las", "Error");
-      }
-    }
   }
-  function downloadFileToUpload(item) {
-    $http({
-      url: self.url + DOWNLOAD_PATH_POST,
-      method: 'POST',
-      headers: {
-        'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': JSON.stringify(self.storageDatabase),
-        'Content-Type': 'application/json',
-        'Referrer-Policy': 'no-referrer',
-        'Service': 'WI_PROJECT_STORAGE'
-      },
-      data: {
-        'files': [item.rootIsFile ? item.path : item.path + '/'],
-        'skipCompressFile': "true"
-      },
-      responseType: 'arraybuffer',
-    }).then(response => {
-      let file = new Blob([response.data], {
-        type: 'file'
-      });
-      // files = files.map((i, idx) => {
-      //     i.name = items[idx].rootName;
-      //     return i;
-      // });
-      self.requesting = false;
-      file.name = item.rootName;
+  function importCurves(fileToDownload) {
+    downloadFileToUpload(fileToDownload)
+    .then((file) => {
       if(file.name.split('.').length > 1) {
-        switch(file.name.split('.').pop()) {
-          case 'las': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
-            break;
-          case 'dlis': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
-            break;
-          case 'csv': wiDialog.csvImportDialog(file);
-            break;
-          default: break;
+          switch(file.name.split('.').pop()) {
+            case 'las': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
+              break;
+            case 'dlis': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
+              break;
+            case 'csv': wiDialog.csvImportDialog(file);
+              break;
+            default: break;
+          }
         }
-      }
     })
-    .catch(err => {
-      console.error("file browser error", err);
-      if (err.data.code === 401) location.reload();
+    .catch((err) => {
+      __toastr.error("Something went wrong", "Error");
+    });
+  }
+  this.importZoneSet = function(items) {
+    if(items.length === 0 ) return;
+    self.requesting = true;
+    downloadFileToUpload(items[0])
+    .then(file => {
+      wiDialog.importZoneSet(file, self.idProject, callBackImportZoneSet);
+    });
+    console.log("import zone set");
+  } 
+  this.importMarkerSet = function() {
+    console.log("import marker set");
+  } 
+  function callBackImportZoneSet(data) {
+    console.log(data);
+  } 
+  // function downloadFileToUpload(item) {
+  //   $http({
+  //     url: self.url + DOWNLOAD_PATH_POST,
+  //     method: 'POST',
+  //     headers: {
+  //       'Authorization': window.localStorage.getItem('token'),
+  //       'Storage-Database': JSON.stringify(self.storageDatabase),
+  //       'Content-Type': 'application/json',
+  //       'Referrer-Policy': 'no-referrer',
+  //       'Service': 'WI_PROJECT_STORAGE'
+  //     },
+  //     data: {
+  //       'files': [item.rootIsFile ? item.path : item.path + '/'],
+  //       'skipCompressFile': "true"
+  //     },
+  //     responseType: 'arraybuffer',
+  //   }).then(response => {
+  //     let file = new Blob([response.data], {
+  //       type: 'file'
+  //     });
+  //     self.requesting = false;
+  //     file.name = item.rootName;
+  //     if(file.name.split('.').length > 1) {
+  //       switch(file.name.split('.').pop()) {
+  //         case 'las': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
+  //           break;
+  //         case 'dlis': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
+  //           break;
+  //         case 'csv': wiDialog.csvImportDialog(file);
+  //           break;
+  //         default: break;
+  //       }
+  //     }
+  //   })
+  //   .catch(err => {
+  //     console.error("file browser error", err);
+  //     if (err.data.code === 401) location.reload();
+  //   });
+  // }
+  function downloadFileToUpload(item) {
+    return new Promise((resolve, reject) => {
+      $http({
+        url: self.url + DOWNLOAD_PATH_POST,
+        method: 'POST',
+        headers: {
+          'Authorization': window.localStorage.getItem('token'),
+          'Storage-Database': JSON.stringify(self.storageDatabase),
+          'Content-Type': 'application/json',
+          'Referrer-Policy': 'no-referrer',
+          'Service': 'WI_PROJECT_STORAGE'
+        },
+        data: {
+          'files': [item.rootIsFile ? item.path : item.path + '/'],
+          'skipCompressFile': "true"
+        },
+        responseType: 'arraybuffer',
+      }).then(response => {
+        let file = new Blob([response.data], {
+          type: 'file'
+        });
+        self.requesting = false;
+        file.name = item.rootName;
+        return resolve(file);
+
+      })
+      .catch(err => {
+        console.error("file browser error", err);
+        if (err.data.code === 401) location.reload();
+        return reject()
+      });
     });
   }
   function callbackImportLAS(response) {
@@ -889,74 +976,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       return __toastr.info('DLIS file are being processed');
     }
   }
-  // this.postWithFile = function (route, dataPayload, options = {}) {
-  //     var self = this;
-  //     let serviceHeader = null;
-  //     switch (options.service) {
-  //         case 'auth':
-  //             serviceHeader = "WI_AUTH";
-  //             break;
-  //         case 'processing':
-  //             serviceHeader = "WI_PROCESSING";
-  //             break;
-  //         default:
-  //             serviceHeader = "WI_INVENTORY";
-  //             break;
-  //     }
-  //     return new Promise(function (resolve, reject) {
-  //         let configUpload = {
-  //             url: self.url + route,
-  //             headers: {
-  //                 'Referrer-Policy': 'no-referrer',
-  //                 'Authorization': window.localStorage.getItem('token'),
-  //                 'Service': serviceHeader
-  //             },
-  //             arrayKey: '',
-  //             data: dataPayload
-  //         };
-  //         const upload = Upload.upload(configUpload);
-  //         upload.then(
-  //             function (responseSuccess) {
-  //                 if (responseSuccess.data && responseSuccess.data.code === 200 && responseSuccess.data.content) {
-  //                     return resolve(responseSuccess.data.content);
-  //                 } else if (responseSuccess.data && responseSuccess.data.code === 401) {
-  //                     window.localStorage.removeItem('token');
-  //                     window.localStorage.removeItem('username');
-  //                     window.localStorage.removeItem('password');
-  //                     window.localStorage.removeItem('rememberAuth');
-  //                     location.reload();
-  //                 } else if (responseSuccess.data && responseSuccess.data.reason) {
-  //                     return reject(responseSuccess.data.reason);
-  //                 } else {
-  //                     return reject('Response is invalid!');
-  //                 }
-  //             },
-  //             function (responseError) {
-  //                 if (responseError.data && responseError.data.content) {
-  //                     return reject(responseError.data.reason);
-  //                 } else {
-  //                     return reject(null);
-  //                 }
-  //             },
-  //             function (evt) {
-  //                 // let progress = Math.round(100.0 * evt.loaded / evt.total);
-  //                 // progressCb && progressCb(progress, upload);
-  //                 // console.log('evt upload', progress);
-  //             }
-  //         );
-  //     });
-  // }
-  // this.uploadFilesToInventory = function (payload, callback, url, options) {
-  //     let self = this;
-  //     this.postWithFile(url, payload, options)
-  //         .then(function (response) {
-  //             if (callback) callback(response);
-  //         })
-  //         .catch(function (err) {
-  //             console.log(err);
-  //             callback(err);
-  //         })
-  // }
 }
 
 let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService', 'wiDialog']);

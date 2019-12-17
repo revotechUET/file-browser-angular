@@ -24,11 +24,10 @@ module.exports = function (ModalService, callback) {
       self.metaData4All = metaData;
     }
     this.apply = function() {
-      let result = {};
       for(let item in self.chooseBox) {
-        if(self.chooseBox[item]) result[item] = self.metaData4All[item];
+        if (!self.chooseBox[item]) delete self.metaData4All[item];
       };
-      close(result);
+      close(self.metaData4All);
     };
     this.closeModal = function () {
       close(null);

@@ -58,6 +58,7 @@ Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'Mod
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
   let self = this;
+  let _toastr = __toastr || toastr;
   window.fileBrowser = self;
   self.widthArray = [];
   self.headerArray = ['Name', 'CODB Status', 'Data type', 'Size', 'Data modified'];
@@ -299,11 +300,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.httpPost(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
           if (result.data.isNotReadable) {
-            __toastr || toastr ? (__toastr || toastr).error(`Previewing "${item.rootName}" is not available`)
+            _toastr ? _toastr.error(`Previewing "${item.rootName}" is not available`)
               : console.error(`Previewing "${item.rootName}" is not available`);
           } else {
             if (result.data.isTooBig) {
-              __toastr || toastr ? (__toastr || toastr).error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
+              _toastr ? _toastr.error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
                 : console.error(`"${item.rootName}" exceeds the maximum file size that we can preview`);
             } else {
               let data = {title: item.rootName};

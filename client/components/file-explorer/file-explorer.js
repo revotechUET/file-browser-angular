@@ -731,6 +731,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
     self.httpPost(self.updateMetaDataUrl, payload, (result) => {
       console.log(result);
+      cb && cb();
       /*self.goTo(-999, function(fileList) {
               cb && cb(fileList);
             });*/
@@ -742,10 +743,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData
-    }, function (fileList) {
-      self.goTo(-999)
-      let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
-      self.clickNode(item);
+    }, function () {
+      self.goTo(-999, (fileList) => {
+        let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
+        self.clickNode(item);
+      })
 
     });
   };

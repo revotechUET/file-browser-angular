@@ -867,14 +867,31 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.requesting = true;
     downloadFileToUpload(items[0])
     .then(file => {
-      wiDialog.importZoneSet(file, self.idProject, callBackImportZoneSet);
+      if(file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
+        self.requesting = true;
+        wiDialog.importZoneSet(file, self.idProject, callBackImport);
+      }else {
+        __toastr.error("Only accept file csv", "Error");
+      }
     });
     console.log("import zone set");
   } 
-  this.importMarkerSet = function() {
+  this.importMarkerSet = function(items) {
+    if(items.length === 0 ) return;
+    self.requesting = true;
+    downloadFileToUpload(items[0])
+    .then(file => {
+      if(file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
+        self.requesting = true;
+        wiDialog.importMarkerSet(file, self.idProject, callBackImport);
+      }else {
+        __toastr.error("Only accept file csv", "Error");
+      }
+    });
     console.log("import marker set");
   } 
-  function callBackImportZoneSet(data) {
+  function callBackImport(data) {
+    self.requesting = false;
     console.log(data);
   } 
   // function downloadFileToUpload(item) {

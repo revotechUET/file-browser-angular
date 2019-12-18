@@ -45,11 +45,9 @@
             <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"
                 style="transform: rotate(-90deg);"
                 ng-click="self.importFilesToInventory(self.selectedList)"></div>
-            <div title="Import ZoneSet" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"
-                style="transform: rotate(-90deg);"
+            <div title="Import ZoneSet" ng-if="!self.hideImportToInventory" class="button-fn import-zoneset-16x16"
                 ng-click="self.importZoneSet(self.selectedList)"></div>
-            <div title="Import MarkerSet" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"
-                style="transform: rotate(-90deg);"
+            <div title="Import MarkerSet" ng-if="!self.hideImportToInventory" class="button-fn import-markerset-16x16"
                 ng-click="self.importMarkerSet(self.selectedList)"></div>
             <div title="Submit to company database"
                 ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"

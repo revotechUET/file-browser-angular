@@ -310,7 +310,7 @@ app.component(componentName, {
 		customConfigs: '<'
     }
 });
-app.directive('spEnter', function ($parse) {
+app.directive('spEnter', ['$parse', function ($parse) {
     return function (scope, element, attrs) {
         let fn = $parse(attrs['spEnter']);
         element.bind("keydown keypress", function (event) {
@@ -322,5 +322,5 @@ app.directive('spEnter', function ($parse) {
             }
         });
     };
-});
+}]);
 module.exports.name = moduleName;

@@ -54,6 +54,7 @@ const REMOVE_REVISION = '/action/remove-revision';
 const UPLOAD_FILES = '/upload/lases';
 const UPLOAD_DLIS = '/upload/dlis';
 const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
+const PROCESSING_STATUS = '/action/status?key='
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
@@ -155,6 +156,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.restoreRevisionUrl = self.url + RESTORE_REVISION;
     self.removeRevisionUrl = self.url + REMOVE_REVISION;
     self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
+    self.statusUrl = self.url + PROCESSING_STATUS;
     self.modeFilter = 'all';
     let searchQuery = {
       conditions: {
@@ -184,10 +186,51 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             }
           });
         }
+        self.processingKey = 'PROCESSING-' + self.storageDatabase.directory;
+        self.processing = JSON.parse(localStorage.getItem(self.processingKey)) || [];
       } else {
         self.fileList = [];
       }
     });
+
+    // processing status
+    let updating = false;
+    const updateProcessing = _.debounce(function () {
+      if (updating || !self.processing || !self.processing.length) {
+        return;
+      }
+      updating = true;
+      async.each(self.processing, function (item, next) {
+        if (item.status === 'SUCCESS' || item.status === 'ERROR') {
+          return next();
+        }
+        self.httpGet(self.statusUrl + item.key, function ({ data }) {
+          if (data.error) {
+            item.percentage = 100;
+            item.status = 'SUCCESS';
+          } else {
+            Object.assign(item, data, {
+              percentage: data.info * 100,
+            });
+          }
+          next();
+        }, { silent: true });
+      }, function () {
+        updating = false;
+        self.processing = self.processing.filter(i => i.status !== 'SUCCESS');
+        localStorage.setItem(self.processingKey, JSON.stringify(self.processing));
+        updateProcessing();
+      });
+    }, 2000)
+    $scope.$watchCollection(() => self.processing, updateProcessing);
+    const $processing = $element.find('.toolbar .processing');
+    const $listProcessing = $processing.find('.list');
+    $processing.focus(function () {
+      const { top, height } = this.getBoundingClientRect();
+      $listProcessing.css({ width: this.clientWidth, top: top + height - 1 });
+      $listProcessing.fadeIn(300);
+    });
+    $processing.blur(() => $listProcessing.fadeOut(300));
   };
   this.submitToCompanyDatabase = function (files) {
     files = files.map(f => f.path);
@@ -551,7 +594,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}`;
 
           self.httpGet(`${self.copyUrl + from + dest}`, res => {
-            console.log(res);
+            if (!res.data.error && res.data.status === 'IN_PROGRESS') {
+              self.addProcessing(res.data);
+            }
             next();
           })
         }, err => {
@@ -569,7 +614,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}`;
 
           self.httpGet(`${self.moveUrl + from + dest}`, res => {
-            console.log(res);
+            if (!res.data.error && res.data.status === 'IN_PROGRESS') {
+              self.addProcessing(res.data);
+            }
             next();
           })
         }, err => {
@@ -590,6 +637,20 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.pasteList = self.selectedList;
     self.pasteList.action = action;
   };
+
+  this.addProcessing = function (processing) {
+    if (self.processing.find(i => i.key === processing.key)) {
+      return;
+    }
+    processing.percentage = 0;
+    processing.fromName = processing.data.from.split('/').slice(-1)[0] || processing.data.from.split('/').slice(-2)[0];
+    processing.destName = processing.data.dest.split('/').slice(-1)[0] || 'Home';
+    self.processing.push(processing);
+  }
+
+  this.removeProcessing = function (item) {
+    self.processing = self.processing.filter(i => i !== item);
+  }
 
   this.uploadFiles = function () {
     uploadFileDialog(ModalService, Upload, self);
@@ -659,9 +720,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
   }
-  this.httpGet = function (url, cb, options) {
-    self.requesting = !self.requesting;
-    console.log(self.storageDatabase);
+  this.httpGet = function (url, cb, options = {}) {
+    if (!options.silent) {
+      self.requesting = !self.requesting;
+    }
     let reqOptions = {
       method: 'GET',
       url: url,
@@ -676,7 +738,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     };
     $http(reqOptions).then(result => {
-      self.requesting = !self.requesting;
+      if (!options.silent) {
+        self.requesting = !self.requesting;
+      }
       cb(result);
     }, err => {
       console.error("file browser error", err);
@@ -783,6 +847,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.$onDestroy = function () {
     delete window.fileBrowser;
+
   }
   this.importCSV = function(items) {
     wiDialog.csvImportDialog();

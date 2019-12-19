@@ -56,20 +56,47 @@
             <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
             <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
             <div class="button-fn ti ti-angle-right" style="margin-right: 10px; font-size: 9px;"></div>
-            <div class="button-fn" ng-show="self.currentPath.length > 0" style="margin-right: 10px;"
+            <div class="button-fn" ng-if="self.currentPath.length > 0" style="margin-right: 10px;"
                 ng-click="self.goTo(-1); self.filter='';self.modeFilter='all'">{{'Home'}}
             </div>
-            <div class="button-fn" ng-show="self.currentPath.length < 1" style="margin-right: 10px;"
+            <div class="button-fn" ng-if="self.currentPath.length < 1" style="margin-right: 10px;"
                 ng-click="self.goTo(-1); self.filter='';self.modeFilter='all'">{{'Home'}}
             </div>
             <div ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}"
-                style="color: #000; display: flex; align-items: center; margin-left: -10px; margin-right: 10px;">
+                style="display: flex; align-items: center; margin-left: -10px; margin-right: 10px;">
                 <div class="button-fn ti ti-angle-right" style="margin: 0 10px; font-size: 9px;"></div>
-                <div ng-show="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='all'">
+                <div ng-if="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='all'" style="cursor: pointer;">
                     {{dir.rootName | strLimit : 8}}
                 </div>
-                <div ng-show="$last">
+                <div ng-if="$last" style="color: #000;">
                     {{dir.rootName | strLimit : 12}}
+                </div>
+            </div>
+        </div>
+        <div class="processing" ng-show="self.processing.length" tabindex="0">
+            <div class="split"></div>
+            <div class="text">
+                <span>{{self.processing.length}} works in progress</span>
+                <span class="ti ti-reload icon"></span>
+            </div>
+            <div class="split"></div>
+            <div class="list">
+                <div class="item" ng-repeat="item in self.processing track by item.key">
+                    <div class="item-title">
+                        <div class="title-text">
+                            <span ng-if="item.status === 'ERROR'">Error</span>
+                            <span ng-if="item.action === 'copy'">Copying</span>
+                            <span ng-if="item.action === 'move'">Moving</span>
+                            <strong>{{item.fromName}}</strong>
+                            into
+                            <strong>{{item.destName}}</strong>
+                        </div>
+                        <span class="action ti ti-close" ng-if="item.status !== 'IN_PROGRESS'" ng-click="self.removeProcessing(item)"></span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" ng-class="{'progress-bar-danger': item.status==='ERROR', 'progress-bar-success': item.status==='SUCCESS'}"
+                            ng-style="{width: item.percentage + '%'}"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,11 +112,11 @@
                 <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()"
                     style="margin-right: 0;"></div>
             </div>
-            <div style=" border-right: 1px solid #e8e8e8; height: 40px; margin: 0 20px;"></div>
+            <div class="split margin"></div>
             <div class="filter-mode" ng-class="{highlightBg: self.modeFilter!='all'}">
                 <span>FILTER: {{self.modeFilter}} mode</span>
                 <span class="ti ti-close" ng-click="self.allFilesMode()" ng-if="self.modeFilter!='all'"
-                    style="margin-left: 10px; color: #fff; cursor: pointer;"></span>
+                    style="margin-left: 10px; color: #fff; cursor: pointer;"></into>
             </div>
         </div>
     </div>

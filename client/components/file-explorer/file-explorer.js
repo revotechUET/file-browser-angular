@@ -194,6 +194,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
 
     // processing status
+    const refreshDebounced = _.debounce(() => self.goto(-999), 1000);
     let updating = false;
     const updateProcessing = _.debounce(function () {
       if (updating || !self.processing || !self.processing.length) {
@@ -204,7 +205,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         if (item.status === 'SUCCESS' || item.status === 'ERROR') {
           return next();
         }
-        self.httpGet(self.statusUrl + item.key, function ({ data }) {
+        self.httpGet(self.statusUrl + item.key, function (res, err) {
+          if (err) {
+            // network error, retry
+            return next();
+          }
+          const data = res.data;
           if (data.error) {
             item.percentage = 100;
             item.status = 'SUCCESS';
@@ -212,6 +218,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             Object.assign(item, data, {
               percentage: data.info * 100,
             });
+            if (item.status === 'SUCCESS') {
+              refreshDebounced();
+            }
           }
           next();
         }, { silent: true });
@@ -745,8 +754,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }, err => {
       console.error("file browser error", err);
       if (err.data.code === 401) location.reload();
-      self.requesting = !self.requesting;
+      if (!options.silent) {
+        self.requesting = !self.requesting;
+      }
       console.log(err);
+      cb(null, err);
     });
   };
 

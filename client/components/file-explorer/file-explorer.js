@@ -194,7 +194,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
 
     // processing status
-    const refreshDebounced = _.debounce(() => self.goto(-999), 1000);
+    const refreshDebounced = _.debounce(() => self.goTo(-999), 1000);
     let updating = false;
     const updateProcessing = _.debounce(function () {
       if (updating || !self.processing || !self.processing.length) {

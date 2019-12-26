@@ -4,11 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/app.js",
     "build:prod": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
-    "start:prod": "webpack -w --mode=production --config webpack.local.js",
-    "start:dev": "webpack -w --mode=development --config webpack.local.js",
+    "start": "webpack -w --mode=development --config webpack.local.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

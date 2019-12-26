@@ -1090,7 +1090,8 @@ app.component(componentName, {
     hideImportToInventory: '<',
     isDatabase: '<',
     hideActionFilter: '<',
-    hideAssociate: '<'
+    hideAssociate: '<',
+    wellReadonly: '<'
   }
 });
 

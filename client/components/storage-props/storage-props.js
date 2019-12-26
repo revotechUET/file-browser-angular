@@ -16,6 +16,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
   	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
+    console.log(self.metaData);
 	};
 	this.fields = [];
 	this.wells = [];
@@ -87,11 +88,15 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			console.warn("JSON.parse error when get MD props. Consider to fix it later", e);
 		}
 		if(mdKey == 'associate') value = self.metaData;
+    let readonly = (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false;
+    if (mdKey == 'well' && self.wellReadonly != undefined) {
+      readonly = self.wellReadonly;
+    }
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
-			readonly: (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false,
+			readonly: readonly,
 			value : value,
 			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
@@ -307,6 +312,7 @@ app.component(componentName, {
         chooseBox: '<',
 		enableAssociate: '<',
 		hideAssociate: '<',
+      wellReadonly: '<',
 		customConfigs: '<'
     }
 });

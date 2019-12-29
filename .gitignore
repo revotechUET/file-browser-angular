@@ -6,4 +6,3 @@ bower_components
 .eslintrc.json
 /.vscode/
 yarn.lock
-webpack.local.js

@@ -11,7 +11,18 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let idProject = fileExplorerCtrl.idProject ? fileExplorerCtrl.idProject : wiSession.getData('idProject');
       (async() => {
         self.wellsSelection = await wiApi.getWellsPromise(idProject);
+        self.wellsSelection = _.orderBy(self.wellsSelection, [well => well.name.toLowerCase()], ['asc']);
+        self.wellSelections = self.wellsSelection.map(well => {
+          return {
+            data: {label: well.name},
+            properties: {name: well.name}
+          }
+        })
       })();
+    }
+    this.onWellSelectionChange = function(selectedItem, index) {
+      let md = self.conditions.find(md => md.mdtype == 'well');
+      md.children[index].well = (selectedItem || {}).name;
     }
     this.mapKey = {
       "name" : {

@@ -57,3 +57,7 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+.advanced-search .btn.btn-default.form-control.ui-select-toggle {
+  padding: 1.5px 7px;
+}

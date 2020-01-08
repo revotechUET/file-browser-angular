@@ -5,7 +5,7 @@ var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 // let OUTPUT = path.join('E:/workspace/wi-angular/build/bower_components/file-explorer/dist');
 
-let OUTPUT = path.resolve(__dirname, '../wi-angular/watch/vendor/js');
+let OUTPUT = path.resolve(__dirname, '../wi-angular/watch/bower_components/file-explorer/dist');
 
 const generalConfig = {
     entry: [

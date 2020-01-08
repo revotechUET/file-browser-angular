@@ -97,7 +97,7 @@
             <span class="properties2-16x16" style="margin-right: 10px; color: #0077be"></span>
             <span class="name">Bulk Edit</span>
           </div>
-          <div role="presentation" ng-click="self.copyMultiLocation(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}" 
+          <div role="presentation" ng-click="self.copyMultiLocation(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1, 'copied': self.multiLocationCopied(self.selectedList)}" 
           role="menuitem"
           tabindex="-1">
             <span class="copy-16x16" style="margin-right: 10px; color: #0077be"></span>

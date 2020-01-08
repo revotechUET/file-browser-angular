@@ -11,7 +11,25 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let idProject = fileExplorerCtrl.idProject ? fileExplorerCtrl.idProject : wiSession.getData('idProject');
       (async() => {
         self.wellsSelection = await wiApi.getWellsPromise(idProject);
+        self.wellsSelection = _.orderBy(self.wellsSelection, [well => well.name.toLowerCase()], ['asc']);
+        $timeout(() => {
+          self.wellSelections = self.wellsSelection.map(well => ({
+            data: {label: well.name},
+            properties: {name: well.name}
+          })
+          )
+          self.wellSelections.unshift({
+            data: {label: ""},
+            properties: {name: ""}
+          });
+        })
       })();
+    }
+    this.onWellSelectionChange = function(selectedItem, index) {
+      let md = self.conditions.find(md => md.mdtype == 'well');
+      $timeout(() => {
+        md.children[index].well = (selectedItem || {}).name;
+      })
     }
     this.mapKey = {
       "name" : {
@@ -262,8 +280,8 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           }
         })
         let config = {
-          title: "Select filter",
-          inputName: "Name",
+          title: "Load Configuration",
+          inputName: "Configuration Name",
           selectionList: selectionList,
           onCtrlBtnClick: function(item, e, wiDropdown) {
             console.log(item, e, wiDropdown);
@@ -287,7 +305,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           console.log(selectItem);
           fileExplorerCtrl.searchQuery = JSON.parse(selectItem).query;
           self.conditions = JSON.parse(selectItem).conditions;
-          self.customArr = JSON.parse(selectItem).customArr
+          self.customArr = JSON.parse(selectItem).customArr;
+          self.searchQuery = JSON.parse(selectItem).searchQuery;
+          self.subFolders = JSON.parse(selectItem).subFolders;
           callback('Ok');
         });
       });
@@ -296,8 +316,8 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       console.log("save filter");
       onSearch();
       let config = {
-        title: "Name filter",
-        inputName: "Name",
+        title: "Save Configuration",
+        inputName: "Configuration Name",
         input: ""
       }
       wiDialog.promptDialog(config, function(name) {
@@ -306,7 +326,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           content: JSON.stringify({
             query: fileExplorerCtrl.searchQuery,
             conditions: self.conditions,
-            customArr: self.customArr 
+            customArr: self.customArr,
+            searchQuery: self.searchQuery,
+            subFolders: self.subFolders
           })
         })
         .then((res) => {

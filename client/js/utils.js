@@ -161,9 +161,9 @@ exports.getSelections = function () {
 			"SCAL (Scalar and Array)",
 			"Zone & Marker",
 			"PVT (Fluid Analysis)",
-			"DST (Formation Pressure Test)",
-			"MDT (Formation Pressure Test)",
-			"RFT (Formation Pressure Test)",
+			"DST (Drill Stem Test)",
+			"MDT (Modular Dynamic Formation Test)",
+			"RFT (Repeat Formation Test)",
 			"Completion Data",
 			"Perforations",
 			"Biostratigraphy",
@@ -199,7 +199,7 @@ exports.getSelections = function () {
             "Geochemical",
             "Geomechanic",
             "Well completion Report"
-	  	]
+	  	].sort((a, b) => a.localeCompare(b))
 	};
 }
 

@@ -64,7 +64,13 @@
                                                     ng-model="child[self.getKeyObj(child)].to">
                                         </div>
                                     </div>
-                                    <div ng-if="md.inputtype == 'select'" class="col-sm-9"
+                                    <div ng-if="md.inputtype == 'select' && md.mdtype == 'well'" class="col-sm-9"
+                                         style="padding-right: 5px;">
+                                        <wi-dropdown-list style="flex:1;" items='self.wellSelections' params="$index"
+                                          current-select="child[self.getKeyObj(child)]" on-item-changed="self.onWellSelectionChange">
+                                        </wi-dropdown-list>
+                                    </div>
+                                    <div ng-if="md.inputtype == 'select' && md.mdtype != 'well'" class="col-sm-9"
                                          style="padding-right: 5px;">
                                         <select class="form-control" style="padding: 0" 
                                                 ng-model="child[self.getKeyObj(child)]"

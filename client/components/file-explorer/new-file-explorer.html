@@ -22,10 +22,14 @@
             <!-- more -->
             <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])"
                 ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+            <!--<div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"-->
+                <!--ng-class="{inactive: !(self.selectedList.length == 1)}"></div>-->
             <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"
-                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+                ng-class="{inactive: false}"></div>
+            <!--<div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')"-->
+                <!--ng-class="{inactive: !(self.selectedList.length == 1)}"></div>-->
             <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')"
-                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+                ng-class="{inactive: false}"></div>
             <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()"
                 ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
             <!--                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 0) || !self.selectedList[0].rootIsFile}"></div>-->

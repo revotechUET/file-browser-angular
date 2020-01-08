@@ -452,7 +452,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         type: 'application/octet-stream'
       });
       let a = document.createElement('a');
-      a.download = response.headers('File-Name') || response.headers('file-name') || response.headers('filename') || Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
+      let fileName = "I2G_Download_" + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
+      console.log(fileName);
+      // a.download = response.headers('File-Name') || response.headers('file-name') || response.headers('filename') || Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
+      a.download = fileName;
       a.href = URL.createObjectURL(blob);
       a.style.display = 'none';
       document.body.appendChild(a);

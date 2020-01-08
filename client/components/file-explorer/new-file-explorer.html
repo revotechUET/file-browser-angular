@@ -37,7 +37,7 @@
                 ng-class="{inactive: self.selectedList.length <= 1}"></div>
             <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
                 ng-click="self.copyMultiLocation(self.selectedList)"
-                ng-class="{inactive: self.selectedList.length <= 1}"></div>
+                ng-class="{inactive: self.selectedList.length <= 1, 'copied': self.multiLocationCopied(self.selectedList)}"></div>
             <!-- more -->
             <div title="Reload" class="button-fn ti ti-reload"
                 ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">

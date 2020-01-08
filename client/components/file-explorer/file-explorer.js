@@ -1034,6 +1034,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.requesting = false;
         let fileName = "I2G_Download_" + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
         file.name = fileName || item.rootName;
+        console.log(fileName);
+        console.log(file);
         return resolve(file);
 
       })

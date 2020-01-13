@@ -108,7 +108,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		let ref = null;
 		switch(refSpec) {
 			case 'time' :  
-				ref = moment(parseInt(self.metaData[mdKey])).format('YYYY/MM/DD hh:mm:ss');
+				ref = moment(parseInt(self.metaData[mdKey])).format('YYYY/MM/DD hh:mm:ss A');
 				break;
 			case 'size' :
 				ref = $filter('humanReadableFileSize')(self.metaData[mdKey]);

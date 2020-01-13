@@ -1124,7 +1124,7 @@ app.filter('fileExtension', ['$filter', function ($filter) {
 
 app.filter('formatDate', ['$filter', function () {
   return function (input) {
-    return moment(input).format('YYYY/MM/DD hh:mm:ss');
+    return moment(input).format('YYYY/MM/DD hh:mm:ss A');
     // return input.substring(0, 19).replace('T', ' ');
     // return input instanceof Date ?
     //   input.toISOString().substring(0, 19).replace('T', ' ') :

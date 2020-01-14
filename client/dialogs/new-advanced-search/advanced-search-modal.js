@@ -280,6 +280,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
             properties: i.content
           }
         })
+        selectionList.sort((a, b) => a.data.label.localeCompare(b.data.label));
         let config = {
           title: "Load Configuration",
           inputName: "Configuration Name",

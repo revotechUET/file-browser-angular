@@ -746,7 +746,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.httpGet = function (url, cb, options = {}) {
     if (!options.silent) {
-      self.requesting = !self.requesting;
+      self.requesting = true;
     }
     let reqOptions = {
       method: 'GET',
@@ -763,14 +763,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     };
     $http(reqOptions).then(result => {
       if (!options.silent) {
-        self.requesting = !self.requesting;
+        self.requesting = false;
       }
       cb(result);
     }, err => {
       console.error("file browser error", err);
       if (err.data.code === 401) location.reload();
       if (!options.silent) {
-        self.requesting = !self.requesting;
+        self.requesting = false;
       }
       console.log(err);
       cb(null, err);
@@ -778,7 +778,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
 
   this.httpPost = function (url, payload, cb, options) {
-    self.requesting = !self.requesting;
+    self.requesting = true;
+    //self.requesting = !self.requesting;
     let reqOptions = {
       method: 'POST',
       url: url,
@@ -792,11 +793,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       data: payload
     };
     $http(reqOptions).then(result => {
-      self.requesting = !self.requesting;
+      self.requesting = false;
       cb(result);
     }, err => {
       console.error("file browser request", err);
-      self.requesting = !self.requesting;
+      self.requesting = false;;
       console.log(err);
     })
   };

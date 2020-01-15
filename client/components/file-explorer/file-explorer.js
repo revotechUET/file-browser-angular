@@ -341,7 +341,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
-        self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
+        item.path.slice(1, item.path.length - 1).split("/").map((name, idx) => {
+          if (idx = 0)
+            self.currentPath.length = 0;
+          self.currentPath.push({rootName: name, displayName: name});
+        })
+        //self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
         self.filter = '';
         self.modeFilter = 'all';
       })

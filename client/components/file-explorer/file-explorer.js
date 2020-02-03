@@ -177,7 +177,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $scope.$watch(() => self.storageDatabase, () => {
       if (self.storageDatabase) {
         if (self.linkedFile) {
-          self.goToByPath(self.linkedFile);
+          //self.goToByPath(self.linkedFile);
         } else {
           self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
             if (result) {

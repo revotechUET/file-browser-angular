@@ -54,7 +54,8 @@ const REMOVE_REVISION = '/action/remove-revision';
 const UPLOAD_FILES = '/upload/lases';
 const UPLOAD_DLIS = '/upload/dlis';
 const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
-const PROCESSING_STATUS = '/action/status?key='
+const PROCESSING_STATUS = '/action/status?key=';
+const CANCEL_PROCESS = '/action/cancel?key=';
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
@@ -157,6 +158,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.removeRevisionUrl = self.url + REMOVE_REVISION;
     self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
     self.statusUrl = self.url + PROCESSING_STATUS;
+    self.cancelUrl = self.url + CANCEL_PROCESS;
     self.modeFilter = 'all';
     let searchQuery = {
       conditions: {
@@ -672,8 +674,15 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
 
   this.removeProcessing = function (item) {
-    self.processing = self.processing.filter(i => i !== item);
-  }
+    self.httpGet(self.cancelUrl + item.key, function (res, err) {
+      if (err) {
+        console.log("Error while cancel ", err);
+      } else {
+        console.log("Cancel process");
+        self.processing = self.processing.filter(i => i !== item);
+      }
+    });
+  };
 
   this.uploadFiles = function () {
     uploadFileDialog(ModalService, Upload, self);

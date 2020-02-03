@@ -95,12 +95,15 @@
                             into
                             <strong>{{item.destName}}</strong>
                         </div>
-                        <span class="action ti ti-close" ng-if="item.status !== 'IN_PROGRESS'" ng-click="self.removeProcessing(item)"></span>
+                        <span class="action ti ti-close" ng-click="self.removeProcessing(item)"></span>
                     </div>
                     <div class="progress">
                         <div class="progress-bar" ng-class="{'progress-bar-danger': item.status==='ERROR', 'progress-bar-success': item.status==='SUCCESS'}"
                             ng-style="{width: item.percentage + '%'}"></div>
                     </div>
+<!--                    <div>-->
+<!--                        x-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>

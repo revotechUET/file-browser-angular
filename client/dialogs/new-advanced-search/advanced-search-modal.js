@@ -1,5 +1,5 @@
 const helper = require('../dialog-helper');
-require('./advanced-search-modal.css');
+require('./advanced-search-modal.less');
 const utils = require('../../js/utils');
 
 module.exports = function (ModalService, fileExplorerCtrl, callback) {
@@ -7,7 +7,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
 
   function modalController($scope, close, wiApi, wiDialog, $timeout) {
     let self = this;
-    let _toastr = window.__toastr || window.toastr;
+    // self.searchQuery.type = 'all';
     this.$onInit = function () {
       let idProject = fileExplorerCtrl.idProject ? fileExplorerCtrl.idProject : wiSession.getData('idProject');
       (async() => {
@@ -192,6 +192,8 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       }
     }
     function conditionsToSearchQuery (conditions, customArr) {
+      console.log(self.searchQuery.type)
+      console.log(self.subFolders)
       let searchQuery = {
         type: self.searchQuery.type,
         subFolders: (self.subFolders) ? 'included' : 'excluded',
@@ -280,7 +282,6 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
             properties: i.content
           }
         })
-        selectionList.sort((a, b) => a.data.label.localeCompare(b.data.label));
         let config = {
           title: "Load Configuration",
           inputName: "Configuration Name",
@@ -323,49 +324,19 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         input: ""
       }
       wiDialog.promptDialog(config, function(name) {
-        wiApi.listStorageFilterPromise()
+        wiApi.createStorageFilterPromise({
+          name: name,
+          content: JSON.stringify({
+            query: fileExplorerCtrl.searchQuery,
+            conditions: self.conditions,
+            customArr: self.customArr,
+            searchQuery: self.searchQuery,
+            subFolders: self.subFolders
+          })
+        })
         .then((res) => {
-          let temp = res.find(c => c.name == name);
-          if(temp) {
-            wiDialog.confirmDialog("Confirm",
-            `Config <b>"${name}"</b> already exists! Are you sure you want to repacle it ?`,
-            function(res) {
-                if(res) {
-                  wiApi.editStorageFilterPromise({
-                    idFilter: temp.idFilter,
-                    name: name,
-                    content: JSON.stringify({
-                      query: fileExplorerCtrl.searchQuery,
-                      conditions: self.conditions,
-                      customArr: self.customArr,
-                      searchQuery: self.searchQuery,
-                      subFolders: self.subFolders
-                    })
-                  })
-                  .then(res => {
-                    console.log(res);
-                    _toastr ? _toastr.success(`Save config successfully`) : console.log(`Save config successfully`);
-                  })
-                }
-            })
-            console.log("exist !");
-          }else {
-            wiApi.createStorageFilterPromise({
-              name: name,
-              content: JSON.stringify({
-                query: fileExplorerCtrl.searchQuery,
-                conditions: self.conditions,
-                customArr: self.customArr,
-                searchQuery: self.searchQuery,
-                subFolders: self.subFolders
-              })
-            })
-            .then((res) => {
-              console.log(res);
-              _toastr ? _toastr.success(`Save config successfully`) : console.log(`Save config successfully`);
-            })
-          }
-        });
+          console.log(res);
+        })
       })
     }
     this.hideActionFilter = fileExplorerCtrl.hideActionFilter;

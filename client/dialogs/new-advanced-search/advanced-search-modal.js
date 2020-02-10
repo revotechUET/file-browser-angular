@@ -328,7 +328,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           let temp = res.find(c => c.name == name);
           if(temp) {
             wiDialog.confirmDialog("Confirm",
-            `Config <b>"${name}"</b> already exists! Are you sure you want to repacle it ?`,
+            `Config <b>"${name}"</b> already exists! Are you sure you want to replace it ?`,
             function(res) {
                 if(res) {
                   wiApi.editStorageFilterPromise({

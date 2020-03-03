@@ -15,7 +15,7 @@
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "misc-component": "git+https://github.com/tunghoang/misc-component.git"
+    "misc-component": "git+https://github.com/revotechUET/misc-component.git"
   },
   "devDependencies": {
     "bower": "^1.8.4",

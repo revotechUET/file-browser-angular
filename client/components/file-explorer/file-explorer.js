@@ -401,7 +401,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                 }
               }
             }, {service: "WI_FILE_PREVIEW"})
-        })
+        }, {service: "WI_FILE_PREVIEW"})
     }
   };
 

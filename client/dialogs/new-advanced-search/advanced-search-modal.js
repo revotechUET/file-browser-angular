@@ -265,6 +265,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     this.closeModal = function () {
       close();
     }
+    this.loadedFilter = null;
     this.loadFilter = function() {
       console.log("load filter");
       // fileExplorerCtrl.searchQuery = JSON.parse('{"type":"all","subFolders":"included","conditions":{"operator":"and","children":[{"operator":"or","children":[{"name":"1_1.las"}]}]}}');
@@ -277,7 +278,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
               label: i.name,
               idFilter: i.idFilter
             },
-            properties: i.content
+            properties: i // i.content
           }
         })
         selectionList.sort((a, b) => a.data.label.localeCompare(b.data.label));
@@ -305,11 +306,21 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         }
         wiDialog.promptListDialog(config, function(selectItem) {
           console.log(selectItem);
+          /*
           fileExplorerCtrl.searchQuery = JSON.parse(selectItem).query;
           self.conditions = JSON.parse(selectItem).conditions;
           self.customArr = JSON.parse(selectItem).customArr;
           self.searchQuery = JSON.parse(selectItem).searchQuery;
           self.subFolders = JSON.parse(selectItem).subFolders;
+          */
+          const parsedContent = JSON.parse(selectItem.content);
+          fileExplorerCtrl.searchQuery = parsedContent.query;
+          self.conditions = parsedContent.conditions;
+          self.customArr = parsedContent.customArr;
+          self.searchQuery = parsedContent.searchQuery;
+          self.subFolders = parsedContent.subFolders;
+          self.loadedFilter = selectItem;
+
           callback('Ok');
         });
       });
@@ -320,7 +331,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let config = {
         title: "Save Configuration",
         inputName: "Configuration Name",
-        input: ""
+        input: self.loadedFilter ? self.loadedFilter.name:""
       }
       wiDialog.promptDialog(config, function(name) {
         wiApi.listStorageFilterPromise()
@@ -344,6 +355,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
                   })
                   .then(res => {
                     console.log(res);
+                    self.loadedFilter = res;
                     _toastr ? _toastr.success(`Save config successfully`) : console.log(`Save config successfully`);
                   })
                 }
@@ -362,6 +374,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
             })
             .then((res) => {
               console.log(res);
+              self.loadedFilter = res;
               _toastr ? _toastr.success(`Save config successfully`) : console.log(`Save config successfully`);
             })
           }

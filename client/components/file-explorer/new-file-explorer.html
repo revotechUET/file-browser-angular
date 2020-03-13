@@ -15,37 +15,33 @@
 </div>
 <div class="outside">
     <div class="toolbar">
-        <!-- Button -->
         <div class="left">
+        
+            <!-- Refresh - -->
+            <div title="Reload" class="button-fn ti ti-reload" ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'"></div>
+            <!-- Upload -  -->
             <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
+            <!-- download -  -->
+            <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: self.selectedList.length === 0}"></div>
+            <!-- open -  -->
+            <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+            <!-- newfolder -  -->
             <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"></div>
-            <!-- more -->
-            <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])"
-                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
-            <!--<div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"-->
-                <!--ng-class="{inactive: !(self.selectedList.length == 1)}"></div>-->
-            <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"
-                ng-class="{inactive: false}"></div>
-            <!--<div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')"-->
-                <!--ng-class="{inactive: !(self.selectedList.length == 1)}"></div>-->
-            <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')"
-                ng-class="{inactive: false}"></div>
-            <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()"
-                ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
-            <!--                <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: !(self.selectedList.length == 0) || !self.selectedList[0].rootIsFile}"></div>-->
-            <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)"
-                ng-class="{inactive: self.selectedList.length === 0}"></div>
-            <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()"
-                ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
-            <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)"
-                ng-class="{inactive: self.selectedList.length <= 1}"></div>
-            <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
+            <!-- delete -  -->
+            <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()" ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
+            <!-- copy -  -->
+            <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"  ng-class="{inactive: false}"></div>
+            <!-- cut -  -->
+            <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: false}"></div>
+            <!-- paste -  -->
+            <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()" ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
+            <!-- bulkvedit -  -->
+            <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}"></div>
+            <!-- CopyLocation -->
+           <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
                 ng-click="self.copyMultiLocation(self.selectedList)"
                 ng-class="{inactive: self.selectedList.length <= 1, 'copied': self.multiLocationCopied(self.selectedList)}"></div>
-            <!-- more -->
-            <div title="Reload" class="button-fn ti ti-reload"
-                ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'">
-            </div>
+            
             <div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"
                 style="transform: rotate(-90deg);"
                 ng-click="self.importFilesToInventory(self.selectedList)"></div>
@@ -56,7 +52,6 @@
             <div title="Submit to company database"
                 ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"
                 class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
-
             <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
             <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
             <div class="button-fn ti ti-angle-right" style="margin-right: 10px; font-size: 9px;"></div>

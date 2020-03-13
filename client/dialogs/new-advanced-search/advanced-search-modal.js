@@ -19,12 +19,16 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
             properties: {name: well.name}
           })
           )
-          self.wellSelections.unshift({
-            data: {label: ""},
-            properties: {name: ""}
-          });
+          //self.wellSelections.unshift({
+            //data: {label: ""},
+            //properties: {name: ""}
+          //});
         })
       })();
+    }
+    this.wellValidationFn = function(selectItem, index) {
+      let md = self.conditions.find(md => md.mdtype == 'well');
+      return md.children[index].well && md.children[index].submitted;
     }
     this.onWellSelectionChange = function(selectedItem, index) {
       let md = self.conditions.find(md => md.mdtype == 'well');
@@ -255,15 +259,40 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions, newCustomArr);
     }
     this.applySearch = function () {
-      onSearch();
-      callback('Ok');
+      change2Submitted();
+      if (_.isEmpty($scope.conditionsForm.$error)) {
+        onSearch();
+        callback('Ok');
+      } else {
+        _toastr ? _toastr.error(`Parameter(s) cannot be empty`) : console.log(`Parameter(s) cannot be empty`);
+      }
     }
     this.okSearch = function () {
-      onSearch();
-      close('Ok');
+      change2Submitted();
+      if (_.isEmpty($scope.conditionsForm.$error)) {
+        onSearch();
+        close('Ok');
+      } else {
+        _toastr ? _toastr.error(`Parameter(s) cannot be empty`) : console.log(`Parameter(s) cannot be empty`);
+      }
     }
     this.closeModal = function () {
       close();
+    }
+    function change2Submitted() {
+      self.conditions.forEach(md => {
+        md.children.forEach(child => {
+          child.submitted = true;
+        })
+      })
+      self.customArr.forEach(field => {
+        field.submitted = true;
+      })
+    }
+    this.validateConditionsForm = function(inputName, inputObj) {
+      return $scope.conditionsForm
+        && $scope.conditionsForm[inputName].$error.required
+        && inputObj.submitted;
     }
     this.loadFilter = function() {
       console.log("load filter");

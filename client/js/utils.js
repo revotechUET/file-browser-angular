@@ -215,3 +215,9 @@ function validateSpecialCharacter(str) {
 function validateUnicodeCharacter(str) {
     return !_.some(str, c => c.charCodeAt(0) >= 128);
 }
+
+function getAllWellsInNode(parentNode) {
+    const groups = parentNode.children.filter(c => c.type === 'group');
+    return _.flatten([...groups.map(g => getAllWellsInNode(g)), parentNode.children.filter(c => c.type === 'well')]);
+}
+exports.getAllWellsInNode = getAllWellsInNode;

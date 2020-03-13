@@ -2,7 +2,7 @@
     <div class='modal-dialog'>
         <div class="wi-modal-content" ng-form="form">
             <div class="wi-modal-header">
-                <div>Advanced Search</div>
+                <div>Advanced Search {{self.loadedFilter ? "("+self.loadedFilter.name+")":""}}</div>
                 <div ng-click="self.closeModal()" class="ti ti-close" style="cursor: pointer;"></div>
             </div>
             <div class="wi-modal-body slim-scroller">

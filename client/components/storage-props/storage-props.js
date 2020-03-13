@@ -5,6 +5,7 @@ const componentName = 'storageProps';
 
 const utils = require('../../js/utils');
 const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
+const selectWellDialog = require('../../dialogs/select-well/select-well-modal');
 
 Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession'];
 
@@ -246,7 +247,8 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(md.name == 'well') {
 			if(md.value.type == 'well') {
 				function getWellheaderByKey(wellProps, key) {
-					let value = wellProps.wellheaders.find(wh => wh.header == key).value;
+					const wellheader = wellProps.wellheaders.find(wh => wh.header == key) || {};
+					let value = wellheader.value;
 					return value || '';
 				}
 				self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
@@ -290,6 +292,14 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.doRating = function (md, index) {
 		md.value = index;
 		self.updateMetaData(md.name, index +'' );
+	}
+	this.selectWell = function (md) {
+		selectWellDialog(ModalService, md.value.id, function (selectedNode) {
+			const bakObjectNode = wiSession.getData('objectNode');
+			wiSession.putData('objectNode', JSON.stringify(selectedNode));
+			self.pasteObject(md, 'well');
+			wiSession.putData('objectNode', bakObjectNode);
+		})
 	}
 }
 

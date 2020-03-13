@@ -54,8 +54,9 @@
 						<input type="text" ng-model="md.value.name"
 								class="form-control props-value"
 								title="{{md.value.name}}"
-                ng-readonly="md.readonly"
-								style="display: inline; text-align: left; cursor: not-allowed;">
+								ng-readonly="md.readonly"
+								ng-click="self.selectWell(md)"
+								style="display: inline; text-align: left; cursor: pointer;">
 					</div>
 					<div ng-if="md.type=='wiassociate'" ng-hide="self.hideAssociate">
 						<div class="ti ti-arrow-top-right" style="cursor: pointer;" ng-click="self.associateToNodes(md)"></div>

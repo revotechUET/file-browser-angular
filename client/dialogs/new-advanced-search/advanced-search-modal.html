@@ -30,7 +30,6 @@
                             <div ng-click="self.subFolders = !self.subFolders" ng-class="{'actived': self.subFolders}">
                                 <div class="sub-folder"></div>
                                 <div>Sub-Folders</div>
-                                <!-- <input type="checkbox" ng-model="self.subFolders"> -->
                             </div>
                         </div>
                     </div>
@@ -52,6 +51,7 @@
                     </div>
                 </div>
                 <div class="data-key-area">
+                  <form name="conditionsForm">
                     <div ng-repeat="md in self.conditions" ng-class="{'selected-item': self.rowSelected(md)}">
                         <div ng-repeat="child in md.children track by $index">
                             <div class="form-group">
@@ -60,18 +60,21 @@
                                 <div class="col-sm-9" style="padding-right: 5px;"
                                     ng-if="md.inputtype != 'date' && md.inputtype != 'select'">
                                     <input type="{{md.inputtype}}" class="form-control"
-                                        ng-model="child[self.getKeyObj(child)]">
+                                        ng-model="child[self.getKeyObj(child)]" required
+                                        name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}">
                                 </div>
                                 <div class="uploaded col-sm-9" ng-if="md.inputtype == 'date'"
                                     style="padding-right: 5px">
                                     <div class="col-sm-4" style="flex: 1; padding: 0;">
                                         <input type="date" class="form-control"
-                                            ng-model="child[self.getKeyObj(child)].from">
+                                            ng-model="child[self.getKeyObj(child)].from" required
+                                            name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}">
                                     </div>
                                     <div class="col-sm-1">To</div>
                                     <div class="col-sm-4" style="flex: 1; padding: 0;">
                                         <input type="date" class="form-control"
-                                            ng-model="child[self.getKeyObj(child)].to">
+                                            ng-model="child[self.getKeyObj(child)].to" required
+                                            name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}">
                                     </div>
                                 </div>
                                 <div ng-if="md.inputtype == 'select' && md.mdtype == 'well'" class="col-sm-9"
@@ -84,7 +87,8 @@
                                 <div ng-if="md.inputtype == 'select' && md.mdtype != 'well'" class="col-sm-9"
                                     style="padding-right: 5px;">
                                     <select class="form-control" style="padding: 0"
-                                        ng-model="child[self.getKeyObj(child)]"
+                                        ng-model="child[self.getKeyObj(child)]" required
+                                        name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}"
                                         ng-options="item for item in self.getSelections(md.mdtype)"></select>
                                 </div>
                                 <div class="col-sm-1" style="padding-left: 0;">
@@ -103,11 +107,13 @@
                                     <input type="text" class="form-control" ng-model="field.key"
                                         style="font-weight: bold; border: none; padding-left: 0;"
                                         ng-change="self.changeCustomFields(field, 'key', $index)"
-                                        placeholder="Edit this title">
+                                        name="{{'customKey' + $index}}" ng-class="{'error-form': self.validateConditionsForm('customKey' + $index, field)}"
+                                        placeholder="Edit this title" required>
                                 </div>
                                 <div class="col-sm-9" style="padding-right: 5px">
                                     <input type="text" class="form-control" ng-model="field.value"
-                                        ng-change="self.changeCustomFields(field, 'value', $index)">
+                                        name="{{'customValue' + $index}}" ng-class="{'error-form': self.validateConditionsForm('customValue' + $index, field)}"
+                                        ng-change="self.changeCustomFields(field, 'value', $index)" required>
                                 </div>
                                 <div class="col-sm-1">
                                     <span style="height: 24px; cursor: pointer;" ng-click="self.removeCustom($index)">
@@ -117,6 +123,7 @@
                             </div>
                         </div>
                     </div>
+                  </form>
                 </div>
             </div>
             <div class="wi-modal-footer">

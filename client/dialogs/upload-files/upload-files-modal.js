@@ -32,6 +32,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.processingName = [];
     self.multiMD = true;
     self.metaData4All = {
+      well: '{}',
       datatype: '',
       quality: '5',
       description: ''

@@ -1,0 +1,39 @@
+<div class='modal fade' data-backdrop="static" data-keyboard="false">
+    <div class='modal-dialog modal-lg'>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="self.onCancelButtonClicked()"
+                    aria-hidden="true">&times;</button>
+                <h4>Select Well</h4>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; flex: 1; margin-bottom: 5px; overflow: hidden;">
+                    <div class="panel panel-default tree-block" style="margin:5px">
+                        <div class="search-block">
+                            <i class="fa fa-search"></i>
+                            <input type='text' id="focus" ng-model="self.filterWell" placeholder="[Search]">
+                        </div>
+                        <div class="treeview-content">
+                            <div style="height: 305px;width: 100%;">
+                                <wi-tree-view-virtual tree-root="self.wellConfig" get-label="self.getLabel"
+                                    get-icon='self.getIcon' run-match='self.runMatch'
+                                    get-children="self.getChildren" hide-unmatched='true' hide-search='true'
+                                    click-fn="self.clickWell" filter='self.filterWell'
+                                    auto-scroll-to-selected-node="true">
+                                </wi-tree-view-virtual>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class='btn btn-default' ng-click='self.onOkButtonClicked()'>
+                    <span class="ok-16x16"></span>&nbsp;Ok
+                </button>
+                <button class='btn btn-default' ng-click='self.onCancelButtonClicked()'>
+                    <span class="close-16x16"></span>&nbsp;Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

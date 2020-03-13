@@ -1,12 +1,18 @@
 const async = require('../../vendor/js/async.min');
 const helper = require('../dialog-helper');
 require('./upload-files-modal.css');
+const constants = require('./constants')
+
+function getType(fileName) {
+  return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown'; 
+}
 
 module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
   modalController.$inject = ['$scope', 'close'];
 
   function modalController($scope, close) {
     let self = this;
+    console.log("HELLO IM NEW 3");
 
     this.customConfigs = {
         "name": {
@@ -34,6 +40,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       self.selectedFile = $files[0];
       self.uploadFileList = _.union(self.uploadFileList, $files);
       async.each(self.uploadFileList, (file, next) => {
+        console.log('file:', file);
         file.desDirectory = '';
         if (isFolderUpload) {
           file.desDirectory = '/' + file.webkitRelativePath.substring(0, file.webkitRelativePath.lastIndexOf('/'));
@@ -42,9 +49,10 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         file.uploadingProgress = null;
         file.overwrite = false;
         file.existed = false;
+        file.type = getType(file.name);
         file.metaData = {
           name: file.name,
-          type: (file.type || file.type !== '') ? file.type : 'Unknown',
+          type: getType(file.name),
           size: file.size,
           location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + file.desDirectory + '/' + file.name).replace('//', '/'),
           author: window.localStorage.getItem('username'),

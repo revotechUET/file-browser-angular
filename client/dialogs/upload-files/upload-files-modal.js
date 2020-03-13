@@ -168,6 +168,14 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                   self.uploadFileList[index].overwrite = false;
                   next();
                 } else {
+                  if (result.data.code === 409) {
+                    fileExplorerCtrl.httpPost(`${fileExplorerCtrl.previewUrl}/remove-file-in-cache`,
+                      {item: file,
+                       path: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + file.desDirectory + '/' + file.name).replace('//', '/')},
+                      result => {
+                      //console.log(result.data)
+                    }, {service: "WI_FILE_PREVIEW"})
+                  }
                   if (self.processingName.findIndex(f => _.isEqual(f, file)) === -1) self.processingName.push(file);
                   self.uploadUrl = fileExplorerCtrl.uploadUrl + encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + file.desDirectory) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
                   file.uploadingObject = Upload.upload({
@@ -184,6 +192,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
                     }
                   });
                   file.uploadingObject.then(resp => {
+                    console.log(resp);
                     self.uploadFileList.splice(self.uploadFileList.findIndex(f => _.isEqual(f, file)), 1);
                     // console.log(resp);
                     next();

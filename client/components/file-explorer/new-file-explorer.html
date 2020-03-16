@@ -144,7 +144,7 @@
                             style="margin-right: 5px; margin-bottom: -4px;"></i>
                         <!-- <i class="folder-icon-16x16" ng-show="!item.rootIsFile && item.metaData.issyncfolder === 'false'"
                            style="margin-right: 5px; margin-bottom: -4px;"></i> -->
-                        <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.type)}}"
+                        <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.name)}}"
                             style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
@@ -208,6 +208,7 @@
             <div class="right-panel">
                 <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"
                     enable-associate="true" revision="self.selectedItem.revision" hide-associate="self.hideAssociate"
+                    is-folder = "!self.selectedItem.rootIsFile"
                     remove-revision-func="self.removeRevision" restore-revision-func="self.restoreVersion" well-readonly="self.wellReadonly">
                 </storage-props>
             </div>

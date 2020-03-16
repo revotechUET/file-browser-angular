@@ -6,6 +6,9 @@ const componentName = 'storageProps';
 const utils = require('../../js/utils');
 const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
 const selectWellDialog = require('../../dialogs/select-well/select-well-modal');
+const getType = require('../../js/utils').getType;
+//const isFolder = require('../../js/utils').isFolder;
+//const getFileExtension = require('../../js/utils').getFileExtension;
 
 Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession'];
 
@@ -17,11 +20,13 @@ function Controller($scope, $filter, ModalService, wiSession) {
   	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
-    console.log(self.metaData);
+		
+		console.log('self: ', self);
 	};
 	this.fields = [];
 	this.wells = [];
 	this.$onChanges = function(changeObj) {
+		//console.log('changeObj:', changeObj);
 		if(changeObj.metaData) {
  			self.fields = self.getMDObj();
 		}
@@ -52,12 +57,13 @@ function Controller($scope, $filter, ModalService, wiSession) {
                 name: rev.time,
                 label: moment(parseInt(rev.time)).format('YYYY/MM/DD hh:mm'),
                 type: 'wirevision',
-                value: $filter('humanReadableFileSize')(rev.size),
+            	value: $filter('humanReadableFileSize')(rev.size),
                 readonly: true,
                 use: true
             }
         }) : [];
-        if (getMDProps('associate', config['associate'])) obj['Information'].push(getMDProps('associate', config['associate']));
+		if (getMDProps('associate', config['associate'])) obj['Information'].push(getMDProps('associate', config['associate']));
+		//console.log("OBJ: ", obj);
         return obj;
 	};
     self.removeRevision = function (revision) {
@@ -82,6 +88,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		if(!self.readonlyValues) self.readonlyValues = [];
 		if(!self.metaData || (mdKey == 'associate' && !self.enableAssociate)) return;
 		let value = self.metaData[mdKey];
+		let name = self.metaData['name'];
 		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 		try {
 			if (mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
@@ -89,16 +96,16 @@ function Controller($scope, $filter, ModalService, wiSession) {
 			console.warn("JSON.parse error when get MD props. Consider to fix it later", e);
 		}
 		if(mdKey == 'associate') value = self.metaData;
-    let readonly = (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false;
-    if (mdKey == 'well' && self.wellReadonly != undefined) {
-      readonly = self.wellReadonly;
-    }
+		let readonly = (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false;
+		if (mdKey == 'well' && self.wellReadonly != undefined) {
+			readonly = self.wellReadonly;
+		}
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
 			readonly: readonly,
-			value : value,
+			value : mdKey == "type" ? (self.isFolder ? "Folder" : getType(name)) : value,
 			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
 			selections: configObj.choices ? self.selections[configObj.choices] : []
@@ -322,8 +329,9 @@ app.component(componentName, {
         chooseBox: '<',
 		enableAssociate: '<',
 		hideAssociate: '<',
-      wellReadonly: '<',
-		customConfigs: '<'
+     	wellReadonly: '<',
+		customConfigs: '<',
+		isFolder: '<'
     }
 });
 app.directive('spEnter', ['$parse', function ($parse) {

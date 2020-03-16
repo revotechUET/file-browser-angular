@@ -23,6 +23,7 @@ const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
 const confirmDialog = require('../../dialogs/confirm/confirm-modal');
 
 const utils = require('../../js/utils');
+const getFileExtension = utils.getFileExtension;
 
 
 const moduleName = 'file-explorer';
@@ -66,61 +67,117 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   self.headerArray = ['Name', 'CODB Status', 'Data type', 'Size', 'Data modified'];
   self.fileTypeList = [
     {
-      type: 'image/svg+xml',
+      type: 'svg',
       class: 'svg-icon-16x16'
-    }, {
-      type: 'application/json',
+    },
+    {
+      type: 'json',
       class: 'json-icon-16x16'
     }, {
-      type: 'text/html',
+      type: 'html',
       class: 'json-icon-16x16'
-    }, {
-      type: 'text/x-python-script',
+    }, 
+    {
+      type: 'htm',
       class: 'json-icon-16x16'
-    }, {
-      type: 'image/bmp',
+    },
+    {
+      type: 'py',
+      class: 'json-icon-16x16'
+    },
+    {
+      type: 'bmp',
       class: 'jpg-icon-16x16'
     }, {
-      type: 'image/tiff',
+      type: 'tif',
       class: 'jpg-icon-16x16'
-    }, {
-      type: 'text/csv',
+    },
+    {
+      type: 'tiff',
+      class: 'jpg-icon-16x16'
+    },
+    {
+      type: 'csv',
       class: 'csv-icon-16x16'
-    }, {
-      type: 'image/jpeg',
+    }, 
+    {
+      type: 'jpg',
+      class: 'jpg-icon-16x16'
+    }, 
+    {
+      type: 'jpeg',
+      class: 'jpg-icon-16x16'
+    }, 
+    {
+      type: 'png',
       class: 'jpg-icon-16x16'
     }, {
-      type: 'image/png',
-      class: 'jpg-icon-16x16'
-    }, {
-      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      type: 'doc',
       class: 'docx-icon-16x16'
-    }, {
-      type: 'application/msword',
+    },
+    {
+      type: 'docx',
       class: 'docx-icon-16x16'
-    }, {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    },
+    {
+      type: 'docm',
+      class: 'docx-icon-16x16'
+    },
+    {
+      type: 'xls',
       class: 'xlsx-icon-16x16'
-    }, {
-      type: 'application/vnd.ms-excel',
+    },
+    {
+      type: 'xlsx',
       class: 'xlsx-icon-16x16'
-    }, {
-      type: 'application/vnd.ms-powerpoint',
+    },
+    {
+      type: 'xlsm',
+      class: 'xlsx-icon-16x16'
+    },
+    {
+      type: 'xlt',
+      class: 'xlsx-icon-16x16'
+    },
+    {
+      type: 'xltm',
+      class: 'xlsx-icon-16x16'
+    },
+    {
+      type: 'xltx',
+      class: 'xlsx-icon-16x16'
+    },
+    {
+      type: 'ppt',
       class: 'pptx-icon-16x16'
-    }, {
-      type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    },
+    {
+      type: 'pptm',
       class: 'pptx-icon-16x16'
-    }, {
-      type: 'application/pdf',
+    },
+    {
+      type: 'pptx',
+      class: 'pptx-icon-16x16'
+    },
+    {
+      type: 'ppsx',
+      class: 'pptx-icon-16x16'
+    },
+    {
+      type: 'ppsm',
+      class: 'pptx-icon-16x16'
+    },
+    {
+      type: 'pdf',
       class: 'pdf-icon-16x16'
     }, {
-      type: 'application/zip',
+      type: 'zip',
       class: 'zip-icon-16x16'
     }, {
-      type: 'application/x-rar',
+      type: 'rar',
       class: 'zip-icon-16x16'
     }, {
-      type: 'text/plain',
+      type: 'txt',
       class: 'file-icon-16x16'
     }, {
       type: 'Unknown',
@@ -261,8 +318,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.goTo(-999)
     })
   };
-  this.setIconFile = function (typeFile) {
-    let found = self.fileTypeList.find(f => f.type === typeFile)
+  this.setIconFile = function (name) {
+    let found = self.fileTypeList.find(f => f.type === getFileExtension(name))
     return found ? found.class : "file-icon-16x16";
   }
   this.changeWidth = function (leftColIdx, leftColWidth, rightColIdx, rightColWidth) {
@@ -294,6 +351,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.clickNode = function (item, $event) {
     if (self.selectedItem !== item) {
       self.selectedItem = item;
+      //console.log('selectedItem: ', self.selectedItem);
       $scope.addName = '';
       $scope.addValue = '';
     }

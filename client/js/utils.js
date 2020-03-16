@@ -1,3 +1,5 @@
+const constants = require('./constants');
+
 exports.getConfigProps = function() {
 	return {
         "name": {
@@ -221,3 +223,19 @@ function getAllWellsInNode(parentNode) {
     return _.flatten([...groups.map(g => getAllWellsInNode(g)), parentNode.children.filter(c => c.type === 'well')]);
 }
 exports.getAllWellsInNode = getAllWellsInNode;
+
+function getType(fileName) {
+    return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown'; 
+}
+
+function getFileExtension(fileName) {
+    return fileName.split('.').pop().toLowerCase();
+}
+
+function isFolder(fileName) {
+    return !fileName.includes(".");
+}
+
+exports.getType = getType;
+exports.getFileExtension = getFileExtension;
+exports.isFolder = isFolder;

@@ -68,8 +68,8 @@ const fileMap = {
     'sldx': 'Microsoft PowerPoint slide',
     'swf': 'Shockwave Flash file',
     'sys': 'Microsoft DOS and Windows system settings and variables file',
-    'tif': 'Tagged Image Format file ',
-    'tiff': 'Tagged Image Format file ',
+    'tif': 'Tagged Image Format file',
+    'tiff': 'Tagged Image Format file',
     'tmp': 'Temporary data file',
     'txt': 'Unformatted text file',
     'vob': 'Video object file',
@@ -104,9 +104,14 @@ const fileMap = {
     'xps': 'XML-based document',
     'zip': 'Compressed file',
     'las': 'LAS file',
-    'dlis': 'DLIS file'
+    'dlis': 'DLIS file',
+    'json': 'JavaScript Object Notation',
+    'svg': 'Scalable Vector Graphics',
+    'py': 'Python Script'
 }
 
 module.exports = {
     FILE_EXTENSIONS: fileMap
 }
+
+

@@ -1,18 +1,14 @@
 const async = require('../../vendor/js/async.min');
 const helper = require('../dialog-helper');
 require('./upload-files-modal.css');
-const constants = require('./constants')
-
-function getType(fileName) {
-  return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown'; 
-}
+const getType = require('../../js/utils').getType;
 
 module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
   modalController.$inject = ['$scope', 'close'];
 
   function modalController($scope, close) {
     let self = this;
-    console.log("HELLO IM NEW 3");
+    console.log("HELLO IM NEW 4");
 
     this.customConfigs = {
         "name": {

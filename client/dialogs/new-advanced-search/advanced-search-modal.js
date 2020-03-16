@@ -295,6 +295,11 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         && inputObj.submitted;
     }
     this.loadedFilter = null;
+    if (fileExplorerCtrl.modeFilter === "custom search") {
+      this.loadedFilter = fileExplorerCtrl.__loadedFilter
+    } else {
+      delete fileExplorerCtrl.__loadedFilter;
+    }
     this.loadFilter = function() {
       console.log("load filter");
       // fileExplorerCtrl.searchQuery = JSON.parse('{"type":"all","subFolders":"included","conditions":{"operator":"and","children":[{"operator":"or","children":[{"name":"1_1.las"}]}]}}');
@@ -349,6 +354,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           self.searchQuery = parsedContent.searchQuery;
           self.subFolders = parsedContent.subFolders;
           self.loadedFilter = selectItem;
+          fileExplorerCtrl.__loadedFilter = selectItem;
 
           callback('Ok');
         });
@@ -385,6 +391,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
                   .then(res => {
                     console.log(res);
                     self.loadedFilter = res;
+                    fileExplorerCtrl.__loadedFilter = res;
                     _toastr ? _toastr.success(`Save config successfully`) : console.log(`Save config successfully`);
                   })
                 }

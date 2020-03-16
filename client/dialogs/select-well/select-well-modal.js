@@ -4,8 +4,11 @@ const utils = require('../../js/utils');
 module.exports = function (ModalService, idWell, callback) {
   modalController.$inject = ['close'];
   function modalController(close, $timeout) {
+    if (!window.explorertree) {
+      close(null);
+      return;
+    }
     const self = this;
-
     const treeConfig = window.explorertree.treeConfig[0];
     this.wellConfig = utils.getAllWellsInNode(treeConfig).map(n => ({ ...n }));
     if (idWell) {

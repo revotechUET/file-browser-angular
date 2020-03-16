@@ -13,22 +13,18 @@
                         <div class="item-list">
                             <div ng-click="self.searchQuery.type = 'all'"
                                 ng-class="{'actived': self.searchQuery.type === 'all'}">
-                                <div class="all-type"></div>
-                                <div style="margin-bottom: -10px;">All</div>
+                                <div>All</div>
                             </div>
                             <div ng-click="self.searchQuery.type = 'file'"
                                 ng-class="{'actived': self.searchQuery.type === 'file'}">
-                                <div class="file"></div>
-                                <div style="margin-bottom: -10px;">File</div>
+                                <div>File</div>
                             </div>
                             <div ng-click="self.searchQuery.type = 'folder'"
                                 ng-class="{'actived': self.searchQuery.type === 'folder'}">
-                                <div class="folder"></div>
-                                <div style="margin-bottom: -10px;">Folder</div>
+                                <div>Folder</div>
                             </div>
                             <span></span>
                             <div ng-click="self.subFolders = !self.subFolders" ng-class="{'actived': self.subFolders}">
-                                <div class="sub-folder"></div>
                                 <div>Sub-Folders</div>
                             </div>
                         </div>

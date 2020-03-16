@@ -1107,6 +1107,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     if (err.data.code === 401) location.reload();
   //   });
   // }
+  this.downloadFileToUpload = downloadFileToUpload;
   function downloadFileToUpload(item) {
     return new Promise((resolve, reject) => {
       $http({

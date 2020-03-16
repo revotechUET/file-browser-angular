@@ -852,8 +852,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   };
 
-  this.httpPost = function (url, payload, cb, options) {
-    self.requesting = true;
+  this.httpPost = function (url, payload, cb, options = {}) {
+    if (!options.silent) {
+      self.requesting = true;
+    }
     //self.requesting = !self.requesting;
     let reqOptions = {
       method: 'POST',
@@ -868,11 +870,15 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       data: payload
     };
     $http(reqOptions).then(result => {
-      self.requesting = false;
+      if (!options.silent) {
+        self.requesting = false;
+      }
       cb(result);
     }, err => {
       console.error("file browser request", err);
-      self.requesting = false;;
+      if (!options.silent) {
+        self.requesting = false;
+      }
       console.log(err);
     })
   };

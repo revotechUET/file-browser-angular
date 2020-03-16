@@ -333,6 +333,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       return;
     }
     self.selectedList = [item];
+    self.clickNodeFn && self.clickNodeFn(self.selectedList);
   };
 
   this.dblClickNode = function (item) {
@@ -352,6 +353,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.modeFilter = 'all';
       })
     } else {
+      if (self.disablePreview) return;
       self.filter = '';
       // self.modeFilter = 'all';
       self.selectedList.push(item);
@@ -1124,7 +1126,11 @@ app.component(componentName, {
     isDatabase: '<',
     hideActionFilter: '<',
     hideAssociate: '<',
-    wellReadonly: '<'
+    wellReadonly: '<',
+    clickNodeFn: '<',
+    disablePreview: '<',
+    hidePdbFeaturesPanel: '<',
+    hideMetadataPanel: '<'
   }
 });
 

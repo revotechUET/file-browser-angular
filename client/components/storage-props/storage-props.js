@@ -14,6 +14,7 @@ Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession'];
 
 function Controller($scope, $filter, ModalService, wiSession) {
   	let self = this;
+    const toastr = window.__toastr || window.toastr;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
@@ -182,20 +183,13 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		}
 		return valid;
 	}
-	self.checkNameMess = '';
 	$scope.flag = true;
 	self.checkName = function (md, oldValue) {
 		if(md.name == 'name') {
-			// let format = /[\/:*?"><|]/;
-			// if(format.test(md.value)) {
 			if(!utils.validateNodeName(md.value)) {
-				self.checkNameMess = "A file name can't contain any of the following characters: \/:*?\"><|";
-				toastr.error("A file name can't contain any of the following characters: \/:*?\"><|");
-				// setTimeout(function() {
-					md.value = oldValue;
-					self.checkNameMess = '';
-				// }, 500);
-			} else self.checkNameMess = '';
+				toastr.error(`File name can not contain special characters except for !-_.'"()`);
+				md.value = oldValue;
+			}
 		}
 	}
 	this.addMetaData = function() {

@@ -839,6 +839,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $http(reqOptions).then(result => {
       if (!options.silent) {
         self.requesting = false;
+        if (!result.data) {
+          toastr.error('Network error');
+        } else if (result.data.error) {
+          toastr.error(result.data.message);
+        }
       }
       cb(result);
     }, err => {
@@ -872,6 +877,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $http(reqOptions).then(result => {
       if (!options.silent) {
         self.requesting = false;
+        if (!result.data) {
+          toastr.error('Network error');
+        } else if (result.data.error) {
+          toastr.error(result.data.message);
+        }
       }
       cb(result);
     }, err => {
@@ -904,9 +914,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
 
     self.httpPost(self.updateMetaDataUrl, payload, (res) => {
-      if (res.data.error) {
-        toastr.error(res.data.message);
-      }
       cb && cb(res.data);
       /*self.goTo(-999, function(fileList) {
               cb && cb(fileList);

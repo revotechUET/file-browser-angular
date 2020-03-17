@@ -13,7 +13,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       name: self.folderName,
       type: 'Folder',
       size: 0,
-      location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName).replace('//', '/'),
+      location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/').replace('//', '/'),
       author: window.localStorage.getItem('username'),
       uploaded: Date.now(),
       modified: Date.now(),
@@ -28,13 +28,23 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       description: ''
     }
     this.folderName = '';
+    let oldName = ''
     self.changeFolderName = function () {
-      let copiedData = angular.copy(self.metaData); // to hook $onchanges func
-      self.metaData = {};
-      self.metaData = copiedData;
-      self.metaData.name = self.folderName;
-      self.metaData.location = fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + self.folderName;
+      if (!self.validateName()) {
+        toastr.error(`File name can not contain special characters except for !-_.'"()`);
+        self.folderName = oldName;
+        return;
+      }
+      oldName = self.folderName;
+      self.metaData = {
+        ...self.metaData,
+        name: self.folderName,
+        location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + (self.folderName || '')).replace('//', '/'),
+      }
     };
+    self.validateName = function () {
+      return utils.validateNodeName(self.folderName);
+    }
 
     this.createFolder = function () {
       let data = {};
@@ -48,9 +58,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
 
       fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, res => {
-        if (res.data.error) {
-          toastr.error(res.data.message);
-        } else {
+        if (!res.data.error) {
           close(null);
           fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
         }

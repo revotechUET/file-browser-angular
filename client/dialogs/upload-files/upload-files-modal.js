@@ -1,5 +1,6 @@
 const async = require('../../vendor/js/async.min');
 const helper = require('../dialog-helper');
+const utils = require('../../js/utils');
 require('./upload-files-modal.css');
 const getType = require('../../js/utils').getType;
 
@@ -8,8 +9,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
 
   function modalController($scope, close) {
     let self = this;
-    console.log("HELLO IM NEW 4");
-
+    const toastr = window.__toastr || window.toastr;
     this.customConfigs = {
         "name": {
             "translation": "Name",
@@ -35,7 +35,13 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     };
     this.addForUpload = function ($files, isFolderUpload) {
       if (!$files || !$files.length) return;
-      const curLength = self.uploadFileList.length;
+      let curLength = $files.length;
+      $files = $files.filter(f => utils.validateNodeName(f.name));
+      if ($files.length !== curLength) {
+				toastr.error(`File name can not contain special characters except for !-_.'"()`);
+      }
+      if (!$files.length) return;
+      curLength = self.uploadFileList.length;
       self.uploadFileList = _.unionWith(self.uploadFileList, $files, (a, b) => a.name + a.size + a.lastModified === b.name + b.size + b.lastModified);
       self.isFilePicked = !isFolderUpload;
       if (self.uploadFileList.length === curLength) return;

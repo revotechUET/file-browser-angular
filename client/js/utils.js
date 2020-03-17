@@ -225,7 +225,8 @@ function getAllWellsInNode(parentNode) {
 exports.getAllWellsInNode = getAllWellsInNode;
 
 function getType(fileName) {
-    return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown'; 
+    if (!fileName) return 'Unknown';
+    return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown';
 }
 
 function getFileExtension(fileName) {

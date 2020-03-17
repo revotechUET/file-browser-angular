@@ -7,6 +7,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
 
   function modalController($scope, close) {
     let self = this;
+    const toastr = window.__toastr || window.toastr;
     this.newFolderUrl = fileExplorerCtrl.newFolderUrl;
     self.metaData = {
       name: self.folderName,
@@ -47,9 +48,12 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
 
       fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, res => {
-        console.log(res);
-        close(null);
-        fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
+        if (res.data.error) {
+          toastr.error(res.data.message);
+        } else {
+          close(null);
+          fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
+        }
       })
     };
     self.updateMetaData = function (metaData) {

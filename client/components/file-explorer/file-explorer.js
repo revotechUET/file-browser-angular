@@ -14,7 +14,7 @@ const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 // const imgPreview = require('../img-preview/img-preview').name;
 const imgPreview = 'img-preview'
 const storageProps = require('../storage-props/storage-props').name;
-const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
+// const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
@@ -903,9 +903,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         return;
     }
 
-    self.httpPost(self.updateMetaDataUrl, payload, (result) => {
-      console.log(result);
-      cb && cb();
+    self.httpPost(self.updateMetaDataUrl, payload, (res) => {
+      if (res.data.error) {
+        toastr.error(res.data.message);
+      }
+      cb && cb(res.data);
       /*self.goTo(-999, function(fileList) {
               cb && cb(fileList);
             });*/
@@ -913,16 +915,17 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
   this.updateMetaData = function (metaData) {
     self.selectedItem.metaData = metaData;
-    self.selectedItem.rootName = metaData.name;
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData
-    }, function () {
+    }, function (res) {
+      if (!res.error) {
+        self.selectedItem.rootName = metaData.name;
+      }
       self.goTo(-999, (fileList) => {
         let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
         self.clickNode(item);
       })
-
     });
   };
   this.removeMetaData = function (name) {

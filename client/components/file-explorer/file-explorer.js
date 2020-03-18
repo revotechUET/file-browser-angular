@@ -1189,6 +1189,40 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       return __toastr.info('DLIS file are being processed');
     }
   }
+
+  this.checkFileExisted = function(file, metaDataRequest, sv) {
+    return new Promise(res => {
+      self.httpGet(self.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), function(result) {
+        if ((result.data && result.data.code && result.data.code === 409) && !file.overwrite) {
+          return res(true);
+        }else {
+          return res(false);
+        }
+      }, {service: sv});
+    })
+  }
+  this.uploadFile = function(file, path, metaDataRequest) {
+    let uploadUrl = self.uploadUrl + encodeURIComponent((path).replace('//', '/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
+    let uploadingObject = Upload.upload({
+        url: uploadUrl,
+        headers: {
+        'Content-Type': 'application/json',
+        'Referrer-Policy': 'no-referrer',
+        'Authorization': window.localStorage.getItem('token'),
+        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Service': "WI_PROJECT_STORAGE"
+        },
+        data: {
+        'upload-file': file
+        }
+    });
+    uploadingObject.then(resp => {
+        console.log("Upload success");
+    })
+    .catch(err => {
+        console.log("Upload terminated", err.message);
+    });
+  }
 }
 
 let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService', 'wiDialog']);

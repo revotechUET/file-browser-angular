@@ -35,13 +35,14 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     };
     this.addForUpload = function ($files, isFolderUpload) {
       if (!$files || !$files.length) return;
-      let curLength = $files.length;
-      $files = $files.filter(f => utils.validateNodeName(f.name));
-      if ($files.length !== curLength) {
-				toastr.error(`File name can not contain special characters except for !-_.'"()`);
+      const validFiles = $files.filter(f => utils.validateNodeName(f.name));
+      if (validFiles.length !== $files.length) {
+        const invalidFiles = _.difference($files, validFiles);
+        toastr.error('Invalid files: ' + invalidFiles.map(f => f.name).join(', '), `File name can not contain special characters except for !-_.'"()`);
       }
+      $files = validFiles;
       if (!$files.length) return;
-      curLength = self.uploadFileList.length;
+      const curLength = self.uploadFileList.length;
       self.uploadFileList = _.unionWith(self.uploadFileList, $files, (a, b) => a.name + a.size + a.lastModified === b.name + b.size + b.lastModified);
       self.isFilePicked = !isFolderUpload;
       if (self.uploadFileList.length === curLength) return;

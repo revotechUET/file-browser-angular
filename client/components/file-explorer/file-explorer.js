@@ -1218,9 +1218,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
     uploadingObject.then(resp => {
         console.log("Upload success");
+        __toastr.success("Upload success");
     })
     .catch(err => {
         console.log("Upload terminated", err.message);
+        __toastr.error("Upload error");
     });
   }
 }

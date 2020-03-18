@@ -77,7 +77,7 @@ exports.getConfigProps = function() {
         },
         "field": {
             "translation": "Field",
-            "option": "readonly",
+            "option": "use",
             // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,

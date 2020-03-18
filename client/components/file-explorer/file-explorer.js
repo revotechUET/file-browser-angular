@@ -216,6 +216,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
     self.statusUrl = self.url + PROCESSING_STATUS;
     self.cancelUrl = self.url + CANCEL_PROCESS;
+    self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
     self.modeFilter = 'all';
     let searchQuery = {
       conditions: {
@@ -483,8 +484,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     return item.rootName || 'untitled';
   }
 
-  this.downloadFile = function (items) {
+  this.downloadFile = async function (items) {
     if (items.length === 0) return;
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'download', resolve));
+      if (res.data.error) return;
+    }
     self.requesting = true;
     // // let item = Array.isArray(items) ? items[0] : items;
     // // if (!item || !item.rootIsFile)
@@ -751,7 +756,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   };
 
-  this.uploadFiles = function () {
+  this.uploadFiles = async function () {
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'upload', resolve));
+      if (res.data.error) return;
+    }
     uploadFileDialog(ModalService, Upload, self);
   };
 
@@ -1205,7 +1214,8 @@ app.component(componentName, {
     clickNodeFn: '<',
     disablePreview: '<',
     hidePdbFeaturesPanel: '<',
-    hideMetadataPanel: '<'
+    hideMetadataPanel: '<',
+    checkPermission: '<',
   }
 });
 

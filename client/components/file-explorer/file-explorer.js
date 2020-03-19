@@ -764,7 +764,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     uploadFileDialog(ModalService, Upload, self);
   };
 
-  this.newFolder = function () {
+  this.newFolder = async function () {
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'upload', resolve));
+      if (res.data.error) return;
+    }
     newFolderDialog(ModalService, self);
   };
 

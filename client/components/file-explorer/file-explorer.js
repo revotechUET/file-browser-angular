@@ -848,9 +848,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $http(reqOptions).then(result => {
       if (!options.silent) {
         self.requesting = false;
-        if (!result.data) {
-          toastr.error('Network error');
-        } else if (result.data.error) {
+        if (result.data && result.data.error) {
           toastr.error(result.data.message);
         }
       }
@@ -886,9 +884,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $http(reqOptions).then(result => {
       if (!options.silent) {
         self.requesting = false;
-        if (!result.data) {
-          toastr.error('Network error');
-        } else if (result.data.error) {
+        if (result.data && result.data.error) {
           toastr.error(result.data.message);
         }
       }

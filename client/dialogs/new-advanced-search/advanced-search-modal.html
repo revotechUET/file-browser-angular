@@ -75,10 +75,16 @@
                                 </div>
                                 <div ng-if="md.inputtype == 'select' && md.mdtype == 'well'" class="col-sm-9"
                                     style="padding-right: 5px;">
-                                    <wi-dropdown-list style="flex:1;" items='self.wellSelections' params="$index"
-                                        current-select="child[self.getKeyObj(child)]"
-                                        on-item-changed="self.onWellSelectionChange">
-                                    </wi-dropdown-list>
+                                  <wi-autocomplete style="flex: 1;"
+                                    item-list="self.wellSelections"
+                                    on-item-changed="self.onWellSelectionChange"
+                                    params="$index"
+                                    get-item-name="self.getWellName">
+                                  </wi-autocomplete>
+                                    <!--<wi-dropdown-list style="flex:1;" items='self.wellSelections' params="$index"-->
+                                        <!--current-select="child[self.getKeyObj(child)]"-->
+                                        <!--on-item-changed="self.onWellSelectionChange">-->
+                                    <!--</wi-dropdown-list>-->
                                 </div>
                                 <div ng-if="md.inputtype == 'select' && md.mdtype != 'well'" class="col-sm-9"
                                     style="padding-right: 5px;">

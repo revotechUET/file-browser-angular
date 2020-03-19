@@ -30,10 +30,13 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       let md = self.conditions.find(md => md.mdtype == 'well');
       return md.children[index].well && md.children[index].submitted;
     }
+    this.getWellName = function(well) {
+      return well.properties.name;
+    }
     this.onWellSelectionChange = function(selectedItem, index) {
       let md = self.conditions.find(md => md.mdtype == 'well');
       $timeout(() => {
-        md.children[index].well = (selectedItem || {}).name;
+        md.children[index].well = typeof(selectedItem) === "string" ? selectedItem : (selectedItem || {}).properties.name;
       })
     }
     this.mapKey = {

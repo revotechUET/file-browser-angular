@@ -30,10 +30,15 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.metaData4All = {
       well: '{}',
       field: '',
+      welltype: '',
       datatype: '',
       quality: '5',
       description: ''
     };
+    if (!window.explorertree) {
+      delete self.metaData4All.well;
+      delete self.metaData4All.welltype;
+    }
     this.addForUpload = function ($files, isFolderUpload) {
       if (!$files || !$files.length) return;
       const validFiles = $files.filter(f => utils.validateNodeName(f.name));

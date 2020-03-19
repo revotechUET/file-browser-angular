@@ -79,7 +79,8 @@
                                     item-list="self.wellSelections"
                                     on-item-changed="self.onWellSelectionChange"
                                     params="$index"
-                                    get-item-name="self.getWellName">
+                                    get-item-name="self.getWellName"
+                                    input-text="child[self.getKeyObj(child)]">
                                   </wi-autocomplete>
                                     <!--<wi-dropdown-list style="flex:1;" items='self.wellSelections' params="$index"-->
                                         <!--current-select="child[self.getKeyObj(child)]"-->

@@ -728,9 +728,13 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
   };
 
-  this.copyOrCut = function (action) {
+  this.copyOrCut = async function (action) {
     if (!self.selectedList)
       return;
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'update', resolve));
+      if (res.data.error) return;
+    }
     self.pasteList = self.selectedList;
     self.pasteList.action = action;
   };
@@ -766,7 +770,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
   this.newFolder = async function () {
     if (this.checkPermission) {
-      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'upload', resolve));
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'update', resolve));
       if (res.data.error) return;
     }
     newFolderDialog(ModalService, self);

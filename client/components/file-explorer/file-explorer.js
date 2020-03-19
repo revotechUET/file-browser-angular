@@ -418,7 +418,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/check-in-cache?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
-          if (!result.data) {
+          if (result.data.notCached) {
             _toastr ? _toastr.info(`File is being converted for next fast preview`)
               : console.info(`File is being converted for next fast preview`);
           }

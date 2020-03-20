@@ -11,9 +11,9 @@ const formatBytes = require('../../js/utils').formatBytes;
 //const isFolder = require('../../js/utils').isFolder;
 //const getFileExtension = require('../../js/utils').getFileExtension;
 
-Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession'];
+Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession', '$timeout'];
 
-function Controller($scope, $filter, ModalService, wiSession) {
+function Controller($scope, $filter, ModalService, wiSession, $timeout) {
   	let self = this;
     const toastr = window.__toastr || window.toastr;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
@@ -22,8 +22,7 @@ function Controller($scope, $filter, ModalService, wiSession) {
   	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
-		
-		console.log('self: ', self);
+		//console.log('self: ', self);
 	};
 	this.fields = [];
 	this.wells = [];
@@ -136,8 +135,10 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		//console.log(self.getSize);
 		self.loadingFolderSize = true;
 		self.getSize().then((rs)=>{
-			self.folderSize = formatBytes(rs, 3);
-			self.loadingFolderSize = false;
+			$timeout(()=>{
+				self.folderSize = formatBytes(rs, 3);
+				self.loadingFolderSize = false;
+			});
 		})
 	}
 

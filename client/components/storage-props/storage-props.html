@@ -31,8 +31,8 @@
 							title="{{md.value}}">
 					<div ng-if="md.label == 'Size' && self.isFolder">
 						<span ng-if="self.folderSize==null && !self.loadingFolderSize" ng-click="self.estimateFolderSize()">Estimate Size</span>
-						<span ng-if="self.folderSize==null && self.loadingFolderSize" ng-click="self.estimateFolderSize()">Loading...</span>
-						<span ng-if="self.folderSize!=null" ng-click="self.estimateFolderSize()">{{self.folderSize}}</span>
+						<span ng-if="self.folderSize==null && self.loadingFolderSize">Loading...</span>
+						<span ng-if="self.folderSize!=null">{{self.folderSize}}</span>
 					</div>	
 					<input ng-if="md.type == 'wiref' && (md.label != 'Size' || !self.isFolder)" 
 							type="text" ng-model="md.ref"

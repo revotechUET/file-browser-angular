@@ -29,7 +29,12 @@
 							sp-enter="$event.currentTarget.blur();"
 							ng-change="self.checkName(md, '{{md.value}}')"
 							title="{{md.value}}">
-					<input ng-if="md.type == 'wiref'" 
+					<div ng-if="md.label == 'Size' && self.isFolder">
+						<span ng-if="self.folderSize==null && !self.loadingFolderSize" ng-click="self.estimateFolderSize()">Estimate Size</span>
+						<span ng-if="self.folderSize==null && self.loadingFolderSize" ng-click="self.estimateFolderSize()">Loading...</span>
+						<span ng-if="self.folderSize!=null" ng-click="self.estimateFolderSize()">{{self.folderSize}}</span>
+					</div>	
+					<input ng-if="md.type == 'wiref' && (md.label != 'Size' || !self.isFolder)" 
 							type="text" ng-model="md.ref"
 							class="form-control props-value"
 							readonly=""
@@ -83,7 +88,7 @@
 					</i>
 				</div>
                 <div ng-if="md.type=='wirevision'" >
-                    {{md.value}}
+					{{md.value}}
                     <i class="ti ti-back-left"
                        ng-click="self.restoreRevisionFunc(md); self.removeRevision(md)"
                        style="padding: 0 2px; cursor: pointer;"

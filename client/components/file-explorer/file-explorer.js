@@ -57,6 +57,7 @@ const UPLOAD_DLIS = '/upload/dlis';
 const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
 const PROCESSING_STATUS = '/action/status?key=';
 const CANCEL_PROCESS = '/action/cancel?key=';
+const GETSIZE_PATH = '/action/folder-size?dir='
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
@@ -216,7 +217,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
     self.statusUrl = self.url + PROCESSING_STATUS;
     self.cancelUrl = self.url + CANCEL_PROCESS;
+    self.getFolderSizeUrl = self.url + GETSIZE_PATH;
     self.modeFilter = 'all';
+    self.getSize = null;
+    
     let searchQuery = {
       conditions: {
         operator: "and",
@@ -351,6 +355,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.clickNode = function (item, $event) {
     if (self.selectedItem !== item) {
       self.selectedItem = item;
+      self.getSize = (() => {
+        return new Promise((res,rej)=>{
+          self.httpGet(self.getFolderSizeUrl + encodeURIComponent(item.path), result=>{
+            res(result.data.data);
+          });
+        });
+      })
+      console.log('self get size now: ', self.getSize);
       //console.log('selectedItem: ', self.selectedItem);
       $scope.addName = '';
       $scope.addValue = '';
@@ -410,6 +422,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.filter = '';
         self.modeFilter = 'all';
       })
+      
     } else {
       if (self.disablePreview) return;
       self.filter = '';
@@ -1188,7 +1201,8 @@ app.component(componentName, {
     clickNodeFn: '<',
     disablePreview: '<',
     hidePdbFeaturesPanel: '<',
-    hideMetadataPanel: '<'
+    hideMetadataPanel: '<',
+    getSize: '<'
   }
 });
 

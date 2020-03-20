@@ -7,13 +7,15 @@ const utils = require('../../js/utils');
 const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
 const selectWellDialog = require('../../dialogs/select-well/select-well-modal');
 const getType = require('../../js/utils').getType;
+const formatBytes = require('../../js/utils').formatBytes;
 //const isFolder = require('../../js/utils').isFolder;
 //const getFileExtension = require('../../js/utils').getFileExtension;
 
 Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession'];
 
 function Controller($scope, $filter, ModalService, wiSession) {
-  	let self = this;
+	let self = this;
+	//console.log('HELLO IM NEWWWW');
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
@@ -27,10 +29,14 @@ function Controller($scope, $filter, ModalService, wiSession) {
 	this.wells = [];
 	this.$onChanges = function(changeObj) {
 		//console.log('changeObj:', changeObj);
+		self.folderSize = null;
+		self.loadingFolderSize = false;
 		if(changeObj.metaData) {
  			self.fields = self.getMDObj();
 		}
 	};
+
+
 	this.getMDObj = function() {
 		Object.assign(config, self.customConfigs || {});
 		let obj = {};
@@ -125,6 +131,16 @@ function Controller($scope, $filter, ModalService, wiSession) {
 		}
 		return ref;
 	}
+
+	this.estimateFolderSize = function() {
+		//console.log(self.getSize);
+		self.loadingFolderSize = true;
+		self.getSize().then((rs)=>{
+			self.folderSize = formatBytes(rs, 3);
+			self.loadingFolderSize = false;
+		})
+	}
+
 	this.checkMDObj = function () {
 		if(!self.metaData || self.metaData == {}) return false;
 		else return true;
@@ -331,7 +347,8 @@ app.component(componentName, {
 		hideAssociate: '<',
      	wellReadonly: '<',
 		customConfigs: '<',
-		isFolder: '<'
+		isFolder: '<',
+		getSize: '<'
     }
 });
 app.directive('spEnter', ['$parse', function ($parse) {

@@ -1,5 +1,6 @@
 const async = require('../../vendor/js/async.min');
 const helper = require('../dialog-helper');
+const utils = require('../../js/utils');
 require('./upload-files-modal.css');
 const getType = require('../../js/utils').getType;
 
@@ -8,8 +9,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
 
   function modalController($scope, close) {
     let self = this;
-    console.log("HELLO IM NEW 4");
-
+    const toastr = window.__toastr || window.toastr;
     this.customConfigs = {
         "name": {
             "translation": "Name",
@@ -29,15 +29,31 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.multiMD = true;
     self.metaData4All = {
       well: '{}',
+      field: '',
+      welltype: '',
       datatype: '',
       quality: '5',
       description: ''
     };
+    if (!window.explorertree) {
+      delete self.metaData4All.well;
+      delete self.metaData4All.welltype;
+    }
     this.addForUpload = function ($files, isFolderUpload) {
+      if (!$files || !$files.length) return;
+      const validFiles = $files.filter(f => utils.validateNodeName(f.name));
+      if (validFiles.length !== $files.length) {
+        const invalidFiles = _.difference($files, validFiles);
+        toastr.error('Invalid files: ' + invalidFiles.map(f => f.name).join(', '), `File name can not contain special characters except for !-_.'"()`);
+      }
+      $files = validFiles;
+      if (!$files.length) return;
+      const curLength = self.uploadFileList.length;
+      self.uploadFileList = _.unionWith(self.uploadFileList, $files, (a, b) => a.name + a.size + a.lastModified === b.name + b.size + b.lastModified);
+      self.isFilePicked = !isFolderUpload;
+      if (self.uploadFileList.length === curLength) return;
       self.selectedFile = $files[0];
-      self.uploadFileList = _.union(self.uploadFileList, $files);
       async.each(self.uploadFileList, (file, next) => {
-        console.log('file:', file);
         file.desDirectory = '';
         if (isFolderUpload) {
           file.desDirectory = '/' + file.webkitRelativePath.substring(0, file.webkitRelativePath.lastIndexOf('/'));
@@ -72,6 +88,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     this.removeFromFolder = function(folderIdx) {
       let folderPath = self.uploadFolderList[folderIdx].path;
       self.uploadFileList = self.uploadFileList.filter(file => file.desDirectory !== ('/' + folderPath));
+      self.uploadFolderList.splice(folderIdx, 1);
     }
     this.removeFromUpload = function (index, type) {
       if(type === 'folder') {
@@ -83,11 +100,14 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         self.uploadFileList.splice(index, 1);
       }
       self.selectedFile = null;
-      if (self.uploadFileList.length === 0 || self.uploadFolderList === 0) self.processing = false;
+      if (self.uploadFileList.length === 0 || self.uploadFolderList === 0) {
+        self.processing = false;
+        self.isFilePicked = false;
+      }
       // !$scope.$$phase && $scope.$digest();
     };
     this.folderPicked = function (files) {
-      console.log(files);
+      if (!files || !files.length) return;
       self.addForUpload(files, true);
       for (let i = 0; i < files.length; i++) {
         const file = files[i];

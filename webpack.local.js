@@ -3,7 +3,7 @@ let path = require('path');
 
 var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
-let OUTPUT = path.resolve(__dirname, '../wi-angular/watch/bower_components/file-explorer/dist');
+ let OUTPUT = path.resolve(__dirname, '../wi-angular/watch/bower_components/file-explorer/dist');
 //let OUTPUT = path.resolve(__dirname, '../i2g-data-administrator/public/bower_components/file-explorer/dist');
 
 const generalConfig = {

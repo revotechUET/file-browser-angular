@@ -1,7 +1,7 @@
 <div class='modal fade' data-backdrop="static" data-keyboard="false">
     <div class='modal-dialog'>
-        <div class="wi-modal-content" ng-form="form">
-            <div class="wi-modal-header">
+        <div class="wi-modal-content modal-content" ng-form="form">
+            <div class="wi-modal-header modal-header">
                 <div>Advanced Search {{self.loadedFilter ? "("+self.loadedFilter.name+")":""}}</div>
                 <div ng-click="self.closeModal()" class="ti ti-close" style="cursor: pointer;"></div>
             </div>
@@ -75,10 +75,17 @@
                                 </div>
                                 <div ng-if="md.inputtype == 'select' && md.mdtype == 'well'" class="col-sm-9"
                                     style="padding-right: 5px;">
-                                    <wi-dropdown-list style="flex:1;" items='self.wellSelections' params="$index"
-                                        current-select="child[self.getKeyObj(child)]"
-                                        on-item-changed="self.onWellSelectionChange">
-                                    </wi-dropdown-list>
+                                  <wi-autocomplete style="flex: 1;"
+                                    item-list="self.wellSelections"
+                                    on-item-changed="self.onWellSelectionChange"
+                                    params="$index"
+                                    get-item-name="self.getWellName"
+                                    input-text="child[self.getKeyObj(child)]">
+                                  </wi-autocomplete>
+                                    <!--<wi-dropdown-list style="flex:1;" items='self.wellSelections' params="$index"-->
+                                        <!--current-select="child[self.getKeyObj(child)]"-->
+                                        <!--on-item-changed="self.onWellSelectionChange">-->
+                                    <!--</wi-dropdown-list>-->
                                 </div>
                                 <div ng-if="md.inputtype == 'select' && md.mdtype != 'well'" class="col-sm-9"
                                     style="padding-right: 5px;">

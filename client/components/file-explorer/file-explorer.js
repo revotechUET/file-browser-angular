@@ -14,7 +14,7 @@ const pdfViewer = require('../pdf-viewer/pdf-viewer').name;
 // const imgPreview = require('../img-preview/img-preview').name;
 const imgPreview = 'img-preview'
 const storageProps = require('../storage-props/storage-props').name;
-const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
+// const textViewerDialog = require('../../dialogs/text-viewer/text-viewer-modal');
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
@@ -218,6 +218,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.statusUrl = self.url + PROCESSING_STATUS;
     self.cancelUrl = self.url + CANCEL_PROCESS;
     self.getFolderSizeUrl = self.url + GETSIZE_PATH;
+    self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
     self.modeFilter = 'all';
     self.getSize = null;
     
@@ -430,7 +431,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/check-in-cache?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
-          if (!result.data) {
+          if (result.data.notCached) {
             _toastr ? _toastr.info(`File is being converted for next fast preview`)
               : console.info(`File is being converted for next fast preview`);
           }
@@ -496,8 +497,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     return item.rootName || 'untitled';
   }
 
-  this.downloadFile = function (items) {
+  this.downloadFile = async function (items) {
     if (items.length === 0) return;
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'download', resolve));
+      if (res.data.error) return;
+    }
     self.requesting = true;
     // // let item = Array.isArray(items) ? items[0] : items;
     // // if (!item || !item.rootIsFile)
@@ -736,9 +741,13 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
   };
 
-  this.copyOrCut = function (action) {
+  this.copyOrCut = async function (action) {
     if (!self.selectedList)
       return;
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'update', resolve));
+      if (res.data.error) return;
+    }
     self.pasteList = self.selectedList;
     self.pasteList.action = action;
   };
@@ -764,11 +773,19 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   };
 
-  this.uploadFiles = function () {
+  this.uploadFiles = async function () {
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'upload', resolve));
+      if (res.data.error) return;
+    }
     uploadFileDialog(ModalService, Upload, self);
   };
 
-  this.newFolder = function () {
+  this.newFolder = async function () {
+    if (this.checkPermission) {
+      const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'update', resolve));
+      if (res.data.error) return;
+    }
     newFolderDialog(ModalService, self);
   };
 
@@ -852,6 +869,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $http(reqOptions).then(result => {
       if (!options.silent) {
         self.requesting = false;
+        if (result.data && result.data.error) {
+          toastr.error(result.data.message);
+        }
       }
       cb(result);
     }, err => {
@@ -865,8 +885,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   };
 
-  this.httpPost = function (url, payload, cb, options) {
-    self.requesting = true;
+  this.httpPost = function (url, payload, cb, options = {}) {
+    if (!options.silent) {
+      self.requesting = true;
+    }
     //self.requesting = !self.requesting;
     let reqOptions = {
       method: 'POST',
@@ -881,11 +903,18 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       data: payload
     };
     $http(reqOptions).then(result => {
-      self.requesting = false;
+      if (!options.silent) {
+        self.requesting = false;
+        if (result.data && result.data.error) {
+          toastr.error(result.data.message);
+        }
+      }
       cb(result);
     }, err => {
       console.error("file browser request", err);
-      self.requesting = false;;
+      if (!options.silent) {
+        self.requesting = false;
+      }
       console.log(err);
     })
   };
@@ -910,9 +939,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         return;
     }
 
-    self.httpPost(self.updateMetaDataUrl, payload, (result) => {
-      console.log(result);
-      cb && cb();
+    self.httpPost(self.updateMetaDataUrl, payload, (res) => {
+      cb && cb(res.data);
       /*self.goTo(-999, function(fileList) {
               cb && cb(fileList);
             });*/
@@ -920,16 +948,17 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
   this.updateMetaData = function (metaData) {
     self.selectedItem.metaData = metaData;
-    self.selectedItem.rootName = metaData.name;
     self.saveObject({
       key: self.selectedItem.rootIsFile ? self.selectedItem.path : self.selectedItem.path + '/',
       metaData: metaData
-    }, function () {
+    }, function (res) {
+      if (!res.error) {
+        self.selectedItem.rootName = metaData.name;
+      }
       self.goTo(-999, (fileList) => {
         let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
         self.clickNode(item);
       })
-
     });
   };
   this.removeMetaData = function (name) {
@@ -1114,6 +1143,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     if (err.data.code === 401) location.reload();
   //   });
   // }
+  this.downloadFileToUpload = downloadFileToUpload;
   function downloadFileToUpload(item) {
     return new Promise((resolve, reject) => {
       $http({
@@ -1176,6 +1206,42 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       return __toastr.info('DLIS file are being processed');
     }
   }
+
+  this.checkFileExisted = function(file, metaDataRequest, sv) {
+    return new Promise(res => {
+      self.httpGet(self.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), function(result) {
+        if ((result.data && result.data.code && result.data.code === 409) && !file.overwrite) {
+          return res(true);
+        }else {
+          return res(false);
+        }
+      }, {service: sv});
+    })
+  }
+  this.uploadFile = function(file, path, metaDataRequest) {
+    let uploadUrl = self.uploadUrl + encodeURIComponent((path).replace('//', '/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
+    let uploadingObject = Upload.upload({
+        url: uploadUrl,
+        headers: {
+        'Content-Type': 'application/json',
+        'Referrer-Policy': 'no-referrer',
+        'Authorization': window.localStorage.getItem('token'),
+        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Service': "WI_PROJECT_STORAGE"
+        },
+        data: {
+        'upload-file': file
+        }
+    });
+    uploadingObject.then(resp => {
+        console.log("Upload success");
+        __toastr.success("Upload success");
+    })
+    .catch(err => {
+        console.log("Upload terminated", err.message);
+        __toastr.error("Upload error");
+    });
+  }
 }
 
 let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService', 'wiDialog']);
@@ -1202,7 +1268,8 @@ app.component(componentName, {
     disablePreview: '<',
     hidePdbFeaturesPanel: '<',
     hideMetadataPanel: '<',
-    getSize: '<'
+    getSize: '<',
+    checkPermission: '<',
   }
 });
 

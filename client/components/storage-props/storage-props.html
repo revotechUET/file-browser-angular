@@ -12,7 +12,7 @@
       >
 			<label class="col-sm-5">
 				<input type="checkbox" 
-						ng-if="self.chooseBox && (md.name != 'field' && md.name != 'welltype')"
+						ng-if="self.chooseBox && !md.readonly"
 						ng-model="self.chooseBox[md.name]"
 						ng-change="self.onChangeBox(self.chooseBox[md.name], md)">
 				{{md.label}}

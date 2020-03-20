@@ -77,7 +77,7 @@ exports.getConfigProps = function() {
         },
         "field": {
             "translation": "Field",
-            "option": "readonly",
+            "option": "use",
             // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
@@ -212,7 +212,7 @@ exports.validateKey = function(key) {
     return validateSpecialCharacter(key) && validateUnicodeCharacter(key);
 }
 function validateSpecialCharacter(str) {
-    return !['/', '\\', ':', '*', '?', '\"', '<', '>', '|'].some(c => str.includes(c));
+    return !(/[\\/:*?<>|{}^%`\[\]~#&$@=;+,]/.test(str));
 }
 function validateUnicodeCharacter(str) {
     return !_.some(str, c => c.charCodeAt(0) >= 128);
@@ -225,7 +225,8 @@ function getAllWellsInNode(parentNode) {
 exports.getAllWellsInNode = getAllWellsInNode;
 
 function getType(fileName) {
-    return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown'; 
+    if (!fileName) return 'Unknown';
+    return constants.FILE_EXTENSIONS[fileName.split('.').pop().toLowerCase()] || 'Unknown';
 }
 
 function getFileExtension(fileName) {

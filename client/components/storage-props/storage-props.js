@@ -11,17 +11,23 @@ const formatBytes = require('../../js/utils').formatBytes;
 //const isFolder = require('../../js/utils').isFolder;
 //const getFileExtension = require('../../js/utils').getFileExtension;
 
-Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession', '$timeout'];
 
-function Controller($scope, $filter, ModalService, wiSession, $timeout) {
+Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession', '$timeout', '$http'];
+
+const PROCESSING_STATUS = '/action/status?key=';
+
+function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
   	let self = this;
-    const toastr = window.__toastr || window.toastr;
+	const toastr = window.__toastr || window.toastr;
+	//this.getSizeKey = null;
+	this.checkFolderSizeProcess = null;
   	// let config = wiComponentService.getComponent(wiComponentService.LIST_CONFIG_PROPERTIES)['storageItem'];
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
-  	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
+	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
+		self.statusUrl = self.apiUrl + PROCESSING_STATUS;
 		//console.log('self: ', self);
 	};
 	this.fields = [];
@@ -29,12 +35,52 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout) {
 	this.$onChanges = function(changeObj) {
 		//console.log('changeObj:', changeObj);
 		self.folderSize = null;
-		self.loadingFolderSize = false;
+		//self.getSizeKey = null;
+		if (self.checkFolderSizeProcess) {
+			clearTimeout(self.checkFolderSizeProcess);
+			self.checkFolderSizeProcess = null;
+		}
+		//self.loadingFolderSize = false;
 		if(changeObj.metaData) {
  			self.fields = self.getMDObj();
 		}
 	};
 
+	this.httpGet = function (url, cb, options = {}) {
+		if (!options.silent) {
+			self.requesting = true;
+		}
+		let reqOptions = {
+			method: 'GET',
+			url: url,
+			headers: {
+			'Content-Type': 'application/json',
+			'Access-Control-Allow-Origin': 'http://127.0.0.1:5000',
+			'Access-Control-Allow-Credentials': 'true',
+			'Referrer-Policy': 'no-referrer',
+			'Authorization': window.localStorage.getItem('token'),
+			'Storage-Database': JSON.stringify(self.storageDatabase),
+			'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
+			}
+		};
+		$http(reqOptions).then(result => {
+			if (!options.silent) {
+			self.requesting = false;
+			if (result.data && result.data.error) {
+				toastr.error(result.data.message);
+			}
+			}
+			cb(result);
+		}, err => {
+			console.error("file browser error", err);
+			if (err.data.code === 401) location.reload();
+			if (!options.silent) {
+			self.requesting = false;
+			}
+			console.log(err);
+			cb(null, err);
+		});
+	};
 
 	this.getMDObj = function() {
 		Object.assign(config, self.customConfigs || {});
@@ -135,10 +181,25 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout) {
 		//console.log(self.getSize);
 		self.loadingFolderSize = true;
 		self.getSize().then((rs)=>{
-			$timeout(()=>{
-				self.folderSize = formatBytes(rs, 3);
-				self.loadingFolderSize = false;
-			});
+			let key = rs.key;
+			// $timeout(()=>{
+			// 	self.folderSize = formatBytes(rs, 3);
+			// 	self.loadingFolderSize = false;
+			// });
+
+			//trigger check key
+			self.checkFolderSizeProcess = setTimeout(()=>{
+				// do check
+				self.httpGet(self.statusUrl + key, (rs)=>{
+					rs = rs.data;
+					if (rs.status == 'SUCCESS') {
+						self.folderSize = rs.info;
+						self.checkFolderSizeProcess = null;
+					} else {
+						self.checkFolderSizeProcess = setTimeout(()=>{}, 500);
+					}
+				})
+			}, 0);
 		})
 	}
 
@@ -342,7 +403,8 @@ app.component(componentName, {
      	wellReadonly: '<',
 		customConfigs: '<',
 		isFolder: '<',
-		getSize: '<'
+		getSize: '<',
+		apiUrl: '<'
     }
 });
 app.directive('spEnter', ['$parse', function ($parse) {

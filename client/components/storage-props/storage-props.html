@@ -30,8 +30,8 @@
 							ng-change="self.checkName(md, '{{md.value}}')"
 							title="{{md.value}}">
 					<div ng-if="md.label == 'Size' && self.isFolder">
-						<span ng-if="self.folderSize==null && !self.loadingFolderSize" ng-click="self.estimateFolderSize()">Estimate Size</span>
-						<span ng-if="self.folderSize==null && self.loadingFolderSize">Loading...</span>
+						<span ng-if="self.folderSize==null && !self.checkFolderSizeProcess" ng-click="self.estimateFolderSize()">Estimate Size</span>
+						<span ng-if="self.folderSize==null && self.checkFolderSizeProcess">Loading...</span>
 						<span ng-if="self.folderSize!=null">{{self.folderSize}}</span>
 					</div>	
 					<input ng-if="md.type == 'wiref' && (md.label != 'Size' || !self.isFolder)" 
@@ -39,6 +39,11 @@
 							class="form-control props-value"
 							readonly=""
 							sp-enter="">
+					<!-- <input ng-if="md.type == 'wiref'" 
+							type="text" ng-model="md.ref"
+							class="form-control props-value"
+							readonly=""
+							sp-enter=""> -->
 					<select ng-if="md.type == 'wiselect'"
 							class="form-control props-value"
 							ng-model="md.value"

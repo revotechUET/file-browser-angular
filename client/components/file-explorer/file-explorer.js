@@ -57,7 +57,7 @@ const UPLOAD_DLIS = '/upload/dlis';
 const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
 const PROCESSING_STATUS = '/action/status?key=';
 const CANCEL_PROCESS = '/action/cancel?key=';
-const GETSIZE_PATH = '/action/folder-size?dir='
+const GETSIZE_PATH = '/action/estimate-folder-size?dir='
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
@@ -359,7 +359,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.getSize = (() => {
         return new Promise((res,rej)=>{
           self.httpGet(self.getFolderSizeUrl + encodeURIComponent(item.path), result=>{
-            res(result.data.data);
+            res(result.data);
           });
         });
       })

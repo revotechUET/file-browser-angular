@@ -363,7 +363,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           });
         });
       })
-      console.log('self get size now: ', self.getSize);
+      //console.log('self get size now: ', self.getSize);
       //console.log('selectedItem: ', self.selectedItem);
       $scope.addName = '';
       $scope.addValue = '';

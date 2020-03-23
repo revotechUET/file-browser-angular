@@ -193,11 +193,13 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 				self.httpGet(self.statusUrl + key, (rs)=>{
 					rs = rs.data;
 					//console.log(rs);
-					if (rs.status == 'IN_PROCESS') {
+					if (rs.status == 'IN_PROGRESS') {
 						self.checkFolderSizeProcess = setTimeout(triggerFn, 500);
 					} else {
-						self.folderSize = formatBytes(rs.info , 3);
-						self.checkFolderSizeProcess = null;
+						if (rs.info) {
+							self.folderSize = formatBytes(rs.info , 3);
+							self.checkFolderSizeProcess = null;
+						}
 					}
 				})
 			}

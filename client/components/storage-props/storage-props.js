@@ -166,8 +166,12 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	function getRef (refSpec, mdKey) {
 		let ref = null;
 		switch(refSpec) {
-			case 'time' :  
-				ref = moment(parseInt(self.metaData[mdKey])).format('YYYY/MM/DD hh:mm:ss A');
+			case 'time' :
+				let date = new Date(self.metaData[mdKey]).getTime();
+				if (isNaN(date)) {
+					date = parseInt(self.metaData[mdKey])
+				}
+				ref = moment(date).format('YYYY/MM/DD hh:mm:ss A');
 				break;
 			case 'size' :
 				ref = $filter('humanReadableFileSize')(self.metaData[mdKey]);

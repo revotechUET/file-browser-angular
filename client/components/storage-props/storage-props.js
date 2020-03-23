@@ -188,18 +188,20 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			// });
 
 			//trigger check key
-			self.checkFolderSizeProcess = setTimeout(()=>{
-				// do check
+
+			let triggerFn = ()=>{
 				self.httpGet(self.statusUrl + key, (rs)=>{
 					rs = rs.data;
-					if (rs.status == 'SUCCESS') {
-						self.folderSize = rs.info;
-						self.checkFolderSizeProcess = null;
+					//console.log(rs);
+					if (rs.status == 'IN_PROCESS') {
+						self.checkFolderSizeProcess = setTimeout(triggerFn, 500);
 					} else {
-						self.checkFolderSizeProcess = setTimeout(()=>{}, 500);
+						self.folderSize = formatBytes(rs.info , 3);
+						self.checkFolderSizeProcess = null;
 					}
 				})
-			}, 0);
+			}
+			self.checkFolderSizeProcess = setTimeout(triggerFn, 0);
 		})
 	}
 
@@ -404,7 +406,8 @@ app.component(componentName, {
 		customConfigs: '<',
 		isFolder: '<',
 		getSize: '<',
-		apiUrl: '<'
+		apiUrl: '<',
+		storageDatabase: '<'
     }
 });
 app.directive('spEnter', ['$parse', function ($parse) {

@@ -20,7 +20,26 @@
 		font-size    : 12px;
 		border-bottom: 1px solid #ddd;
 
-		// height       : 38px;
+		&.readonly {
+			background-color: #eee;
+		}
+
+		&.selectable {
+			&:hover {
+				background-color: #f1f8ff;
+			}
+			&.selected {
+				background-color: #f9fafb;
+				label {
+					font-weight: 700;
+				}
+			}
+		}
+
+		&.type-wirevision {
+			background-color: #fff;
+		}
+
 		&>div {
 			height: 36px;
 		}
@@ -41,7 +60,6 @@
 			border       : none;
 			height       : auto;
 			padding      : 0;
-			background   : #fff;
 			text-overflow: ellipsis;
 			// direction    : rtl;
 			text-align: right;
@@ -49,10 +67,6 @@
 
 		select {
 			direction: ltr !important;
-		}
-
-		.props-value[readonly] {
-			background: #eee;
 		}
 	}
 

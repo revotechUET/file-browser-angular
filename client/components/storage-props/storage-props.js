@@ -28,6 +28,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
   	this.selections = utils.getSelections();
  	this.$onInit = function () {
 		self.statusUrl = self.apiUrl + PROCESSING_STATUS;
+		self.revMetadataUrl = self.apiUrl + '/action/info';
 		//console.log('self: ', self);
 	};
 	this.fields = [];
@@ -41,7 +42,8 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			self.checkFolderSizeProcess = null;
 		}
 		//self.loadingFolderSize = false;
-		if(changeObj.metaData) {
+		if (changeObj.metaData) {
+			self.currentRevision = null;
  			self.fields = self.getMDObj();
 		}
 	};
@@ -82,16 +84,16 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		});
 	};
 
-	this.getMDObj = function() {
+	this.getMDObj = function () {
 		Object.assign(config, self.customConfigs || {});
 		let obj = {};
-		self.sections.forEach(function(section) {
+		self.sections.forEach(function (section) {
 			let arr = [];
 			let undefinedArr = [];
-			for(let key in self.metaData) {
-				if(config[key] && config[key].section && config[key].section == section) 
+			for (let key in self.metaData) {
+				if (config[key] && config[key].section && config[key].section == section)
 					arr.push(getMDProps(key, config[key]));
-				else if(!config[key]) undefinedArr.push({
+				else if (!config[key]) undefinedArr.push({
 					name: key,
 					label: decodingSpace(key),
 					type: 'text',
@@ -103,19 +105,33 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			obj[section] = arr;
 			obj['More Information'] = undefinedArr;
 		});
-        obj['Version History'] = self.revision ? self.revision.map(rev => {
-            return {
-                name: rev.time,
-                label: moment(parseInt(rev.time)).format('YYYY/MM/DD hh:mm'),
-                type: 'wirevision',
-            	value: $filter('humanReadableFileSize')(rev.size),
-                readonly: true,
-                use: true
-            }
-        }) : [];
+		obj['Version History'] = self.revision ? self.revision.map(rev => {
+			const md = {
+				name: rev.time,
+				label: moment(parseInt(rev.time)).format('YYYY/MM/DD HH:mm'),
+				type: 'wirevision',
+				value: $filter('humanReadableFileSize')(rev.size),
+				readonly: true,
+				use: true,
+				onSelect: () => {
+					if (self.currentRevision === rev) return;
+					self.currentRevision = rev;
+					self.httpGet(self.revMetadataUrl + `?file_path=${self.metaData.location}&revision=${rev.time}`, res => {
+						if (!res) return;
+						self.metaData = res.data.Metadata;
+						self.fields = self.getMDObj();
+				})
+				},
+				selected: self.currentRevision === rev,
+				onDblClick: () => {
+					self.dblclickRevisionFunc({ ...self.item, path: self.item.path + `__WI__/${rev.time}` });
+				},
+			}
+			return md;
+		}) : [];
 		if (getMDProps('associate', config['associate'])) obj['Information'].push(getMDProps('associate', config['associate']));
 		//console.log("OBJ: ", obj);
-        return obj;
+		return obj;
 	};
     self.removeRevision = function (revision) {
         self.revision = self.revision ? self.revision.filter(v => v.time !== revision.name) : [];
@@ -211,8 +227,9 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		})
 	}
 
-	this.checkMDObj = function () {
-		if(!self.metaData || self.metaData == {}) return false;
+	this.checkMDObj = function (section) {
+		if (!self.metaData || self.metaData == {}) return false;
+		if (!self.fields[section] || !self.fields[section].length) return false;
 		else return true;
 	}
     this.updateMetaData = function (name, value) {
@@ -392,29 +409,31 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 let app = angular.module(moduleName, []);
 
 app.component(componentName, {
-    template: require('./storage-props.html'),
-    controller: Controller,
-    controllerAs: 'self',
-    transclude: true,
-    bindings: {
-        metaData : '<',
-        revision : '<',
-        updateMetadatFunc : '<',
-        removeRevisionFunc: '<',
-        restoreRevisionFunc: '<',
-        hideHeader: '<',
-        readonlyValues: '<',
-        shortView: '<',
-        chooseBox: '<',
+	template: require('./storage-props.html'),
+	controller: Controller,
+	controllerAs: 'self',
+	transclude: true,
+	bindings: {
+		metaData: '<',
+		revision: '<',
+		updateMetadatFunc: '<',
+		item: '<',
+		dblclickRevisionFunc: '<',
+		removeRevisionFunc: '<',
+		restoreRevisionFunc: '<',
+		hideHeader: '<',
+		readonlyValues: '<',
+		shortView: '<',
+		chooseBox: '<',
 		enableAssociate: '<',
 		hideAssociate: '<',
-     	wellReadonly: '<',
+		wellReadonly: '<',
 		customConfigs: '<',
 		isFolder: '<',
 		getSize: '<',
 		apiUrl: '<',
 		storageDatabase: '<'
-    }
+	}
 });
 app.directive('spEnter', ['$parse', function ($parse) {
     return function (scope, element, attrs) {

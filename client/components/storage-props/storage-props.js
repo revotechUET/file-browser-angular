@@ -194,7 +194,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 					rs = rs.data;
 					//console.log(rs);
 					if (rs.status == 'IN_PROGRESS') {
-						self.checkFolderSizeProcess = setTimeout(triggerFn, 500);
+						self.checkFolderSizeProcess = setTimeout(triggerFn, 1500);
 					} else {
 						if (rs.info) {
 							self.folderSize = formatBytes(rs.info , 3);

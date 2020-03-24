@@ -151,8 +151,7 @@
 						ng-model="md.label"
 						ng-blur="self.updateMDName(md.label, md.name, md.value)"
 						sp-enter="$event.currentTarget.blur();"
-						ng-change="self.warning = ''"
-						readonly="">
+						ng-change="self.warning = ''">
 				</label>
 				<div class="col-sm-7"
 					style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
@@ -173,7 +172,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="form-group props-group more-info"
+	<div class="form-group props-group more-info" ng-if="self.metaData"
 		style="margin: 20px;">
 		<div>
 			<label ng-if="self.warning" style="width: 100%; text-align: center; background: #ffe7b8;">{{self.warning}}</label>

@@ -94,6 +94,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     // this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';
     this.searchQuery = angular.copy(fileExplorerCtrl.searchQuery);
+    this.customArr = [];
     this.conditions = getTableConditions(this.searchQuery);
     this.subFolders = this.searchQuery.subFolders == 'included' ? true : false;
     this.getKeyObj = function (obj) {
@@ -108,22 +109,26 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       searchQuery.conditions.children.forEach(function(child) {
         if(child.children && child.children.length) {
           let keyObj = Object.keys(child.children[0])[0];
-          let children = [];
-          if(keyObj == 'uploaded') children = child.children.map(item => {
-                                          let rObj = {};
-                                          if(item.uploaded) {
-                                            rObj[keyObj] = {};
-                                            rObj[keyObj].from = new Date(item.uploaded.from);
-                                            rObj[keyObj].to = new Date(item.uploaded.to);
-                                          }
-                                          return rObj;
-                                        });
-          else children = child.children;
-          conditions.push({
-            mdtype: keyObj,
-            inputtype: self.mapKey[keyObj].type,
-            children: children
-          });
+          if (self.mapKey[keyObj]) {
+            let children = [];
+            if(keyObj == 'uploaded') children = child.children.map(item => {
+                                            let rObj = {};
+                                            if(item.uploaded) {
+                                              rObj[keyObj] = {};
+                                              rObj[keyObj].from = new Date(item.uploaded.from);
+                                              rObj[keyObj].to = new Date(item.uploaded.to);
+                                            }
+                                            return rObj;
+                                          });
+            else children = child.children;
+            conditions.push({
+              mdtype: keyObj,
+              inputtype: self.mapKey[keyObj].type,
+              children: children
+            });
+          } else {
+            self.customArr.push({ key: keyObj, value: child.children[0][keyObj] });
+          }
         }
       });
       return conditions;
@@ -145,7 +150,6 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       selectedArr[idx] = true;
 
     }
-    this.customArr = [];
     this.insertMetaDataKey = function (key) {
       let idx = self.conditions.findIndex(d => d.mdtype == key);
       if(key == 'custom') {

@@ -155,9 +155,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           console.log(res);
           folder.isDone = true;
           next();
-        }, err => {
-          console.log(err);
-        })
+        }, { silent: true });
       }, () => {
         cb()
       });

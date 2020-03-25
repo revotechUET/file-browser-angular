@@ -360,7 +360,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         return new Promise((res,rej)=>{
           self.httpGet(self.getFolderSizeUrl + encodeURIComponent(item.path), result=>{
             res(result.data);
-          });
+          }, { silent: true });
         });
       })
       //console.log('self get size now: ', self.getSize);
@@ -870,17 +870,17 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       if (!options.silent) {
         self.requesting = false;
         if (result.data && result.data.error) {
-          toastr.error(result.data.message);
+          toastr.error(result.data.message || 'Unknown error');
         }
       }
       cb(result);
     }, err => {
       console.error("file browser error", err);
-      if (err.data.code === 401) location.reload();
+      if (error.data && err.data.code === 401) location.reload();
       if (!options.silent) {
         self.requesting = false;
+        toastr.error('Error connecting to server');
       }
-      console.log(err);
       cb(null, err);
     });
   };
@@ -906,16 +906,17 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       if (!options.silent) {
         self.requesting = false;
         if (result.data && result.data.error) {
-          toastr.error(result.data.message);
+          toastr.error(result.data.message || 'Unknown error');
         }
       }
       cb(result);
     }, err => {
       console.error("file browser request", err);
+      if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
         self.requesting = false;
+        toastr.error('Error connecting to server');
       }
-      console.log(err);
     })
   };
 

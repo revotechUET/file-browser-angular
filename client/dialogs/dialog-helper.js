@@ -40,6 +40,7 @@ function initModal(modal) {
 exports.initModal = initModal;
 
 exports.removeBackdrop = function () {
-  $('.modal-backdrop').last().remove();
-  $('body').removeClass('modal-open');
+    const $backdrop = $('.modal-backdrop');
+    $backdrop.last().remove();
+    $backdrop.length === 1 && $('body').removeClass('modal-open');
 }

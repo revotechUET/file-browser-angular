@@ -65,23 +65,23 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
 			}
 		};
-		$http(reqOptions).then(result => {
-			if (!options.silent) {
-			self.requesting = false;
-			if (result.data && result.data.error) {
-				toastr.error(result.data.message);
-			}
-			}
-			cb(result);
-		}, err => {
-			console.error("file browser error", err);
-			if (err.data.code === 401) location.reload();
-			if (!options.silent) {
-			self.requesting = false;
-			}
-			console.log(err);
-			cb(null, err);
-		});
+    $http(reqOptions).then(result => {
+      if (!options.silent) {
+        self.requesting = false;
+        if (result.data && result.data.error) {
+          toastr.error(result.data.message || 'Unknown error');
+        }
+      }
+      cb(result);
+    }, err => {
+      console.error("file browser error", err);
+      if (error.data && err.data.code === 401) location.reload();
+      if (!options.silent) {
+        self.requesting = false;
+        toastr.error('Error connecting to server');
+      }
+      cb(null, err);
+    });
 	};
 
 	this.getMDObj = function () {
@@ -199,7 +199,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 
 	this.estimateFolderSize = function() {
 		//console.log(self.getSize);
-		self.loadingFolderSize = true;
+		self.checkFolderSizeProcess = setTimeout(() => {});
 		self.getSize().then((rs)=>{
 			let key = rs.key;
 			// $timeout(()=>{
@@ -221,7 +221,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 							self.checkFolderSizeProcess = null;
 						}
 					}
-				})
+				}, { silent: true })
 			}
 			self.checkFolderSizeProcess = setTimeout(triggerFn, 1500);
 		})

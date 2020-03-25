@@ -1,0 +1,21 @@
+<div class='modal fade' data-backdrop="static" data-keyboard="false">
+  <div class='modal-dialog'>
+    <div class="modal-content" ng-form="form">
+      <div class="modal-header">
+        <button type="button" class="close" aria-hidden="true" ng-click="self.closeModal()">&times;</button>
+        <h4 class="modal-title">{{self.title}}</h4>
+      </div>
+      <div class="modal-body">
+        <storage-props meta-data="self.metadata"
+          hide-associate="true"
+          view-only="true"
+        ></storage-props>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="self.closeModal()">
+          <span class="close-16x16"></span>&nbsp;Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

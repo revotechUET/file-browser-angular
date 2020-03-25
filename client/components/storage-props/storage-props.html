@@ -1,4 +1,4 @@
-<form class="form-horizontal storage-props">
+<form class="form-horizontal storage-props" ng-if="self.metaData">
 	<div ng-repeat="section in self.sections" ng-if="section!='More Information' && self.checkMDObj(section)">
 		<div class="heading" 
 			ng-if="!self.hideHeader || (!self.shortView && self.fields[section].length>0)">{{section}}</div>
@@ -36,18 +36,18 @@
 					<input ng-switch-when="wiref" ng-if="md.label != 'Size' || !self.isFolder" 
 							type="text" ng-model="md.ref"
 							class="form-control props-value"
-							readonly=""
-							sp-enter="">
+							readonly>
 					<select ng-switch-when="wiselect"
 							class="form-control props-value"
 							ng-model="md.value"
 							ng-options="item for item in md.selections"
 							ng-change="self.onChangeSelect(md.name, md.value)"
+							ng-disabled="md.readonly"
 							title="{{md.value}}">
 					</select>
 					<div ng-switch-when="rating" class="quality-field">
 						<span ng-repeat="star in [1,2,3,4,5]" 
-							ng-click="self.doRating(md, star)"
+							ng-click="!md.readonly && self.doRating(md, star)"
 							ng-class="{highlight: star <= md.value}">
 							<i class="fa fa-star"></i>
 						</span>
@@ -79,6 +79,9 @@
 					</div>
 					<div ng-switch-when="wirevision">
 						{{md.value}}
+						<i class="ti ti-view-list-alt" ng-click="self.revisionMetadata(md);"
+							style="padding: 0 2px; cursor: pointer;" title="View metadata">
+						</i>
 						<i class="ti ti-back-left" ng-click="self.restoreRevisionFunc(md); self.removeRevision(md)"
 							style="padding: 0 2px; cursor: pointer;" title="Restore to this version!">
 						</i>
@@ -105,33 +108,38 @@
 	</div>
 	<div ng-init="section = 'More Information'">
 		<div class="heading" ng-if="!self.hideHeader || (!self.shortView && self.fields[section].length>0)">More Information</div>
-		<div class="form-group props-group" ng-repeat="md in self.fields[section]">
+		<div class="form-group props-group"
+			ng-class="md.readonly ? 'readonly': ''"
+			ng-repeat="md in self.fields[section]"
+		>
 			<div ng-if="md.name !== 'issyncfolder'">
 				<label class="col-sm-5">
 					<input type="text" class="form-control props-value" style="direction: ltr;"
 						ng-model="md.label"
 						ng-blur="self.updateMDName(md.label, md.name, md.value)"
 						sp-enter="$event.currentTarget.blur();"
+						ng-readonly="md.readonly"
 						ng-change="self.warning = ''">
 				</label>
 				<div class="col-sm-7"
-					style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; background: #fff; padding: 9px 15px;align-items: center;">
+					style="border-left: 1px solid #ddd; display: flex; text-align: right; padding: 9px 15px;align-items: center;">
 					<div style="flex: 1 ;display: flex; align-items: center;">
 						<input type="text" class="form-control props-value"
 							ng-model="md.value"
 							ng-blur="self.updateMetaData(md.name, md.value)"
+							ng-readonly="md.readonly"
 							sp-enter="$event.currentTarget.blur();">
 						<div ng-if="md.type=='rating'" class="quality-field">
 							<span ng-click="self.removeDataMeta(md.name)">
 								<i class="ti ti-close"></i>
 							</span>
 						</div>
-						<div class="ti ti-close" ng-click="self.removeDataMeta(md.name)" style="margin-left: 10px; color: red;"></div>
+						<div ng-if="!md.readonly" class="ti ti-close" ng-click="self.removeDataMeta(md.name)" style="margin-left: 10px; color: red;"></div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div ng-if="self.metaData" style="margin: 20px;">
+		<div style="margin: 20px;" ng-if="!self.viewOnly">
 			<label ng-if="self.warning" style="width: 100%; text-align: center; background: #ffe7b8;">{{self.warning}}</label>
 			<div class="add-mdata" title="Add Metadata"
 					ng-if="!self.shortView"

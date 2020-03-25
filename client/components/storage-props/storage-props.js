@@ -4,6 +4,7 @@ const moduleName = 'storage-props';
 const componentName = 'storageProps';
 
 const utils = require('../../js/utils');
+const metadataDialog = require('../../dialogs/metadata/metadata-modal');
 const addMetadataDialog = require('../../dialogs/add-metadata/add-metadata-modal');
 const selectWellDialog = require('../../dialogs/select-well/select-well-modal');
 const getType = require('../../js/utils').getType;
@@ -43,9 +44,9 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		}
 		//self.loadingFolderSize = false;
 		if (changeObj.metaData) {
-			self.currentRevision = null;
  			self.fields = self.getMDObj();
 		}
+
 	};
 
 	this.httpGet = function (url, cb, options = {}) {
@@ -97,7 +98,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 					name: key,
 					label: decodingSpace(key),
 					type: 'text',
-					readonly: false,
+					readonly: self.viewOnly,
 					value: self.metaData[key]
 				});
 			}
@@ -113,16 +114,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 				value: $filter('humanReadableFileSize')(rev.size),
 				readonly: true,
 				use: true,
-				onSelect: () => {
-					if (self.currentRevision === rev) return;
-					self.currentRevision = rev;
-					self.httpGet(self.revMetadataUrl + `?file_path=${self.metaData.location}&revision=${rev.time}`, res => {
-						if (!res) return;
-						self.metaData = res.data.Metadata;
-						self.fields = self.getMDObj();
-				})
-				},
-				selected: self.currentRevision === rev,
+				onSelect: () => {},
 				onDblClick: () => {
 					self.dblclickRevisionFunc({ ...self.item, path: self.item.path + `__WI__/${rev.time}` });
 				},
@@ -133,10 +125,16 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		//console.log("OBJ: ", obj);
 		return obj;
 	};
-    self.removeRevision = function (revision) {
-        self.revision = self.revision ? self.revision.filter(v => v.time !== revision.name) : [];
-        self.fields = self.getMDObj();
-    };
+	self.revisionMetadata = function (revision) {
+		self.httpGet(self.revMetadataUrl + `?file_path=${self.item.path}&revision=${revision.name}`, res => {
+			if (!res) return;
+			metadataDialog(ModalService, res.data.Metadata, revision.label);
+		})
+	};
+	self.removeRevision = function (revision) {
+		self.revision = self.revision ? self.revision.filter(v => v.time !== revision.name) : [];
+		self.fields = self.getMDObj();
+	};
 	function mapOrder (array, order, key) {
 		array.sort( function (a, b) {
 		    var A = a[key], B = b[key];
@@ -164,14 +162,11 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		}
 		if(mdKey == 'associate') value = self.metaData;
 		let readonly = (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false;
-		if (mdKey == 'well' && self.wellReadonly != undefined) {
-			readonly = self.wellReadonly;
-		}
 		return mdProps = {
 			name: mdKey,
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
-			readonly: readonly,
+			readonly: self.viewOnly || readonly,
 			value : mdKey == "type" ? (self.isFolder ? "Folder" : getType(name)) : value,
 			use: (configObj.option == 'notuse') ? false : true,
 			ref: getRef(configObj.refSpec, mdKey),
@@ -427,12 +422,12 @@ app.component(componentName, {
 		chooseBox: '<',
 		enableAssociate: '<',
 		hideAssociate: '<',
-		wellReadonly: '<',
 		customConfigs: '<',
 		isFolder: '<',
 		getSize: '<',
 		apiUrl: '<',
-		storageDatabase: '<'
+		storageDatabase: '<',
+		viewOnly: '<',
 	}
 });
 app.directive('spEnter', ['$parse', function ($parse) {

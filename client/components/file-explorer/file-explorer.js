@@ -1264,13 +1264,13 @@ app.component(componentName, {
     isDatabase: '<',
     hideActionFilter: '<',
     hideAssociate: '<',
-    wellReadonly: '<',
     clickNodeFn: '<',
     disablePreview: '<',
     hidePdbFeaturesPanel: '<',
     hideMetadataPanel: '<',
     getSize: '<',
     checkPermission: '<',
+    readonlyValues: '<',
   }
 });
 

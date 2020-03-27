@@ -60,7 +60,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, res => {
         if (!res.data.error) {
           close(null);
-          fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
+          fileExplorerCtrl.goTo(-999);
         }
       })
     };

@@ -241,9 +241,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             }
           }, err => {
             if (!err && self.uploadFileList.length === 0) {
-              // fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
-              console.log('===upload files done');
-              fileExplorerCtrl.goTo(fileExplorerCtrl.currentPath.length - 1);
+              fileExplorerCtrl.goTo(-999);
               close();
             }
           }

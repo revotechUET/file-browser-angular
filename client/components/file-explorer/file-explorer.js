@@ -354,6 +354,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     return orderBy(fileList, propOrder, reverse);
   };
   this.clickNode = function (item, $event) {
+    if (!item) {
+      self.selectedItem = null;
+      self.selectedList = [];
+      return;
+    }
     if (self.selectedItem !== item) {
       self.selectedItem = item;
       self.getSize = (() => {
@@ -363,12 +368,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           }, { silent: true });
         });
       })
-      //console.log('self get size now: ', self.getSize);
-      //console.log('selectedItem: ', self.selectedItem);
       $scope.addName = '';
       $scope.addValue = '';
     }
-    self.selectedItem.metaData.modified = new Date(self.selectedItem.modifiedDate).getTime() + '';
     let indexInSelectedList = self.selectedList.indexOf(item);
 
     if ($event && $event.shiftKey) {
@@ -384,7 +386,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           !self.isSelected(current) && self.selectedList.push(current);
           i++;
         }
-        console.log("===", self.selectedList);
         return;
       }
       if (lastSelected && list.indexOf(lastSelected) > indexInList) {
@@ -394,13 +395,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           !self.isSelected(current) && self.selectedList.push(current);
           i--;
         }
-        console.log("===", self.selectedList);
         return;
       }
     }
     if ($event && $event.ctrlKey) {
       self.isSelected(item) ? self.selectedList.splice(indexInSelectedList, 1) : self.selectedList.push(item);
-      console.log("===", self.selectedList);
       return;
     }
     self.selectedList = [item];
@@ -629,11 +628,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   }
   this.goTo = function (index, callback) {
-    if (index == '-999') {
+    if (index == -999) {
+      // refresh
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
-        callback && callback(self.fileList);
+        const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
+        self.clickNode(item);
+        callback && callback();
       })
       self.httpGet(`${self.previewUrl}/refresh-cache`, result => {
         //console.log(result.data)
@@ -664,7 +666,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           })
         }, err => {
           if (!err) {
-            self.goTo(self.currentPath.length - 1);
+            self.goTo(-999);
           }
         })
       }
@@ -715,7 +717,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           } else {
             console.log('===done');
           }
-          self.goTo(self.currentPath.length - 1);
+          self.goTo(-999);
         });
         break;
       case 'cut':
@@ -735,7 +737,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           } else {
             console.log('=done');
           }
-          self.goTo(self.currentPath.length - 1);
+          self.goTo(-999);
         });
         break;
     }
@@ -830,7 +832,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     } else if (!self.filter || self.filter === '') {
       self.modeFilter = 'all';
       self.goTo(-999);
-    } else if (self.filter != '[Custom search]') self.goTo(self.currentPath.length - 1);
+    } else if (self.filter != '[Custom search]') self.goTo(-999);
   }
   this.advancedSearch = function () {
     newAdvancedSearchDialog(ModalService, self, function (isSearching) {
@@ -956,10 +958,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       if (!res.error) {
         self.selectedItem.rootName = metaData.name;
       }
-      self.goTo(-999, (fileList) => {
-        let item = fileList.find(f => f.rootName === self.selectedItem.rootName);
-        self.clickNode(item);
-      })
+      self.goTo(-999)
     });
   };
   this.removeMetaData = function (name) {

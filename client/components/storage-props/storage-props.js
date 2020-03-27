@@ -131,7 +131,15 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			metadataDialog(ModalService, res.data.Metadata, revision.label);
 		})
 	};
+	self.restoreRevision = function (revision) {
+		if (!confirm('Are you sure you want to restore to this version?')) return;
+		self.restoreRevisionFunc(revision);
+		self.revision = self.revision ? self.revision.filter(v => v.time !== revision.name) : [];
+		self.fields = self.getMDObj();
+	};
 	self.removeRevision = function (revision) {
+		if (!confirm('Are you sure you want to delete this version?')) return;
+		self.removeRevisionFunc(revision);
 		self.revision = self.revision ? self.revision.filter(v => v.time !== revision.name) : [];
 		self.fields = self.getMDObj();
 	};

@@ -357,6 +357,16 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           */
           const parsedContent = JSON.parse(selectItem.content);
           fileExplorerCtrl.searchQuery = parsedContent.query;
+          parsedContent.conditions.forEach(md => {
+            if(md.mdtype === "uploaded") {
+              md.children.forEach(c => {
+                if(c.uploaded) {
+                  c.uploaded.from ? c.uploaded.from = new Date(c.uploaded.from) : null;
+                  c.uploaded.to ? c.uploaded.to = new Date(c.uploaded.to) : null;
+                }
+              })
+            }
+          })
           self.conditions = parsedContent.conditions;
           self.customArr = parsedContent.customArr;
           self.searchQuery = parsedContent.searchQuery;
@@ -376,6 +386,19 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         inputName: "Configuration Name",
         input: self.loadedFilter ? self.loadedFilter.name:""
       }
+      // 
+      let cacheConditions = Object.assign({}, self.conditions);
+      cacheConditions.forEach(md => {
+        if(md.mdtype === "uploaded") {
+          md.children.forEach(c => {
+            if(c.uploaded) {
+              c.uploaded.from ? c.uploaded.from = new Date(c.uploaded.from) : null;
+              c.uploaded.to ? c.uploaded.to = new Date(c.uploaded.to) : null;
+            }
+          })
+        }
+      })
+      // Nam The write but yet apply
       wiDialog.promptDialog(config, function(name) {
         wiApi.listStorageFilterPromise()
         .then((res) => {

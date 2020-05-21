@@ -7,7 +7,8 @@ var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 let OUTPUT = path.join(__dirname, 'dist');
 
-const generalConfig = {
+module.exports = {
+    mode: "development",
     entry: [
         './client/components/file-explorer/file-explorer.js'
         ,'./node_modules/pdfjs-dist/build/pdf.worker.entry.js',
@@ -44,10 +45,10 @@ const generalConfig = {
     // ]
 };
 // webpack.config.js
-module.exports = (env, argv) => {
-    const config = Object.assign({}, generalConfig, {
-        mode: argv.mode,
-        devtool: argv.devtool
-    });
-    return config;
-};
+// module.exports = (env, argv) => {
+//     const config = Object.assign({}, generalConfig, {
+//         mode: argv.mode,
+//         devtool: argv.devtool
+//     });
+//     return config;
+// };

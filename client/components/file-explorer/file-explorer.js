@@ -201,24 +201,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.reverse = false;
     // self.HEADER_CONFIG = HEADER_CONFIG;
 
-    self.rawDataUrl = self.url + RAW_DATA_PATH;
-    self.exploreUrl = self.url + EXPLORE_PATH;
-    self.uploadUrl = self.url + UPLOAD_PATH;
-    self.downloadUrl = self.url + DOWNLOAD_PATH;
-    self.removeUrl = self.url + REMOVE_PATH;
-    self.copyUrl = self.url + COPY_PATH;
-    self.moveUrl = self.url + MOVE_PATH;
-    self.newFolderUrl = self.url + NEW_FOLDER_PATH;
-    self.searchUrl = self.url + SEARCH_PATH;
-    self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
-    self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
-    self.restoreRevisionUrl = self.url + RESTORE_REVISION;
-    self.removeRevisionUrl = self.url + REMOVE_REVISION;
-    self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
-    self.statusUrl = self.url + PROCESSING_STATUS;
-    self.cancelUrl = self.url + CANCEL_PROCESS;
-    self.getFolderSizeUrl = self.url + GETSIZE_PATH;
-    self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
     self.modeFilter = 'all';
     self.getSize = null;
     
@@ -238,8 +220,28 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       subFolders: "included"
     }
     self.searchQuery = searchQuery;
-    $scope.$watch(() => self.storageDatabase, () => {
-      if (self.storageDatabase) {
+    $scope.$watch(() => self.url, () => {
+      self.rawDataUrl = self.url + RAW_DATA_PATH;
+      self.exploreUrl = self.url + EXPLORE_PATH;
+      self.uploadUrl = self.url + UPLOAD_PATH;
+      self.downloadUrl = self.url + DOWNLOAD_PATH;
+      self.removeUrl = self.url + REMOVE_PATH;
+      self.copyUrl = self.url + COPY_PATH;
+      self.moveUrl = self.url + MOVE_PATH;
+      self.newFolderUrl = self.url + NEW_FOLDER_PATH;
+      self.searchUrl = self.url + SEARCH_PATH;
+      self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
+      self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
+      self.restoreRevisionUrl = self.url + RESTORE_REVISION;
+      self.removeRevisionUrl = self.url + REMOVE_REVISION;
+      self.submitToCompanyDatabaseUrl = self.url + SUBMIT_TO_COMPANY_DB;
+      self.statusUrl = self.url + PROCESSING_STATUS;
+      self.cancelUrl = self.url + CANCEL_PROCESS;
+      self.getFolderSizeUrl = self.url + GETSIZE_PATH;
+      self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
+    })
+    $scope.$watch(() => self.storageDatabase + self.url, () => {
+      if (self.storageDatabase && self.url) {
         if (self.linkedFile) {
           //self.goToByPath(self.linkedFile);
         } else {
@@ -476,6 +478,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             }, {service: "WI_FILE_PREVIEW"})
         }, {service: "WI_FILE_PREVIEW"})
     }
+    self.afterDblClick && self.afterDblClick(item);
   };
 
   this.getDownloadLink = function (items) {
@@ -1264,6 +1267,7 @@ app.component(componentName, {
     hideActionFilter: '<',
     hideAssociate: '<',
     clickNodeFn: '<',
+    afterDblClick: '<',
     disablePreview: '<',
     hidePdbFeaturesPanel: '<',
     hideMetadataPanel: '<',

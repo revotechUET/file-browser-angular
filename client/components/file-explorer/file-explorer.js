@@ -388,6 +388,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           !self.isSelected(current) && self.selectedList.push(current);
           i++;
         }
+        self.clickNodeFn && self.clickNodeFn(self.selectedList);
         return;
       }
       if (lastSelected && list.indexOf(lastSelected) > indexInList) {
@@ -397,11 +398,13 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           !self.isSelected(current) && self.selectedList.push(current);
           i--;
         }
+        self.clickNodeFn && self.clickNodeFn(self.selectedList);
         return;
       }
     }
     if ($event && $event.ctrlKey) {
       self.isSelected(item) ? self.selectedList.splice(indexInSelectedList, 1) : self.selectedList.push(item);
+      self.clickNodeFn && self.clickNodeFn(self.selectedList);
       return;
     }
     self.selectedList = [item];

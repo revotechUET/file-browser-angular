@@ -387,7 +387,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         input: self.loadedFilter ? self.loadedFilter.name:""
       }
       // 
-      let cacheConditions = Object.assign({}, self.conditions);
+      let cacheConditions = Object.assign([], self.conditions);
       cacheConditions.forEach(md => {
         if(md.mdtype === "uploaded") {
           md.children.forEach(c => {
@@ -413,7 +413,8 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
                     name: name,
                     content: JSON.stringify({
                       query: fileExplorerCtrl.searchQuery,
-                      conditions: self.conditions,
+                      conditions: cacheConditions,
+                      // conditions: self.conditions,
                       customArr: self.customArr,
                       searchQuery: self.searchQuery,
                       subFolders: self.subFolders
@@ -433,7 +434,8 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
               name: name,
               content: JSON.stringify({
                 query: fileExplorerCtrl.searchQuery,
-                conditions: self.conditions,
+                conditions: cacheConditions,
+                // conditions: self.conditions,
                 customArr: self.customArr,
                 searchQuery: self.searchQuery,
                 subFolders: self.subFolders

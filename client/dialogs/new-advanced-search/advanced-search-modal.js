@@ -127,7 +127,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
               children: children
             });
           } else {
-            self.customArr.push({ key: keyObj, value: child.children[0][keyObj] });
+            self.customArr.push({ key: decodeURI(keyObj), value: child.children[0][keyObj] });
           }
         }
       });

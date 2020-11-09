@@ -76,7 +76,7 @@ function Controller($scope) {
     self.PDFJS.disableWorker = true;
     self.PDFJS.getDocument({
       data: pdfEncoded
-    }).then(pdfDoc => {
+    }).promise.then(pdfDoc => {
       self.pdfDoc = pdfDoc;
       self.pdfPages = pdfDoc.numPages;
       self.pagesToShow = self.pagesToShow || self.pdfPages;
@@ -85,7 +85,7 @@ function Controller($scope) {
   }
 
   function renderPage(page, num) {
-    let viewport = page.getViewport(self.options.scale);
+    let viewport = page.getViewport(self.options);
     let div = document.getElementById(`pdf-div-${num}`);
     let canvas = document.getElementById(`pdf-canvas-${num}`);
     if (!div) {

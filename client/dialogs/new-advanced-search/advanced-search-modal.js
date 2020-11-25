@@ -127,7 +127,15 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
               children: children
             });
           } else {
-            self.customArr.push({ key: decodeURI(keyObj), value: child.children[0][keyObj] });
+            let _customArr = child.children.filter(_children => {
+              return Object.keys(_children)[0] == keyObj
+            }).map(_children => {
+              return {
+                key: decodeURI(keyObj), value: _children[keyObj]
+              }
+            })
+            self.customArr.push(..._customArr)
+            // self.customArr.push({ key: decodeURI(keyObj), value: child.children[0][keyObj] });
           }
         }
       });
@@ -374,7 +382,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           self.loadedFilter = selectItem;
           fileExplorerCtrl.__loadedFilter = selectItem;
 
-          callback('Ok');
+          callback(null);
         });
       });
     }

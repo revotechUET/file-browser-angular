@@ -18,7 +18,7 @@ const storageProps = require('../storage-props/storage-props').name;
 const pdfViewerDialog = require('../../dialogs/pdf-viewer/pdf-viewer-modal');
 const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal');
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
-const newAdvancedSearchDialog = require('../../dialogs/new-advanced-search/advanced-search-modal');
+const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
 const confirmDialog = require('../../dialogs/confirm/confirm-modal');
 
@@ -841,7 +841,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     } else if (self.filter != '[Custom search]') self.goTo(-999);
   }
   this.advancedSearch = function () {
-    newAdvancedSearchDialog(ModalService, self, function (isSearching) {
+    advancedSearchDialog(ModalService, self, function (isSearching) {
       if (isSearching) {
         self.modeFilter = 'custom search';
         self.filter = '[Custom search]';

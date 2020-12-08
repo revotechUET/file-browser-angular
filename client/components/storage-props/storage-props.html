@@ -61,21 +61,21 @@
 								ng-readonly="md.readonly"
 								ng-click="self.selectWell(md)"
 								style="display: inline; text-align: left; cursor: pointer;">
+						<div ng-hide="self.hideAssociate">
+							<i class="ti ti-clipboard"
+								ng-click="self.pasteObject(md, md.name)"
+								style="padding: 0 2px; cursor: pointer;"
+								title="Paste!">
+							</i>
+							<i class="ti ti-close"
+								ng-click="self.clearObject(md)"
+								style="padding: 0 2px; cursor: pointer;"
+								title="Clear!">
+							</i>
+						</div>
 					</div>
 					<div ng-switch-when="wiassociate" ng-hide="self.hideAssociate">
 						<div class="ti ti-arrow-top-right" style="cursor: pointer;" ng-click="self.associateToNodes(md)"></div>
-					</div>
-					<div ng-switch-when="wilink" ng-hide="self.hideAssociate">
-						<i class="ti ti-clipboard"
-							ng-click="self.pasteObject(md, md.name)"
-							style="padding: 0 2px; cursor: pointer;"
-							title="Paste!">
-						</i>
-						<i class="ti ti-close"
-							ng-click="self.clearObject(md)"
-							style="padding: 0 2px; cursor: pointer;"
-							title="Clear!">
-						</i>
 					</div>
 					<div ng-switch-when="wirevision">
 						{{md.value}}

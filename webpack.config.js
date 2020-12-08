@@ -1,8 +1,6 @@
 let path = require('path');
 //let webpack = require('webpack');
 
-var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
-
 // let OUTPUT = path.join('E:/workspace/wi-angular/build/bower_components/file-explorer/dist');
 
 let OUTPUT = path.join(__dirname, 'dist');
@@ -35,7 +33,6 @@ module.exports = {
         ],
     },
     plugins: [
-        new HardSourceWebpackPlugin()
     ]
     // plugins: [
     //     new webpack.ProvidePlugin({

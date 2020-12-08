@@ -245,21 +245,25 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
     	self.metaData[name] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	};
+	function findWellheader (headerName, well) {
+		let value = '';
+		if(well) {
+			let header = well.well_headers.find(h => h.header == headerName);
+			if (header) value = header.value;
+		}
+
+		return value;
+	}
 	this.onChangeSelect = function (name, value) {
 		if(name == 'well') {
 			let selectedWell = self.wells.find(w => w.name == value);
-			function findWellheader (headerName, well) {
-				let value = '';
-				if(well) {
-					let header = well.well_headers.find(h => h.header == headerName);
-					if (header) value = header.value;
-				}
-
-				return value;
-			}
 			self.fields['Information'].forEach(md => {
 				if(md.name == 'field') {
 					md.value = findWellheader('FLD', selectedWell);
+					self.metaData[md.name] = md.value;
+				}
+				if(md.name == 'block') {
+					md.value = findWellheader('BLOCK', selectedWell);
 					self.metaData[md.name] = md.value;
 				}
 				if(md.name == 'welltype') {
@@ -358,13 +362,16 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 					return value || '';
 				}
 				self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
+				self.metaData.block = getWellheaderByKey(object.properties, 'BLOCK');
 				self.metaData.welltype = getWellheaderByKey(object.properties, 'WTYPE');
 			} else {
 				self.metaData.field = '';
+				self.metaData.block = '';
 				self.metaData.welltype = '';
 			}
 		}
 		setValue('field');
+		setValue('block');
 		setValue('welltype');
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}

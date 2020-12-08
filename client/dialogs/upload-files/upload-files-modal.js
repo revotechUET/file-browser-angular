@@ -30,6 +30,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.metaData4All = {
       well: '{}',
       field: '',
+      block: '',
       welltype: '',
       datatype: '',
       quality: '5',
@@ -74,6 +75,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           // modified: file.lastModified,
           source: 'Desktop Uploaded',
           field: '',
+          block: '',
           well: '{}',
           welltype: '',
           // parameter: '',
@@ -127,6 +129,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             modified: Date.now() + '',
             source: 'Desktop Uploaded',
             field: '',
+            block: '',
             well: '{}',
             welltype: '',
             datatype: '',

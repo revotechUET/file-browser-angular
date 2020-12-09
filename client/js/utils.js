@@ -171,7 +171,7 @@ exports.getSelections = function () {
 			"Drilling Reports (Drilling Programs, Final Drilling Reports, Final Completion Reports)",
 			"DST (Drill Stem Test)",
 			"Image Logs",
-			"Mud Logging (Gas Data, Mud Log, Oil show etc.)",
+			"Mud Logging (Gas Data, Mud Log, Oil show, etc.)",
 			"Perforation",
 			"Pressure Logs (MDT, RFT, RCI, etc.)",
 			"Production (Data, Forecast, Reports, etc.)",

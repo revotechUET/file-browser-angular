@@ -75,18 +75,18 @@ exports.getConfigProps = function() {
             "refSpec": null,
             "choices": null
         },
-        "field": {
-            "translation": "Field",
+        "block": {
+            "translation": "Block",
             "option": "use",
-            // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
             "choices": null
         },
-        "block": {
-            "translation": "Block",
+        "field": {
+            "translation": "Field",
             "option": "use",
+            // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,

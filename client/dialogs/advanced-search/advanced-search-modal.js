@@ -57,13 +57,13 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         type: 'date',
         label: "Date Uploaded"
       },
-      "field" : {
-        type: 'text',
-        label: "Field"
-      },
       "block" : {
         type: 'text',
         label: "Block"
+      },
+      "field" : {
+        type: 'text',
+        label: "Field"
       },
       "well" : {
         type: 'select',

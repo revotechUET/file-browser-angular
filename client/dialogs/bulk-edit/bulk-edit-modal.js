@@ -10,8 +10,8 @@ module.exports = function (ModalService, callback) {
 
     self.metaData4All = {
       well: '{}',
-      field: '',
       block: '',
+      field: '',
       welltype: '',
       datatype: '',
       quality: '5',

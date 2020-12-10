@@ -71,8 +71,7 @@ exports.getConfigProps = function() {
             "option": "use",
             // "option" : "notuse",
             "section": "Information",
-            // "typeSpec": "wilink",
-            "typeSpec": null,
+            "typeSpec": "wilink",
             "refSpec": null,
             "choices": null
         },

@@ -71,7 +71,8 @@ exports.getConfigProps = function() {
             "option": "use",
             // "option" : "notuse",
             "section": "Information",
-            "typeSpec": "wilink",
+            // "typeSpec": "wilink",
+            "typeSpec": null,
             "refSpec": null,
             "choices": null
         },
@@ -94,7 +95,8 @@ exports.getConfigProps = function() {
         },
         "welltype": {
             "translation": "Well Type",
-            "option": "readonly",
+            "option": "use",
+            // "option": "readonly",
             // "option" : "notuse",
             "section": "Information",
             "typeSpec": null,

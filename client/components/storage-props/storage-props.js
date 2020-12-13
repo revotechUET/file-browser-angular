@@ -363,17 +363,17 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 					let value = wellheader.value;
 					return value || '';
 				}
-				self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
 				self.metaData.block = getWellheaderByKey(object.properties, 'BLOCK');
+				self.metaData.field = getWellheaderByKey(object.properties, 'FLD');
 				self.metaData.welltype = getWellheaderByKey(object.properties, 'WTYPE');
 			} else {
-				self.metaData.field = '';
 				self.metaData.block = '';
+				self.metaData.field = '';
 				self.metaData.welltype = '';
 			}
 		}
-		setValue('field');
 		setValue('block');
+		setValue('field');
 		setValue('welltype');
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}

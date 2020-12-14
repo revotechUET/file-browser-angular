@@ -66,16 +66,6 @@ exports.getConfigProps = function() {
             "refSpec": "time",
             "choices": null
         },
-        "well": {
-            "translation": "Well",
-            "option": "use",
-            // "option" : "notuse",
-            "section": "Information",
-            // "typeSpec": "wilink",
-            "typeSpec": null,
-            "refSpec": null,
-            "choices": null
-        },
         "block": {
             "translation": "Block",
             "option": "use",
@@ -87,7 +77,14 @@ exports.getConfigProps = function() {
         "field": {
             "translation": "Field",
             "option": "use",
-            // "option" : "notuse",
+            "section": "Information",
+            "typeSpec": null,
+            "refSpec": null,
+            "choices": null
+        },
+        "well": {
+            "translation": "Well",
+            "option": "use",
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,

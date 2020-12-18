@@ -164,9 +164,9 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		let name = self.metaData['name'];
 		// if(mdKey == 'size') value = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 		try {
-			if (mdKey == 'relatesto') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
-			if(mdKey == 'well' && configObj[mdKey].option != 'use') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
-			// if (mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+			// if (mdKey == 'relatesto') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+			// if(mdKey == 'well' && configObj[mdKey].option != 'use') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
+			if (mdKey == 'relatesto' || mdKey == 'well') value = (self.metaData[mdKey] == '') ? {} : JSON.parse(self.metaData[mdKey]);
 		} catch (e) {
 			console.warn("JSON.parse error when get MD props. Consider to fix it later", e);
 		}

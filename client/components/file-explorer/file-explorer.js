@@ -885,6 +885,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.abortSearch && self.abortSearch();
       self.searching = false;
     } else {
+      if (!self.filter) return;
       self.filter = '';
       self.modeFilter = 'all';
       self.search();
@@ -987,6 +988,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.requesting = false;
           }
           doneCb && doneCb();
+          $scope.$digest();
           return;
         }
         chunkCb && chunkCb(decoder.decode(value));

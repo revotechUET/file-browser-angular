@@ -996,6 +996,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
       reader.read().then(readChunk);
     }).catch(err => {
+      if (err.name === 'AbortError') return;
       console.error("file browser request", err);
       if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {

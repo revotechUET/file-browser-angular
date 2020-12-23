@@ -33,6 +33,10 @@ file-explorer {
                 margin-right: 20px;
                 font-size   : 12px;
                 cursor      : pointer;
+                &[disabled] {
+                    color: #eee;
+                    cursor: not-allowed;
+                }
             }
 
             .left {
@@ -41,6 +45,7 @@ file-explorer {
                 margin-left: 15px;
                 align-items: center;
                 font-weight: bold;
+                white-space: nowrap;
             }
 
             .processing {
@@ -141,6 +146,9 @@ file-explorer {
                 .search-box {
                     display    : flex;
                     align-items: center;
+                    input:disabled {
+                        cursor: not-allowed;
+                    }
                 }
 
                 .split {
@@ -180,7 +188,7 @@ file-explorer {
             .sidebar-properties {
                 border-left: 1px solid #c5c5c5;
                 position   : absolute;
-                right      : 0;
+                right      : 5px;
                 height     : 100%;
             }
 

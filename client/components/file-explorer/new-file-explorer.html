@@ -108,17 +108,17 @@
             <div class="search-box">
                 <input style="width: 150px; background: #f4f4f4; padding: 4px 10px; margin-right: 20px" type='text'
                     ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}" size='10'
-                    placeholder="[Search]">
+                    placeholder="[Search]" ng-disabled="self.searching || self.modeFilter === 'custom search'">
                 <div style="margin-right: 20px;  cursor: pointer;" class="ti ti-close"
-                    ng-click="self.filter = ''; self.modeFilter = 'all'; self.search()"
+                    ng-click="self.clearSearch()" title="{{self.searching?'Stop':'Clear'}}"
                     ng-style="{color: self.filter != '' ? '#c00' : '#eee'}"></div>
-                <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()"
+                <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()" ng-disabled="self.searching"
                     style="margin-right: 0;"></div>
             </div>
             <div class="split margin"></div>
             <div class="filter-mode" ng-class="{highlightBg: self.modeFilter!='all'}">
                 <span>FILTER: {{self.modeFilter}} mode</span>
-                <span class="ti ti-close" ng-click="self.allFilesMode()" ng-if="self.modeFilter!='all'"
+                <span class="ti ti-close" ng-click="self.clearSearch()" ng-if="self.modeFilter!='all'"
                     style="margin-left: 10px; color: #fff; cursor: pointer;"></into>
             </div>
         </div>

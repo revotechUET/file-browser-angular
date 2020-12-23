@@ -1,12 +1,6 @@
+import { v4 as uuidv4 } from 'uuid';
 // Load css
 require('./new-file-explorer.less');
-
-// Load js
-/*
-require('../../vendor/js/ng-file-upload.min');
-const async = require('../../vendor/js/async.min');
-*/
-
 
 // const crypto = require('crypto');
 const textViewer = require('../text-viewer/text-viewer').name;
@@ -48,6 +42,8 @@ const COPY_PATH = '/action/copy?';
 const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
 const SEARCH_PATH = '/search';
+const SEARCH_STREAM_PATH = '/search/streaming';
+const SEARCH_STREAM_CANCEL_PATH = '/search/streaming/cancel';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 const RESTORE_REVISION = '/action/restore';
@@ -230,6 +226,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.moveUrl = self.url + MOVE_PATH;
       self.newFolderUrl = self.url + NEW_FOLDER_PATH;
       self.searchUrl = self.url + SEARCH_PATH;
+      self.searchStreamingUrl = self.url + SEARCH_STREAM_PATH;
+      self.searchStreamingCancelUrl = self.url + SEARCH_STREAM_CANCEL_PATH;
       self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
       self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
       self.restoreRevisionUrl = self.url + RESTORE_REVISION;
@@ -639,8 +637,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
         let data = result.data.data;
         self.fileList = [...data.files, ...data.folders];
-        const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
-        self.clickNode(item);
+        if (self.selectedItem) {
+          const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
+          self.clickNode(item);
+        }
         callback && callback();
       })
       self.httpGet(`${self.previewUrl}/refresh-cache`, result => {
@@ -797,6 +797,39 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     newFolderDialog(ModalService, self);
   };
 
+  self.searching = false;
+  function doSearch(payload) {
+    if (self.searching) return;
+    self.searching = true;
+    if (self.searchMode === 'stream') {
+      self.fileList = [];
+      let result = '';
+      const EOL = '***eol***';
+      self.abortSearch = self.httpPostStreaming(self.searchStreamingUrl, payload,
+        res => {
+        if (!self.searching) return;
+        result += res;
+        const lines = result.split(EOL)
+        if (lines.length > 1) {
+          result = result.slice(result.indexOf(EOL) + EOL.length);
+          const line = lines[0];
+          try {
+            const files = JSON.parse(line);
+            self.fileList.push(...files);
+            $scope.$digest();
+          } catch (error) {
+            console.log(line);
+          }
+        }
+      }, () => {
+          self.searching = false;
+      });
+    } else {
+      self.httpPost(self.searchUrl, payload, res => {
+        self.fileList = res.data.data;
+      });
+    }
+  }
   this.search = function () {
     self.searchQuery = {
       conditions: {
@@ -814,12 +847,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       subFolders: "included"
     };
     if (self.filter != '') {
-      let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}&`;
-      let content = `content=${encodeURIComponent(self.filter)}`;
-
-      // self.httpGet(`${self.searchUrl + folder + content}`, res => {
-      //   self.fileList = res.data.data;
-      // })
       let payload = {
         folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
         content: {
@@ -831,31 +858,37 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           subFolders: "included",
         }
       };
-      self.httpPost(self.searchUrl, payload, res => {
-        self.fileList = res.data.data;
-        self.modeFilter = 'seach';
-      });
+      self.modeFilter = 'search';
+      doSearch(payload);
     } else if (!self.filter || self.filter === '') {
+      self.searching = false;
       self.modeFilter = 'all';
       self.goTo(-999);
     } else if (self.filter != '[Custom search]') self.goTo(-999);
   }
   this.advancedSearch = function () {
+    if (self.searching) return;
     advancedSearchDialog(ModalService, self, function (isSearching) {
       if (isSearching) {
         self.modeFilter = 'custom search';
         self.filter = '[Custom search]';
-        let folder = `folder=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}&`;
-
         let payload = {
           folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
           content: self.searchQuery
         };
-        self.httpPost(self.searchUrl, payload, res => {
-          self.fileList = res.data.data;
-        });
+        doSearch(payload);
       }
     });
+  }
+  this.clearSearch = function () {
+    if (self.searching) {
+      self.abortSearch && self.abortSearch();
+      self.searching = false;
+    } else {
+      self.filter = '';
+      self.modeFilter = 'all';
+      self.search();
+    }
   }
   this.httpGet = function (url, cb, options = {}) {
     if (!options.silent) {
@@ -927,6 +960,53 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     })
   };
+
+  this.httpPostStreaming = function (url, payload, chunkCb, doneCb, options = {}) {
+    if (!options.silent) {
+      self.requesting = true;
+    }
+    const uuid = uuidv4();
+    const abortController = new AbortController();
+    const decoder = new TextDecoder('utf-8');
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Referrer-Policy': 'no-referrer',
+        'Authorization': window.localStorage.getItem('token'),
+        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
+      },
+      body: JSON.stringify({ ...payload, uuid }),
+      signal: abortController.signal,
+    }).then(res => {
+      const reader = res.body.getReader();
+      function readChunk({ value, done }) {
+        if (done) {
+          if (!options.silent) {
+            self.requesting = false;
+          }
+          doneCb && doneCb();
+          return;
+        }
+        chunkCb && chunkCb(decoder.decode(value));
+        return reader.read().then(readChunk);
+      }
+      reader.read().then(readChunk);
+    }).catch(err => {
+      console.error("file browser request", err);
+      if (err.data && err.data.code === 401) location.reload();
+      if (!options.silent) {
+        self.requesting = false;
+        toastr.error('Error connecting to server');
+      }
+    });
+    return () => {
+      self.httpPost(self.searchStreamingCancelUrl, { uuid }, () => {
+        abortController.abort();
+      });
+    }
+  }
 
   this.getExtFile = function (item) {
     if (!item.rootIsFile)
@@ -1277,6 +1357,7 @@ app.component(componentName, {
     getSize: '<',
     checkPermission: '<',
     readonlyValues: '<',
+    searchMode: '<',
   }
 });
 
@@ -1323,4 +1404,4 @@ app.filter('humanReadableFileSize', ['$filter', function ($filter) {
   };
 }]);
 
-module.exports.name = moduleName;
+export const name = moduleName;

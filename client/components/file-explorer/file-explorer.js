@@ -73,7 +73,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }, {
       type: 'html',
       class: 'json-icon-16x16'
-    }, 
+    },
     {
       type: 'htm',
       class: 'json-icon-16x16'
@@ -96,15 +96,15 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     {
       type: 'csv',
       class: 'csv-icon-16x16'
-    }, 
+    },
     {
       type: 'jpg',
       class: 'jpg-icon-16x16'
-    }, 
+    },
     {
       type: 'jpeg',
       class: 'jpg-icon-16x16'
-    }, 
+    },
     {
       type: 'png',
       class: 'jpg-icon-16x16'
@@ -199,7 +199,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
     self.modeFilter = 'all';
     self.getSize = null;
-    
+
     let searchQuery = {
       conditions: {
         operator: "and",
@@ -216,7 +216,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       subFolders: "included"
     }
     self.searchQuery = searchQuery;
-    $scope.$watch(() => self.url, () => {
+    function updateUrls() {
       self.rawDataUrl = self.url + RAW_DATA_PATH;
       self.exploreUrl = self.url + EXPLORE_PATH;
       self.uploadUrl = self.url + UPLOAD_PATH;
@@ -237,7 +237,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.cancelUrl = self.url + CANCEL_PROCESS;
       self.getFolderSizeUrl = self.url + GETSIZE_PATH;
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
-    })
+    }
+    updateUrls();
+    $scope.$watch(() => self.url, updateUrls);
     $scope.$watch(() => self.storageDatabase + self.url, () => {
       if (self.storageDatabase && self.url) {
         if (self.linkedFile) {
@@ -425,7 +427,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.filter = '';
         self.modeFilter = 'all';
       })
-      
+
     } else {
       if (self.disablePreview) return;
       self.filter = '';
@@ -1174,7 +1176,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
     console.log("import zone set");
-  } 
+  }
   this.importMarkerSet = function(items) {
     if(items.length === 0 ) return;
     self.requesting = true;
@@ -1188,11 +1190,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
     console.log("import marker set");
-  } 
+  }
   function callBackImport(data) {
     self.requesting = false;
     console.log(data);
-  } 
+  }
   // function downloadFileToUpload(item) {
   //   $http({
   //     url: self.url + DOWNLOAD_PATH_POST,

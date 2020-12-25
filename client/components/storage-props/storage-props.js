@@ -146,15 +146,15 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	function mapOrder (array, order, key) {
 		array.sort( function (a, b) {
 		    var A = a[key], B = b[key];
-		    
+
 		    if (order.indexOf(A) > order.indexOf(B)) {
 		        return 1;
 		    } else {
 		        return -1;
 		    }
-		    
+
 		  });
-		  
+
 		return array;
 	};
 	function getMDProps (mdKey, configObj) {
@@ -197,7 +197,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			case 'size' :
 				ref = $filter('humanReadableFileSize')(self.metaData[mdKey]);
 				break;
-			default: 
+			default:
 		}
 		return ref;
 	}
@@ -379,6 +379,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	}
 	this.onChangeBox = function(check, md) {
 		if(md.name != 'well') return;
+		self.chooseBox.block = check;
 		self.chooseBox.field = check;
 		self.chooseBox.welltype = check;
 	}
@@ -392,8 +393,10 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	this.clearObject = function(md) {
 		if(!md || !md.value) return;
 		md.value = {};
+		self.metaData.block = '';
 		self.metaData.field = '';
 		self.metaData.welltype = '';
+		setValue('block');
 		setValue('field');
 		setValue('welltype');
 		self.metaData[md.name] = JSON.stringify(md.value);

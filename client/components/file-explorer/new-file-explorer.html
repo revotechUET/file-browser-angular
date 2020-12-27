@@ -41,7 +41,7 @@
              <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
                   ng-click="self.copyMultiLocation(self.selectedList)"
                   ng-class="{inactive: self.selectedList.length <= 1, 'copied': self.multiLocationCopied(self.selectedList)}"></div>
-              
+
               <!--<div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"-->
                   <!--style="transform: rotate(-90deg);"-->
                   <!--ng-click="self.importFilesToInventory(self.selectedList)"></div>-->
@@ -173,7 +173,7 @@
                 <div class="date">Date modified</div>
             </div> -->
         </div>
-        <side-bar my-default-width="320" collapsed="false " orientation="w"
+        <side-bar my-default-width="350" collapsed="false" orientation="w"
           class="sidebar-properties"
           ng-if="!self.hideMetadataPanel">
             <div ng-if="!self.selectedItem.metaData" class="no-file-select" style=" opacity: 0.5; ">

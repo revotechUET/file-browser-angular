@@ -109,7 +109,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		obj['Version History'] = self.revision ? self.revision.map(rev => {
 			const md = {
 				name: rev.time,
-				label: moment(parseInt(rev.time)).format('YYYY/MM/DD HH:mm'),
+				label: moment(parseInt(rev.time)).format('YYYY/MM/DD hh:mm A'),
 				type: 'wirevision',
 				value: $filter('humanReadableFileSize')(rev.size),
 				readonly: true,

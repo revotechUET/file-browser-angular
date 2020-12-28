@@ -258,6 +258,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.fileList = [];
       }
     });
+    self.requesting = true;
 
     // processing status
     const refreshDebounced = _.debounce(() => self.goTo(-999), 1000);

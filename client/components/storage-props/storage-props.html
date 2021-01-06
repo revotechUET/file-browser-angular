@@ -45,6 +45,10 @@
 							ng-disabled="md.readonly"
 							title="{{md.value}}">
 					</select>
+					<input ng-switch-when="taxonomies" class="form-control props-value"
+						ng-model="md.value" autocomplete source="md.selections"
+						sp-enter="$event.currentTarget.blur();"
+						ng-blur="self.updateMetaData(md.name, md.value)">
 					<div ng-switch-when="rating" class="quality-field">
 						<span ng-repeat="star in [1,2,3,4,5]" 
 							ng-click="!md.readonly && self.doRating(md, star)"
@@ -55,12 +59,13 @@
 					<div ng-switch-when="wilink" style="display: flex;">
 						<span class="{{md.value.icon}}" title="{{md.value.type}}"
 								style="margin-right: 10px;"></span>
-						<input type="text" ng-model="md.value.name"
+						<input type="text" ng-model="md.value.name" autocomplete source="md.selections"
 								class="form-control props-value"
 								title="{{md.value.name}}"
 								ng-readonly="md.readonly"
-								ng-click="self.selectWell(md)"
-								style="display: inline; text-align: left; cursor: pointer;">
+								sp-enter="$event.currentTarget.blur();"
+								ng-blur="self.editWell(md)"
+								style="display: inline; text-align: left;">
 						<div ng-hide="self.hideAssociate">
 							<i class="ti ti-clipboard"
 								ng-click="self.pasteObject(md, md.name)"

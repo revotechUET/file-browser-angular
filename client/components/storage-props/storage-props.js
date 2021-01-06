@@ -26,8 +26,12 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
 	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
-  	this.selections = utils.getSelections();
- 	this.$onInit = function () {
+	const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
+		obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
+		return obj;
+	}, {});
+	this.selections = { ...utils.getSelections(), ...taxonomies };
+	this.$onInit = function () {
 		self.statusUrl = self.apiUrl + PROCESSING_STATUS;
 		self.revMetadataUrl = self.apiUrl + '/action/info';
 		//console.log('self: ', self);
@@ -418,6 +422,18 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			self.pasteObject(md, 'well');
 			wiSession.putData('objectNode', bakObjectNode);
 		})
+	}
+	this.editWell = function (md) {
+		try {
+			if(JSON.parse(self.metaData.well).name == md.value.name) return;
+			Object.assign(md.value, {
+				type: "well",
+				icon: "well-16x16"
+			});
+			self.metaData.well = JSON.stringify(md.value);
+			if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
+		} catch (error) {
+		}
 	}
 }
 

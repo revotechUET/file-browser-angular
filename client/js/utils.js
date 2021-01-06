@@ -70,17 +70,17 @@ exports.getConfigProps = function() {
             "translation": "Block",
             "option": "use",
             "section": "Information",
-            "typeSpec": null,
+            "typeSpec": "taxonomies",
             "refSpec": null,
-            "choices": null
+            "choices": "Block"
         },
         "field": {
             "translation": "Field",
             "option": "use",
             "section": "Information",
-            "typeSpec": null,
+            "typeSpec": "taxonomies",
             "refSpec": null,
-            "choices": null
+            "choices": "Field"
         },
         "well": {
             "translation": "Well",
@@ -88,7 +88,7 @@ exports.getConfigProps = function() {
             "section": "Information",
             "typeSpec": "wilink",
             "refSpec": null,
-            "choices": null
+            "choices": "Well"
         },
         "welltype": {
             "translation": "Well Type",
@@ -96,9 +96,9 @@ exports.getConfigProps = function() {
             // "option": "readonly",
             // "option" : "notuse",
             "section": "Information",
-            "typeSpec": null,
+            "typeSpec": "taxonomies",
             "refSpec": null,
-            "choices": null
+            "choices": "Well Type"
         },
         /*"parameter": {
             "translation": "Parameter",

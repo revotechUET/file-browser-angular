@@ -11,6 +11,9 @@ module.exports = function (ModalService, metadata, callback) {
     self.warning = '';
     self.name = '';
     self.value = '';
+    try {
+      self.autocompleteSource = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);
+    } catch (e) {}
     let fixKeys = ['name', 'type', 'size', 'location', 'author', 'uploaded', 'modifided', 'source', 'parameter', 'quality', 'relatesto'];
     this.onOk = function () {
       if(!utils.validateKey(self.name)) {

@@ -113,7 +113,7 @@
                                         style="font-weight: bold; border: none; padding-left: 0;"
                                         ng-change="self.changeCustomFields(field, 'key', $index)"
                                         name="{{'customKey' + $index}}" ng-class="{'error-form': self.validateConditionsForm('customKey' + $index, field)}"
-                                        placeholder="Edit this title" required>
+                                        placeholder="Edit this title" required autocomplete source="self.autocompleteSource">
                                 </div>
                                 <div class="col-sm-9" style="padding-right: 5px">
                                     <input type="text" class="form-control" ng-model="field.value"

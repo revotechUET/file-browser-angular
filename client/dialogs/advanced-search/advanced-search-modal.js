@@ -95,6 +95,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       }
       return selections;
     }
+    try {
+      self.autocompleteSource = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);
+    } catch (e) {}
     // this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';
     this.searchQuery = angular.copy(fileExplorerCtrl.searchQuery);

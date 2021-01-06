@@ -260,7 +260,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
     self.requesting = true;
 
-    // processing status
+    //#region processing status
     const refreshDebounced = _.debounce(() => self.goTo(-999), 1000);
     let updating = false;
     const updateProcessing = _.debounce(function () {
@@ -307,6 +307,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       $listProcessing.fadeIn(300);
     });
     $processing.blur(() => $listProcessing.fadeOut(300));
+    //#endregion
   };
   this.submitToCompanyDatabase = function (files) {
     files = files.map(f => f.path);
@@ -1411,3 +1412,29 @@ app.filter('humanReadableFileSize', ['$filter', function ($filter) {
 }]);
 
 export const name = moduleName;
+
+app.directive('autocomplete', ['$parse', function ($parse) {
+  return {
+    restrict: 'A',
+    require: 'ngModel',
+    link: function ($scope, $element, attrs) {
+      $scope.$watch(() => $parse(attrs.source)($scope), () => {
+        const source = $parse(attrs.source)($scope);
+        if (Array.isArray(source) && source.length) {
+          $element.autocomplete({
+            source,
+            minLength: 0,
+            select: function () {
+              setTimeout(function () {
+                $element.trigger('input');
+              }, 0);
+            },
+          });
+        }
+      });
+      $element.on('focus', function () {
+        $(this).autocomplete('instance') && $(this).autocomplete('search', this.value);
+      });
+    }
+  };
+}]);

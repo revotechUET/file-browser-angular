@@ -57,7 +57,7 @@
 							<i class="fa fa-star"></i>
 						</span>
 					</div>
-					<div ng-switch-when="wilink" style="display: flex;">
+					<div ng-switch-when="wilink" style="display: flex; flex: 1;">
 						<span class="{{md.value.icon}}" title="{{md.value.type}}"
 								style="margin-right: 10px;"></span>
 						<input type="text" ng-model="md.value.name" autocomplete source="md.selections"
@@ -67,7 +67,7 @@
 								sp-enter="$event.currentTarget.blur();"
 								ng-blur="self.editWell(md)"
 								style="display: inline; text-align: left;">
-						<div ng-hide="self.hideAssociate">
+						<div ng-hide="self.hideAssociate" style="flex-shrink: 0; flex-basis: 40px;">
 							<i class="ti ti-clipboard"
 								ng-click="self.pasteObject(md, md.name)"
 								style="padding: 0 2px; cursor: pointer;"

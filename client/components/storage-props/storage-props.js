@@ -32,15 +32,19 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 			"overflow": "auto",
 		},
 	}
-	const taxonomies = $scope.$root.taxonomies && Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
-		obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
-		return obj;
-	}, {}) || {};
-	this.selections = { ...utils.getSelections(), ...taxonomies };
+	this.selections = utils.getSelections();
 	this.$onInit = function () {
 		self.statusUrl = self.apiUrl + PROCESSING_STATUS;
 		self.revMetadataUrl = self.apiUrl + '/action/info';
-		//console.log('self: ', self);
+		const unwatch = $scope.$watch(() => $scope.$root.taxonomies, () => {
+			if (!$scope.$root.taxonomies) return;
+			unwatch();
+			const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
+				obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
+				return obj;
+			}, {});
+			self.selections = { ...utils.getSelections(), ...taxonomies };
+		});
 	};
 	this.fields = [];
 	this.wells = [];

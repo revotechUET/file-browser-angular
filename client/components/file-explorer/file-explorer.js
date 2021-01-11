@@ -240,7 +240,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
-    $scope.$watch(() => self.storageDatabase + self.url, () => {
+    $scope.$watch(() => JSON.stringify(self.storageDatabase) + self.url, () => {
       if (self.storageDatabase && self.url) {
         if (self.linkedFile) {
           //self.goToByPath(self.linkedFile);
@@ -1412,29 +1412,3 @@ app.filter('humanReadableFileSize', ['$filter', function ($filter) {
 }]);
 
 export const name = moduleName;
-
-app.directive('autocomplete', ['$parse', function ($parse) {
-  return {
-    restrict: 'A',
-    require: 'ngModel',
-    link: function ($scope, $element, attrs) {
-      $scope.$watch(() => $parse(attrs.source)($scope), () => {
-        const source = $parse(attrs.source)($scope);
-        if (Array.isArray(source) && source.length) {
-          $element.autocomplete({
-            source,
-            minLength: 0,
-            select: function () {
-              setTimeout(function () {
-                $element.trigger('input');
-              }, 0);
-            },
-          });
-        }
-      });
-      $element.on('focus', function () {
-        $(this).autocomplete('instance') && $(this).autocomplete('search', this.value);
-      });
-    }
-  };
-}]);

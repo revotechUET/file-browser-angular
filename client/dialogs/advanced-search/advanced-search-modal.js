@@ -58,19 +58,19 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         label: "Date Uploaded"
       },
       "block" : {
-        type: 'text',
+        type: 'taxonomies',
         label: "Block"
       },
       "field" : {
-        type: 'text',
+        type: 'taxonomies',
         label: "Field"
       },
       "well" : {
-        type: 'select',
+        type: 'taxonomies',
         label: "Well"
       },
       "welltype" : {
-        type: 'text',
+        type: 'taxonomies',
         label: "Well Type"
       },
       "datatype" : {
@@ -84,19 +84,21 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         case 'datatype': 
           selections = utils.getSelections()['datatypes'];
           break;
-        case 'well': 
-          // selections = wells.map(w => w.properties.name);
-          selections = self.wellsSelection ? self.wellsSelection.map(w => w.name) : [];
-          // selections = JSON.parse(fileExplorerCtrl.wiSession.getData('wells')).map(w => w.properties.name);
-          selections.unshift('');
-          break;
+        // case 'well': 
+        //   // selections = wells.map(w => w.properties.name);
+        //   selections = self.wellsSelection ? self.wellsSelection.map(w => w.name) : [];
+        //   // selections = JSON.parse(fileExplorerCtrl.wiSession.getData('wells')).map(w => w.properties.name);
+        //   selections.unshift('');
+        //   break;
         default:
+          const taxonomies = $scope.$root.taxonomies[self.mapKey[mdkey].label];
+          selections = taxonomies.map(t => t.item);
           break;
       }
       return selections;
     }
     try {
-      self.autocompleteSource = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);
+      self.customMdSource = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);
     } catch (e) {}
     // this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';

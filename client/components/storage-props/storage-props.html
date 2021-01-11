@@ -2,6 +2,7 @@
 	<div ng-repeat="section in self.sections" ng-if="section!='More Information' && self.checkMDObj(section)">
 		<div class="heading" 
 			ng-if="!self.hideHeader || (!self.shortView && self.fields[section].length>0)">{{section}}</div>
+		<div ng-style="self.sectionStyles[section]">
 		<div ng-repeat="md in self.fields[section]"
 			class="form-group props-group"
 			ng-class="[
@@ -13,7 +14,7 @@
 			ng-click="md.onSelect && md.onSelect()"
 			ng-dblclick="md.onDblClick && md.onDblClick()"
 			ng-if="md.use"
-      >
+			>
 			<label class="col-sm-5">
 				<input type="checkbox" 
 						ng-if="self.chooseBox && !md.readonly"
@@ -23,7 +24,7 @@
 			</label>
 			<div class="col-sm-7"
 				style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; padding: 9px 15px;align-items: center;"
-      >
+			>
 				<div style="flex: 1; display: flex; justify-content: flex-end;" ng-switch="md.type">
 					<input type="text" ng-model="md.value" 
 							class="form-control props-value"
@@ -109,6 +110,7 @@
 					</i>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 	<div ng-init="section = 'More Information'">

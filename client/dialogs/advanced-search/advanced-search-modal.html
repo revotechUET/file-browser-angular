@@ -56,7 +56,7 @@
                                 <label class="col-sm-2" ng-if="$index == 0">{{self.getLabel(md)}}</label>
                                 <label class="col-sm-2" ng-if="$index > 0">&nbsp;</label>
                                 <div class="col-sm-9" style="padding-right: 5px;"
-                                    ng-if="md.inputtype != 'date' && md.inputtype != 'select'">
+                                    ng-if="md.inputtype == 'text'">
                                     <input type="{{md.inputtype}}" class="form-control"
                                         ng-model="child[self.getKeyObj(child)]" required
                                         name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}">
@@ -74,6 +74,12 @@
                                             ng-model="child[self.getKeyObj(child)].to" required
                                             name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}">
                                     </div>
+                                </div>
+                                <div ng-if="md.inputtype == 'taxonomies'" class="col-sm-9" style="padding-right: 5px;">
+                                    <input type="{{md.inputtype}}" class="form-control"
+                                        ng-model="child[self.getKeyObj(child)]" required
+                                        name="{{md.mdtype + $index}}" ng-class="{'error-form': self.validateConditionsForm(md.mdtype + $index, child)}"
+                                        autocomplete source="self.getSelections(md.mdtype)">
                                 </div>
                                 <div ng-if="md.inputtype == 'select' && md.mdtype == 'well'" class="col-sm-9"
                                     style="padding-right: 5px;">
@@ -113,7 +119,7 @@
                                         style="font-weight: bold; border: none; padding-left: 0;"
                                         ng-change="self.changeCustomFields(field, 'key', $index)"
                                         name="{{'customKey' + $index}}" ng-class="{'error-form': self.validateConditionsForm('customKey' + $index, field)}"
-                                        placeholder="Edit this title" required autocomplete source="self.autocompleteSource">
+                                        placeholder="Edit this title" required autocomplete source="self.customMdSource">
                                 </div>
                                 <div class="col-sm-9" style="padding-right: 5px">
                                     <input type="text" class="form-control" ng-model="field.value"

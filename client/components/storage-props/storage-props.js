@@ -26,10 +26,16 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
   	// let idProject = wiComponentService.getComponent(wiComponentService.PROJECT_LOADED).idProject;
   	let config = utils.getConfigProps();
 	this.sections = ['Version History', 'General', 'Information', 'Description', 'More Information'];
-	const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
+	this.sectionStyles = {
+		'Version History': {
+			"max-height": "111px",
+			"overflow": "auto",
+		},
+	}
+	const taxonomies = $scope.$root.taxonomies && Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
 		obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
 		return obj;
-	}, {});
+	}, {}) || {};
 	this.selections = { ...utils.getSelections(), ...taxonomies };
 	this.$onInit = function () {
 		self.statusUrl = self.apiUrl + PROCESSING_STATUS;

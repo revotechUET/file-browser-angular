@@ -18,7 +18,7 @@
         <div class="left">
             <div ng-if="!self.hidePdbFeaturesPanel" class="left" style="margin-left: 0;">
               <!-- Refresh - -->
-              <div title="Reload" class="button-fn ti ti-reload" ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='all'"></div>
+              <div title="Reload" class="button-fn ti ti-reload" ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='none'"></div>
               <!-- Upload -  -->
               <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
               <!-- download -  -->
@@ -57,15 +57,15 @@
             <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
             <div class="button-fn ti ti-angle-right" style="margin-right: 10px; font-size: 9px;"></div>
             <div class="button-fn" ng-if="self.currentPath.length > 0" style="margin-right: 10px;"
-                ng-click="self.goTo(-1); self.filter='';self.modeFilter='all'">{{'Home'}}
+                ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">{{'Home'}}
             </div>
             <div class="button-fn" ng-if="self.currentPath.length < 1" style="margin-right: 10px;"
-                ng-click="self.goTo(-1); self.filter='';self.modeFilter='all'">{{'Home'}}
+                ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">{{'Home'}}
             </div>
             <div ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}"
                 style="display: flex; align-items: center; margin-left: -10px; margin-right: 10px;">
                 <div class="button-fn ti ti-angle-right" style="margin: 0 10px; font-size: 9px;"></div>
-                <div ng-if="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='all'" style="cursor: pointer;">
+                <div ng-if="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='none'" style="cursor: pointer;">
                     {{dir.rootName | strLimit : 8}}
                 </div>
                 <div ng-if="$last" style="color: #000;">
@@ -116,9 +116,9 @@
                     style="margin-right: 0;"></div>
             </div>
             <div class="split margin"></div>
-            <div class="filter-mode" ng-class="{highlightBg: self.modeFilter!='all'}">
-                <span>FILTER: {{self.modeFilter}} mode</span>
-                <span class="ti ti-close" ng-click="self.clearSearch()" ng-if="self.modeFilter!='all'"
+            <div class="filter-mode" ng-class="{highlightBg: self.modeFilter!='none'}">
+                <span>FILTER: {{self.modeFilter}}</span>
+                <span class="ti ti-close" ng-click="self.clearSearch()" ng-if="self.modeFilter!='none'"
                     style="margin-left: 10px; color: #fff; cursor: pointer;"></into>
             </div>
         </div>
@@ -165,7 +165,7 @@
                     <div ng-style='{"width": self.widthArray[4]}' title="{{item.modifiedDate | formatDate}}"
                         class="date">{{item.modifiedDate | formatDate}}</div>
                 </div>
-                <div ng-show="self.modeFilter !== 'all' && !self.searching && !self.fileList.length" class="table-row">
+                <div ng-show="self.modeFilter !== 'none' && !self.searching && !self.fileList.length" class="table-row">
                     <div class="name-row" style="width: 100%;">No results found</div>
                 </div>
             </wi-table-resizeable>

@@ -196,7 +196,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.reverse = false;
     // self.HEADER_CONFIG = HEADER_CONFIG;
 
-    self.modeFilter = 'all';
+    self.modeFilter = 'none';
     self.getSize = null;
 
     let searchQuery = {
@@ -436,13 +436,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         })
         //self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
         self.filter = '';
-        self.modeFilter = 'all';
+        self.modeFilter = 'none';
       })
 
     } else {
       if (self.disablePreview) return;
       self.filter = '';
-      // self.modeFilter = 'all';
       self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/check-in-cache?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
@@ -871,20 +870,20 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           subFolders: "included",
         }
       };
-      self.modeFilter = 'search';
+      self.modeFilter = 'simple search';
       doSearch(payload);
     } else if (!self.filter || self.filter === '') {
       self.searching = false;
-      self.modeFilter = 'all';
+      self.modeFilter = 'none';
       self.goTo(-999);
-    } else if (self.filter != '[Custom search]') self.goTo(-999);
+    } else if (self.filter != '[Advanced search]') self.goTo(-999);
   }
   this.advancedSearch = function () {
     if (self.searching) return;
     advancedSearchDialog(ModalService, self, function (isSearching) {
       if (isSearching) {
-        self.modeFilter = 'custom search';
-        self.filter = '[Custom search]';
+        self.modeFilter = 'advanced search';
+        self.filter = '[Advanced search]';
         let payload = {
           folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
           content: self.searchQuery
@@ -900,7 +899,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     } else {
       if (!self.filter) return;
       self.filter = '';
-      self.modeFilter = 'all';
+      self.modeFilter = 'none';
       self.search();
     }
   }
@@ -1085,9 +1084,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $scope.addValue = "";
   }
   this.allFilesMode = function () {
-    if (self.modeFilter !== 'all') {
+    if (self.modeFilter !== 'none') {
       self.goTo(-999, function () {
-        self.modeFilter = 'all';
+        self.modeFilter = 'none';
         self.filter = '';
       });
     }

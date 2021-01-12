@@ -165,7 +165,7 @@
                     <div ng-style='{"width": self.widthArray[4]}' title="{{item.modifiedDate | formatDate}}"
                         class="date">{{item.modifiedDate | formatDate}}</div>
                 </div>
-                <div ng-show="!self.requesting && !self.fileList.length" class="table-row">
+                <div ng-show="self.modeFilter !== 'all' && !self.searching && !self.fileList.length" class="table-row">
                     <div class="name-row" style="width: 100%;">No results found</div>
                 </div>
             </wi-table-resizeable>

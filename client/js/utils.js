@@ -251,7 +251,7 @@ exports.checkMetadata = function (metadata) {
             arr.push('Well');
         }
     }
-    if (arr.length) return arr.join(', ') + 'shoud not be empty!';
+    if (arr.length) return arr.join(', ') + ' shoud not be empty!';
     return false;
 }
 

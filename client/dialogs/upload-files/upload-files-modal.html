@@ -102,7 +102,7 @@
                                     <i class="fa fa-refresh"></i>&nbsp;Overwrite all
                                 </button>
                                 <button class="btn btn-sm btn-primary pull-right"
-                                        ng-click="self.uploadFolderList = [];self.uploadFileList = []"
+                                        ng-click="self.uploadFolderList = [];self.uploadFileList = [];self.processing=false"
                                         ng-if="!self.getExistedFiles().length">
                                     <i class="ti-brush-alt"></i>&nbsp;Clear
                                 </button>

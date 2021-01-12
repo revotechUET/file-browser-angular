@@ -59,14 +59,19 @@
                                     ng-repeat="(index, uploadFile) in self.uploadFileList"
                                     ng-click="self.selectRow(uploadFile, index, 'file')"
                                     ng-class="{'selectRow' : self.selectedFile == uploadFile}">
-                                    <button style="padding: 5 10px; margin-top: -3px;"
+                                    <button style="margin-top: -3px;"
                                             class="fa fa-remove btn btn-sm btn-danger pull-right"
                                             ng-click="self.removeFromUpload(index)" title="Remove from uploadlist">
                                     </button>
-                                    <button style="padding: 5 10px; margin-top: -3px;"
+                                    <button style="margin-top: -3px;"
                                             class="fa fa-refresh btn btn-sm btn-success pull-right"
-                                            ng-click="self.uploadFiles(index)" ng-show="uploadFile.existed"
+                                            ng-click="self.overwriteFile(index)" ng-show="uploadFile.existed"
                                             title="Overwrite and upload">
+                                    </button>
+                                    <button style="margin-top: -3px;"
+                                            class="fa fa-check btn btn-sm btn-warning pull-right"
+                                            ng-click="self.ignoreWarning(index)" ng-show="uploadFile.warning && !uploadFile.ignoreWarning"
+                                            title="Ignore warning">
                                     </button>
                                     <div style="padding: 0 0.5em; max-height: 20%; overflow-y: auto;"
                                          ng-show="uploadFile.uploadingProgress">
@@ -88,12 +93,13 @@
                                         {{uploadFile.name}}&nbsp;&nbsp;&nbsp;
                                         <b ng-show="uploadFile.existed"
                                            style="color: red">Existed</b>
+                                        <b ng-show="uploadFile.warning && !uploadFile.ignoreWarning" class="text-warning">{{uploadFile.warning}}</b>
                                     </p>
                                 </li>
                                 <button class="btn btn-sm btn-success pull-right"
                                         ng-click="self.overwriteAllFiles()"
                                         ng-if="self.getExistedFiles().length > 0">
-                                    <i class="fa fa-refresh"></i>&nbsp;Yes to all
+                                    <i class="fa fa-refresh"></i>&nbsp;Overwrite all
                                 </button>
                                 <button class="btn btn-sm btn-primary pull-right"
                                         ng-click="self.uploadFolderList = [];self.uploadFileList = []"

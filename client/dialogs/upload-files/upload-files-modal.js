@@ -170,18 +170,33 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       self.uploadFileList.map(file => { file.overwrite = true });
       self.uploadFiles();
     }
-    this.uploadFiles = function (index) {
+    this.overwriteFile = function (index) {
       if (_.isFinite(index)) {
         self.uploadFileList[index].overwrite = true;
+        self.uploadFiles();
       }
-      // fileExplorerCtrl.requesting = !fileExplorerCtrl.requesting;
+    }
+    this.ignoreWarning = function (index) {
+      if (_.isFinite(index)) {
+        self.uploadFileList[index].ignoreWarning = true;
+        self.uploadFiles();
+      }
+    }
+    this.uploadFiles = function () {
       self.processing = true;
       self.selectedFile = null;
       self.createFolder(() => {
         async.each(self.uploadFileList, (file, next) => {
-            if (file.uploadingProgress || (file.existed && !file.overwrite)) {
+            if (file.uploadingProgress || (file.existed && !file.overwrite) || (file.warning && !file.ignoreWarning)) {
               next();
             } else {
+              if (!file.ignoreWarning) {
+                const warning = utils.checkMetadata(file.metaData);
+                if (warning) {
+                  file.warning = warning;
+                  return;
+                }
+              }
               let metaDataRequest = {};
               for (let key in file.metaData) {
                 metaDataRequest[key] = file.metaData[key] + '';

@@ -238,6 +238,22 @@ function isFolder(fileName) {
 
 function formatBytes(a,b) {if(0==a) return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
 
+exports.checkMetadata = function (metadata) {
+    const arr = [];
+    if (!metadata.block) arr.push('Block');
+    if (!metadata.field) arr.push('Field');
+    if (!metadata.datatype) arr.push('Data Type');
+    if (window.explorertree) {
+        try {
+            const well = JSON.parse(metadata.well);
+            if (!well.name) arr.push('Well');
+        } catch (error) {
+            arr.push('Well');
+        }
+    }
+    if (arr.length) return arr.join(', ') + 'shoud not be empty!';
+    return false;
+}
 
 exports.getType = getType;
 exports.getFileExtension = getFileExtension;

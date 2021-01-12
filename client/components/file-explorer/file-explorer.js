@@ -14,7 +14,6 @@ const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal'
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
 const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
-const confirmDialog = require('../../dialogs/confirm/confirm-modal');
 
 const utils = require('../../js/utils');
 const getFileExtension = utils.getFileExtension;
@@ -309,9 +308,19 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     $processing.blur(() => $listProcessing.fadeOut(300));
     //#endregion
   };
-  this.submitToCompanyDatabase = function (files) {
-    files = files.map(f => f.path);
-    self.httpPost(self.submitToCompanyDatabaseUrl, {file_paths: files, project: window.localStorage.getItem('LProject')}, res => {
+  this.submitToCompanyDatabase = async function (files) {
+    const yes = await new Promise(res => wiDialog.confirmDialog('Confirm', 'Submit files to company database?', res));
+    if (!yes) return;
+    const warningFiles = files.filter(f => utils.checkMetadata(f.metaData));
+    if (warningFiles.length) {
+      const yes = await new Promise(res => {
+        const message = `Following files' metadata are not fulfilled. Do you want to continue?<br>${warningFiles.map(f => f.rootName).join(', ')}`;
+        wiDialog.confirmDialog('Warning!', message, res)
+      })
+      if (!yes) return;
+    }
+    const filePaths = files.map(f => f.path);
+    self.httpPost(self.submitToCompanyDatabaseUrl, {file_paths: filePaths, project: window.localStorage.getItem('LProject')}, res => {
       self.goTo(-999)
     })
   };
@@ -667,7 +676,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (!self.selectedList)
       return;
     let mess = "Are you sure you want to delete " + (self.selectedList.length > 1 ? self.selectedList.length + ' items?' : ' this item?');
-    confirmDialog(ModalService, "Delete Confirmation", mess, function (ret) {
+    wiDialog.confirmDialog("Delete Confirmation", mess, function (ret) {
       if (ret) {
         async.each(self.selectedList, (node, next) => {
           self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {

@@ -44,6 +44,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 				return obj;
 			}, {});
 			self.selections = { ...utils.getSelections(), ...taxonomies };
+ 			self.fields = self.getMDObj();
 		});
 	};
 	this.fields = [];

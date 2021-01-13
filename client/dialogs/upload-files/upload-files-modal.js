@@ -36,10 +36,10 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       quality: '5',
       description: ''
     };
-    if (!window.explorertree) {
-      delete self.metaData4All.well;
-      delete self.metaData4All.welltype;
-    }
+    // if (!window.explorertree) {
+    //   delete self.metaData4All.well;
+    //   delete self.metaData4All.welltype;
+    // }
     this.addForUpload = function ($files, isFolderUpload) {
       if (!$files || !$files.length) return;
       const validFiles = $files.filter(f => utils.validateNodeName(f.name));
@@ -108,6 +108,13 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       }
       // !$scope.$$phase && $scope.$digest();
     };
+    this.removeAll = function () {
+      self.uploadFileList.forEach((f, i) => self.removeFromUpload(i));
+      self.uploadFolderList = [];
+      self.uploadFileList = [];
+      self.processing = false;
+      self.isFilePicked = false;
+    }
     this.folderPicked = function (files) {
       if (!files || !files.length) return;
       self.addForUpload(files, true);
@@ -164,7 +171,12 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       });
     };
     this.getExistedFiles = function () {
-      return self.uploadFileList.filter(f => f.existed);
+      if (!self.processing) return [];
+      return self.uploadFileList.filter(f => f.existed && !f.overwrite);
+    }
+    this.getWarningFiles = function () {
+      if (!self.processing) return [];
+      return self.uploadFileList.filter(f => f.warning && !f.ignoreWarning);
     }
     this.overwriteAllFiles = function () {
       self.uploadFileList.map(file => { file.overwrite = true });
@@ -182,8 +194,20 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         self.uploadFiles();
       }
     }
+    this.ignoreWarningAllFiles = function () {
+      self.uploadFileList.map(file => { file.ignoreWarning = true });
+      self.uploadFiles();
+    }
+    this.cancelUpload = function () {
+      self.uploadFileList.forEach(f => {
+        f.warning = '';
+      });
+      self.processing = false;
+      self.selectedFile = self.bakSelectedFile;
+    }
     this.uploadFiles = function () {
       self.processing = true;
+      self.bakSelectedFile = self.selectedFile;
       self.selectedFile = null;
       self.createFolder(() => {
         async.each(self.uploadFileList, (file, next) => {
@@ -297,6 +321,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     };*/
 
     this.closeModal = function () {
+      this.removeAll();
       close(null);
     }
   }

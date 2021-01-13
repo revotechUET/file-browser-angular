@@ -309,18 +309,19 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     //#endregion
   };
   this.submitToCompanyDatabase = async function (files) {
-    const yes = await new Promise(res => wiDialog.confirmDialog('Confirm', 'Submit files to company database?', res));
+    const yes = await new Promise(res => wiDialog.confirmDialog('Confirmation', 'Do you want to submit folders/files to CODB?', res));
     if (!yes) return;
     const warningFiles = files.filter(f => utils.checkMetadata(f.metaData));
     if (warningFiles.length) {
       const yes = await new Promise(res => {
-        const message = `Following files' metadata are not fulfilled. Do you want to continue?<br>${warningFiles.map(f => f.rootName).join(', ')}`;
+        const message = `The following files' metadata are not fulfilled. Do you want to continue?<br>${warningFiles.map(f => f.rootName).join(', ')}`;
         wiDialog.confirmDialog('Warning!', message, res)
       })
       if (!yes) return;
     }
     const filePaths = files.map(f => f.path);
-    self.httpPost(self.submitToCompanyDatabaseUrl, {file_paths: filePaths, project: window.localStorage.getItem('LProject')}, res => {
+    self.httpPost(self.submitToCompanyDatabaseUrl, { file_paths: filePaths, project: window.localStorage.getItem('LProject') }, res => {
+      _toastr && _toastr.success(`Successfully submitted folders/files to CODB`);
       self.goTo(-999)
     })
   };

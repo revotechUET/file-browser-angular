@@ -243,14 +243,14 @@ exports.checkMetadata = function (metadata) {
     if (!metadata.block) arr.push('Block');
     if (!metadata.field) arr.push('Field');
     if (!metadata.datatype) arr.push('Data Type');
-    if (window.explorertree) {
+    // if (window.explorertree) {
         try {
             const well = JSON.parse(metadata.well);
             if (!well.name) arr.push('Well');
         } catch (error) {
             arr.push('Well');
         }
-    }
+    // }
     if (arr.length) return arr.join(', ') + ' shoud not be empty!';
     return false;
 }

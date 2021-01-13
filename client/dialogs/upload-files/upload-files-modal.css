@@ -49,6 +49,8 @@
 }
 .upload-list .list-files-group {
     padding: 15px;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 .upload-list .list-files-group .list-group-item-heading {
     display: inline-block;
@@ -78,4 +80,7 @@
     background: #fff !important;
     color: #ed4643 !important;
     border: 2px solid steelblue !important;
+}
+.list-actions {
+    padding: 5px 15px;
 }

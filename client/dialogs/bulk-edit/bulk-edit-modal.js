@@ -17,10 +17,10 @@ module.exports = function (ModalService, callback) {
       quality: '5',
       description: ''
     };
-    if (!window.explorertree) {
-      delete self.metaData4All.well;
-      delete self.metaData4All.welltype;
-    }
+    // if (!window.explorertree) {
+    //   delete self.metaData4All.well;
+    //   delete self.metaData4All.welltype;
+    // }
     self.chooseBox = {};
     Object.keys(self.metaData4All).forEach((item, index) => {
       self.chooseBox[item] = false;

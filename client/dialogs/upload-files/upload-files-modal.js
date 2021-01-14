@@ -25,6 +25,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     self.selectedFile = null;
     self.selectedFolder = null;
     self.processing = false;
+    self.processingFolder = false;
     self.processingName = [];
     self.multiMD = true;
     self.metaData4All = {
@@ -155,7 +156,15 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       console.log(self.uploadFolderList);
     };
     this.createFolder = function (cb) {
+      self.processingFolder = true;
       async.eachSeries(self.uploadFolderList, (folder, next) => {
+        if (!folder.ignoreWarning) {
+          const warning = utils.checkMetadata(folder.metaData);
+          if (warning) {
+            folder.warning = warning;
+            return next(folder.warning);
+          }
+        }
         for (let key in folder.metaData) {
           folder.metaData[key] = folder.metaData[key] + '';
         }
@@ -166,17 +175,18 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
           folder.isDone = true;
           next();
         }, { silent: true });
-      }, () => {
-        cb()
+      }, (err) => {
+          if (!err) self.processingFolder = false;
+          cb(err);
       });
     };
     this.getExistedFiles = function () {
       if (!self.processing) return [];
       return self.uploadFileList.filter(f => f.existed && !f.overwrite);
     }
-    this.getWarningFiles = function () {
+    this.getWarnings = function () {
       if (!self.processing) return [];
-      return self.uploadFileList.filter(f => f.warning && !f.ignoreWarning);
+      return [...self.uploadFolderList, ...self.uploadFileList].filter(f => f.warning && !f.ignoreWarning);
     }
     this.overwriteAllFiles = function () {
       self.uploadFileList.map(file => { file.overwrite = true });
@@ -188,14 +198,22 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         self.uploadFiles();
       }
     }
-    this.ignoreWarning = function (index) {
-      if (_.isFinite(index)) {
+    this.ignoreWarning = function (index, type = 'file') {
+      if (!_.isFinite(index)) return;
+      if (type === 'file') {
         self.uploadFileList[index].ignoreWarning = true;
+        self.uploadFiles();
+      } else {
+        self.uploadFolderList[index].ignoreWarning = true;
         self.uploadFiles();
       }
     }
     this.ignoreWarningAllFiles = function () {
-      self.uploadFileList.map(file => { file.ignoreWarning = true });
+      if (self.processingFolder) {
+        self.uploadFolderList.forEach(f => { f.ignoreWarning = true });
+      } else {
+        self.uploadFileList.forEach(file => { file.ignoreWarning = true });
+      }
       self.uploadFiles();
     }
     this.cancelUpload = function () {
@@ -203,13 +221,15 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
         f.warning = '';
       });
       self.processing = false;
+      self.processingFolder = false;
       self.selectedFile = self.bakSelectedFile;
     }
     this.uploadFiles = function () {
       self.processing = true;
       self.bakSelectedFile = self.selectedFile;
       self.selectedFile = null;
-      self.createFolder(() => {
+      self.createFolder((err) => {
+        if (err) return;
         async.each(self.uploadFileList, (file, next) => {
             if (file.uploadingProgress || (file.existed && !file.overwrite) || (file.warning && !file.ignoreWarning)) {
               next();

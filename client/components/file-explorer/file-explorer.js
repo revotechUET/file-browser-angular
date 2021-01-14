@@ -314,7 +314,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     const warningFiles = files.filter(f => utils.checkMetadata(f.metaData));
     if (warningFiles.length) {
       const yes = await new Promise(res => {
-        const message = `The following files' metadata are not fulfilled. Do you want to continue?<br>${warningFiles.map(f => f.rootName).join(', ')}`;
+        const message = `The following items' metadata are not fulfilled. Do you want to continue?<br>${warningFiles.map(f => f.rootName).join(', ')}`;
         wiDialog.confirmDialog('Warning!', message, res)
       })
       if (!yes) return;

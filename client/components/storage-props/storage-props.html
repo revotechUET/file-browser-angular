@@ -1,6 +1,6 @@
 <form class="form-horizontal storage-props" ng-if="self.metaData">
 	<div ng-repeat="section in self.sections" ng-if="section!='More Information' && self.checkMDObj(section)">
-		<div class="heading" 
+		<div class="heading"
 			ng-if="!self.hideHeader || (!self.shortView && self.fields[section].length>0)">{{section}}</div>
 		<div ng-style="self.sectionStyles[section]">
 		<div ng-repeat="md in self.fields[section]"
@@ -16,7 +16,7 @@
 			ng-if="md.use"
 			>
 			<label class="col-sm-5">
-				<input type="checkbox" 
+				<input type="checkbox"
 						ng-if="self.chooseBox && !md.readonly"
 						ng-model="self.chooseBox[md.name]"
 						ng-change="self.onChangeBox(self.chooseBox[md.name], md)">
@@ -26,7 +26,7 @@
 				style="border-left: 1px solid #ddd; padding: 0; display: flex; text-align: right; padding: 9px 15px;align-items: center;"
 			>
 				<div style="flex: 1; display: flex; justify-content: flex-end;" ng-switch="md.type">
-					<input type="text" ng-model="md.value" 
+					<input type="text" ng-model="md.value"
 							class="form-control props-value"
 							ng-readonly="{{md.readonly}}"
 							ng-switch-when="text"
@@ -34,7 +34,7 @@
 							sp-enter="$event.currentTarget.blur();"
 							ng-change="self.checkName(md, '{{md.value}}')"
 							title="{{md.value}}">
-					<input ng-switch-when="wiref" ng-if="md.label != 'Size' || !self.isFolder" 
+					<input ng-switch-when="wiref" ng-if="md.label != 'Size' || !self.isFolder"
 							type="text" ng-model="md.ref"
 							class="form-control props-value"
 							readonly>
@@ -48,10 +48,11 @@
 					</select>
 					<input ng-switch-when="taxonomies" class="form-control props-value"
 						ng-model="md.value" autocomplete source="md.selections"
+						ng-readonly="{{md.readonly}}"
 						sp-enter="$event.currentTarget.blur();"
 						ng-blur="self.updateMetaData(md.name, md.value)">
 					<div ng-switch-when="rating" class="quality-field">
-						<span ng-repeat="star in [1,2,3,4,5]" 
+						<span ng-repeat="star in [1,2,3,4,5]"
 							ng-click="!md.readonly && self.doRating(md, star)"
 							ng-class="{highlight: star <= md.value}">
 							<i class="fa fa-star"></i>

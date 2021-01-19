@@ -23,7 +23,7 @@
     font-style: italic;
 }
 .upload-files-modal .meta-data {
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
 }
 .upload-files-modal .meta-data .button-checkbox {
@@ -53,12 +53,19 @@
     margin-bottom: 0;
 }
 .upload-list .list-files-group .list-group-item-heading {
-    display: inline-block;
+    display: flex;
     font-weight: bold;
-    position: absolute;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
     width: 80%;
+    margin: 0;
+}
+.upload-list .list-files-group .list-group-item-heading .name {
+    max-width: 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .upload-list .list-files-group li.list-files-group-item {
     list-style-type: none;

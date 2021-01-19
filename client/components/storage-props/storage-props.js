@@ -18,7 +18,7 @@ Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession', '$timeou
 const PROCESSING_STATUS = '/action/status?key=';
 
 function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
-  	let self = this;
+	let self = this;
 	const toastr = window.__toastr || window.toastr;
 	//this.getSizeKey = null;
 	this.checkFolderSizeProcess = null;
@@ -35,7 +35,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	this.selections = utils.getSelections();
 	this.$onInit = function () {
 		self.statusUrl = self.apiUrl + PROCESSING_STATUS;
-		self.revMetadataUrl = self.apiUrl + '/action/info';
+		self.getMetadataUrl = self.apiUrl + '/action/info';
 		const unwatch = $scope.$watch(() => $scope.$root.taxonomies, () => {
 			if (!$scope.$root.taxonomies) return;
 			unwatch();
@@ -141,7 +141,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		return obj;
 	};
 	self.revisionMetadata = function (revision) {
-		self.httpGet(self.revMetadataUrl + `?file_path=${self.item.path}&revision=${revision.name}`, res => {
+		self.httpGet(self.getMetadataUrl + `?file_path=${self.item.path}&revision=${revision.name}`, res => {
 			if (!res) return;
 			metadataDialog(ModalService, res.data.Metadata, revision.label);
 		})

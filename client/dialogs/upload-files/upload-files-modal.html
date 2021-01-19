@@ -88,24 +88,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <span class="item-index">{{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
-                                    <p class="list-group-item-heading"
-                                       title="{{uploadFile.name}}">
-                                        {{uploadFile.name}}&nbsp;&nbsp;&nbsp;
+                                    <div class="list-group-item-heading"
+                                        title="{{uploadFile.name}}">
+                                        <span class="item-index">{{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
+                                        <span class="name">{{uploadFile.name}}</span>&nbsp;&nbsp;&nbsp;
                                         <b ng-show="uploadFile.existed"
                                            style="color: red">Existed</b>
                                         <b ng-show="uploadFile.warning && !uploadFile.ignoreWarning" class="text-warning">{{uploadFile.warning}}</b>
-                                    </p>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
                         <div class="list-actions pull-right">
-                            <button class="btn btn-sm btn-success"
-                                    ng-click="self.overwriteAllFiles()"
-                                    ng-if="self.getExistedFiles().length > 0">
-                                <i class="fa fa-refresh"></i>&nbsp;Overwrite all
-                            </button>
-                            <div ng-if="self.getWarnings().length > 0">
+                            <span ng-if="self.getWarnings().length > 0">
                                 <button class="btn btn-sm btn-default"
                                         ng-click="self.cancelUpload()">
                                     <i class="fa fa-arrow-left"></i>&nbsp;Back
@@ -114,7 +109,12 @@
                                         ng-click="self.ignoreWarningAllFiles()">
                                     <i class="fa fa-check"></i>&nbsp;Ignore all warnings
                                 </button>
-                            </div>
+                            </span>
+                            <button class="btn btn-sm btn-success"
+                                    ng-click="self.overwriteAllFiles()"
+                                    ng-if="self.getExistedFiles().length > 0">
+                                <i class="fa fa-refresh"></i>&nbsp;Overwrite all
+                            </button>
                             <button class="btn btn-sm btn-primary"
                                     ng-click="self.removeAll()"
                                     ng-if="!self.processing">

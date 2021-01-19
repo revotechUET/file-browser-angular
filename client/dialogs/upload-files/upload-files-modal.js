@@ -121,17 +121,23 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       self.addForUpload(files, true);
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const path = file.webkitRelativePath.split('/');
-        path.pop();
-        let folderName = path[path.length - 1];
+        const paths = file.webkitRelativePath.split('/');
+        paths.pop();
+        const path = paths.join('/');
+        const existFolder = self.uploadFolderList.find(f => f.path === path);
+        if (existFolder) {
+          file.folder = existFolder;
+          continue;
+        }
+        let folderName = paths[paths.length - 1];
         let folder = {
-          path: path.join('/'),
+          path,
           name: folderName,
           metaData: {
             name: folderName,
             type: 'Folder',
             size: 0,
-            location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + path.join('/')).replace('//', '/'),
+            location: (fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/') + '/' + paths.join('/')).replace('//', '/'),
             author: window.localStorage.getItem('username'),
             uploaded: Date.now() + '',
             modified: Date.now() + '',
@@ -146,9 +152,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
             description: ''
           }
         };
-        if (self.uploadFolderList.findIndex(f => f.path === folder.path) === -1) {
-          self.uploadFolderList.push(folder);
-        }
+        self.uploadFolderList.push(folder);
+        file.folder = folder;
       }
       self.uploadFolderList.sort((a, b) => {
         return a.path.split('/').length - b.path.split('/').length;
@@ -157,20 +162,22 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     };
     this.createFolder = function (cb) {
       self.processingFolder = true;
-      async.eachSeries(self.uploadFolderList, (folder, next) => {
+      async.eachSeries(self.uploadFolderList.filter(f => !f.isDone), (folder, next) => {
         if (!folder.ignoreWarning) {
-          const warning = utils.checkMetadata(folder.metaData);
-          if (warning) {
-            folder.warning = warning;
-            return next(folder.warning);
+          folder.warning = utils.checkMetadata(folder.metaData);
+          if (folder.warning) {
+            return next();
           }
         }
         for (let key in folder.metaData) {
           folder.metaData[key] = folder.metaData[key] + '';
         }
-        let queryStr = `dest=${encodeURIComponent(folder.metaData.location.substring(0, folder.metaData.location.lastIndexOf('/')))}&name=${encodeURIComponent(folder.name)}&metaData=${encodeURIComponent(JSON.stringify(folder.metaData))}`;
+        const url = new URL(fileExplorerCtrl.newFolderUrl);
+        url.searchParams.append('dest', folder.metaData.location.substring(0, folder.metaData.location.lastIndexOf('/')))
+        url.searchParams.append('name', folder.name)
+        url.searchParams.append('metaData', JSON.stringify(folder.metaData))
 
-        fileExplorerCtrl.httpGet(fileExplorerCtrl.newFolderUrl + queryStr, res => {
+        fileExplorerCtrl.httpGet(url.toString(), res => {
           console.log(res);
           folder.isDone = true;
           next();
@@ -209,11 +216,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
       }
     }
     this.ignoreWarningAllFiles = function () {
-      if (self.processingFolder) {
-        self.uploadFolderList.forEach(f => { f.ignoreWarning = true });
-      } else {
-        self.uploadFileList.forEach(file => { file.ignoreWarning = true });
-      }
+      self.uploadFolderList.forEach(f => { f.ignoreWarning = true });
+      self.uploadFileList.forEach(file => { file.ignoreWarning = true });
       self.uploadFiles();
     }
     this.cancelUpload = function () {
@@ -235,10 +239,9 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
               next();
             } else {
               if (!file.ignoreWarning) {
-                const warning = utils.checkMetadata(file.metaData);
-                if (warning) {
-                  file.warning = warning;
-                  return;
+                file.warning = utils.checkMetadata(file.metaData);
+                if (file.warning) {
+                  return next();
                 }
               }
               let metaDataRequest = {};
@@ -302,7 +305,7 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
               });
             }
           }, err => {
-            if (!err && self.uploadFileList.length === 0) {
+            if (!err && self.uploadFileList.length === 0 && !self.uploadFolderList.some(f => !f.isDone)) {
               fileExplorerCtrl.goTo(-999);
               close();
             }

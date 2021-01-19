@@ -14,6 +14,7 @@ const uploadFileDialog = require('../../dialogs/upload-files/upload-files-modal'
 const newFolderDialog = require('../../dialogs/new-folder/new-folder-modal');
 const advancedSearchDialog = require('../../dialogs/advanced-search/advanced-search-modal');
 const bulkEditDialog = require('../../dialogs/bulk-edit/bulk-edit-modal');
+const metadataDialog = require('../../dialogs/metadata/metadata-modal');
 
 const utils = require('../../js/utils');
 const getFileExtension = utils.getFileExtension;
@@ -236,6 +237,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.cancelUrl = self.url + CANCEL_PROCESS;
       self.getFolderSizeUrl = self.url + GETSIZE_PATH;
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
+		  self.getMetadataUrl = self.url + '/action/info';
     }
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
@@ -1343,6 +1345,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         console.log("Upload terminated", err.message);
         __toastr.error("Upload error");
     });
+  }
+  this.previewMetadata = function (metadata, title) {
+		metadataDialog(ModalService, metadata, title);
   }
 }
 

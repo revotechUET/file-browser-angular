@@ -16,7 +16,7 @@ exports.getConfigProps = function() {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null  
+            "choices": null
         },
         "size": {
             "translation": "Size",
@@ -48,7 +48,7 @@ exports.getConfigProps = function() {
             "section": "General",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null  
+            "choices": null
         },
         "uploaded": {
             "translation": "Date Uploaded",
@@ -106,7 +106,7 @@ exports.getConfigProps = function() {
             "section": "Information",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null 
+            "choices": null
         },*/
         "datatype": {
             "translation": "Data Type",
@@ -139,7 +139,7 @@ exports.getConfigProps = function() {
             "section": "Information",
             "typeSpec": 'rating',
             "refSpec": null,
-            "choices": null 
+            "choices": null
         },
         "description": {
             "translation": "Description",
@@ -147,7 +147,7 @@ exports.getConfigProps = function() {
             "section": "Description",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null   
+            "choices": null
         },
         "encodingtype": {
             "translation": "Description",
@@ -155,7 +155,7 @@ exports.getConfigProps = function() {
             "section": "",
             "typeSpec": null,
             "refSpec": null,
-            "choices": null   
+            "choices": null
         }
     };
 }
@@ -252,7 +252,7 @@ exports.checkMetadata = function (metadata) {
         }
     // }
     if (arr.length) return arr.join(', ') + ' shoud not be empty!';
-    return false;
+    return '';
 }
 
 exports.getType = getType;

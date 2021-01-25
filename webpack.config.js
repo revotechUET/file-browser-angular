@@ -1,9 +1,8 @@
 let path = require('path');
 //let webpack = require('webpack');
 
-// let OUTPUT = path.join('E:/workspace/wi-angular/build/bower_components/file-explorer/dist');
-
-let OUTPUT = path.join(__dirname, 'dist');
+const OUTPUT = path.join(__dirname, 'dist');
+// const OUTPUT = path.join(__dirname, '../i2g-data-administrator/dist/bower_components/file-explorer/dist');
 
 module.exports = {
     mode: "development",

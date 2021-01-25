@@ -200,6 +200,7 @@ exports.getSelections = function () {
             "Well Model",
             "Well Paths",
             "Well Test (Records, Interpretation, etc.)",
+            "Others",
 	  	].sort((a, b) => a.localeCompare(b))
 	};
 }

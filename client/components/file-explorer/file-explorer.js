@@ -508,31 +508,37 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     const menu = [
       self.selectedList.length > 1 ? null: {
         label: 'Open',
+        icon: 'ti ti-share',
         handler() {
           self.dblClickNode(item);
         }
       }, {
         label: 'Download',
+        icon: 'ti ti-import',
         handler() {
           self.downloadFile(self.selectedList)
         }
       }, {
         label: 'Copy',
+        icon: 'ti ti-files',
         handler() {
           self.copyOrCut('copy')
         }
       }, {
         label: 'Cut',
+        icon: 'ti ti-cut',
         handler() {
           self.copyOrCut('cut')
         }
       }, {
         label: 'Delete',
+        icon: 'ti ti-close',
         handler() {
           self.removeNodes()
         }
       }, self.selectedList.length < 2 ? null : {
         label: 'Bulk Edit',
+        icon: 'ti ti-menu-alt',
         handler() {
           self.bulkEdit(self.selectedList);
         }

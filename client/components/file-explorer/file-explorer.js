@@ -1,4 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
+import Vue from 'vue';
+import { VueContextMenu } from "@revotechuet/misc-component-vue";
+
+Vue.use(VueContextMenu);
+
 // Load css
 require('./new-file-explorer.less');
 
@@ -182,23 +187,24 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
   ]
   this.wiSession = wiSession;
+  self.imgResource = {};
+  self.currentPath = [];
+  self.selectedList = [];
+  self.selectedItem = {};
+  self.pasteList = [];
+  self.requesting = false;
+  self.rootFolder = self.rootFolder || '/';
+  self.filter = '';
+  self.propOrder = 'rootName';
+  self.reverse = false;
+  // self.HEADER_CONFIG = HEADER_CONFIG;
+
+  self.modeFilter = 'none';
+  self.getSize = null;
+
   this.$onInit = function () {
     if(typeof self.setContainer === 'function') self.setContainer(self);
-
-    self.imgResource = {};
-    self.currentPath = [];
-    self.selectedList = [];
-    self.selectedItem = {};
-    self.pasteList = [];
-    self.requesting = false;
     self.rootFolder = self.rootFolder || '/';
-    self.filter = '';
-    self.propOrder = 'rootName';
-    self.reverse = false;
-    // self.HEADER_CONFIG = HEADER_CONFIG;
-
-    self.modeFilter = 'none';
-    self.getSize = null;
 
     let searchQuery = {
       conditions: {
@@ -496,6 +502,44 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
     self.afterDblClick && self.afterDblClick(item);
   };
+
+  this.showContextMenu = function (item, $event) {
+    if (!self.selectedList.includes(item)) self.selectedList = [item];
+    const menu = [
+      self.selectedList.length > 1 ? null: {
+        label: 'Open',
+        handler() {
+          self.dblClickNode(item);
+        }
+      }, {
+        label: 'Download',
+        handler() {
+          self.downloadFile(self.selectedList)
+        }
+      }, {
+        label: 'Copy',
+        handler() {
+          self.copyOrCut('copy')
+        }
+      }, {
+        label: 'Cut',
+        handler() {
+          self.copyOrCut('cut')
+        }
+      }, {
+        label: 'Delete',
+        handler() {
+          self.removeNodes()
+        }
+      }, self.selectedList.length < 2 ? null : {
+        label: 'Bulk Edit',
+        handler() {
+          self.bulkEdit(self.selectedList);
+        }
+      },
+    ].filter(v => v);
+    Vue.showContextMenu($event, menu);
+  }
 
   this.getDownloadLink = function (items) {
     if (items.length > 1) return '';
@@ -1351,7 +1395,20 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
 }
 
-let app = angular.module(moduleName, ['ngFileUpload', textViewer, pdfViewer, imgPreview, storageProps, 'sideBar', 'wiSession', 'wiTableResizeable', 'wiApi', 'angularModalService', 'wiDialog']);
+let app = angular.module(moduleName, [
+  'ngFileUpload',
+  textViewer,
+  pdfViewer,
+  imgPreview,
+  storageProps,
+  'sideBar',
+  'wiSession',
+  'wiTableResizeable',
+  'wiApi',
+  'angularModalService',
+  'wiDialog',
+  'wiRightClick'
+]);
 
 app.component(componentName, {
   template: require('./new-file-explorer.html'),

@@ -32,13 +32,12 @@ module.exports = {
         ],
     },
     plugins: [
-    ]
-    // plugins: [
-    //     new webpack.ProvidePlugin({
-    //         $: 'jquery',
-    //         jQuery: 'jquery'
-    //     })
-    // ]
+    ],
+    resolve: {
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js',
+        }
+    }
 };
 // webpack.config.js
 // module.exports = (env, argv) => {

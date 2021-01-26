@@ -12,10 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@revotechuet/misc-component-vue": "^1.1.30",
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "vue": "^2.6.12"
   },
   "devDependencies": {
     "bower": "^1.8.4",

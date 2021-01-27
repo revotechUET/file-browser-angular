@@ -5,7 +5,7 @@ const OUTPUT = path.join(__dirname, 'dist');
 // const OUTPUT = path.join(__dirname, '../i2g-data-administrator/dist/bower_components/file-explorer/dist');
 
 module.exports = {
-    mode: "development",
+    // mode: "development",
     entry: [
         './client/components/file-explorer/file-explorer.js'
         ,'./node_modules/pdfjs-dist/build/pdf.worker.entry.js',
@@ -34,9 +34,9 @@ module.exports = {
     plugins: [
     ],
     resolve: {
-        alias: {
-            'vue$': 'vue/dist/vue.esm.js',
-        }
+        // alias: {
+        //     'vue$': 'vue/dist/vue.esm.js',
+        // }
     }
 };
 // webpack.config.js

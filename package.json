@@ -1,8 +1,11 @@
 {
-  "name": "file-explorer",
-  "version": "1.0.2",
+  "name": "@revotechuet/file-explorer",
+  "version": "1.0.4",
   "description": "",
   "main": "./dist/file-explorer-module.js",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "build:prod": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
@@ -12,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@revotechuet/misc-component-vue": "^1.1.31",
+    "@revotechuet/misc-component-vue": "^1.2.0",
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
@@ -31,7 +34,7 @@
     "pdfjs-dist": "^2.5.207",
     "popper.js": "^1.14.5",
     "style-loader": "^0.23.1",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^4.2.0"
+    "webpack": "^5.18.0",
+    "webpack-cli": "^4.4.0"
   }
 }

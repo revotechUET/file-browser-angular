@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import Vue from 'vue';
-import { VueContextMenu } from "@revotechuet/misc-component-vue";
+import { Vue, VueContextMenu } from "@revotechuet/misc-component-vue";
 
 Vue.use(VueContextMenu);
 

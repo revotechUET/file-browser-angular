@@ -434,6 +434,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (!item)
       return;
     if (!item.rootIsFile) {
+      if (self.requesting) return;
       self.selectedList = [];
       self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
         let data = result.data.data;
@@ -453,10 +454,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/check-in-cache?file_path=${encodeURIComponent(item.path)}`,
         {item}, result => {
-          if (result.data.notCached) {
-            _toastr ? _toastr.info(`File is being converted for next fast preview`)
-              : console.info(`File is being converted for next fast preview`);
-          }
+          // if (result.data.notCached) {
+          //   _toastr ? _toastr.info(`File is being converted for next fast preview`)
+          //     : console.info(`File is being converted for next fast preview`);
+          // }
           self.httpPost(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`,
             {item}, result => {
               if (result.data.isNotReadable) {
@@ -528,6 +529,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         icon: 'ti ti-cut',
         handler() {
           self.copyOrCut('cut')
+        }
+      }, !self.pasteList.length ? null : {
+        label: 'Paste',
+        icon: 'ti ti-clipboard',
+        handler() {
+          self.paste(item)
         }
       }, {
         label: 'Delete',
@@ -696,6 +703,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   }
   this.goTo = function (index, callback) {
+    if (self.requesting) return;
     if (index == -999) {
       // refresh
       self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
@@ -766,16 +774,17 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         && !locations.value.some(l => !_locations.includes(l))) return true;
 		else return false;
   }
-  this.paste = function () {
+  this.paste = function (folder) {
     if (!(self.pasteList))
       return;
     switch (self.pasteList.action) {
       case 'copy':
         async.eachSeries(self.pasteList, (file, next) => {
-          let from = `from=${encodeURIComponent(file.path)}&`;
-          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}`;
-
-          self.httpGet(`${self.copyUrl + from + dest}`, res => {
+          const paths = [...self.currentPath, !folder.rootIsFile && folder].filter(p => p)
+          const url = new URL(self.copyUrl)
+          url.searchParams.set('from', file.path)
+          url.searchParams.set('dest', self.rootFolder + paths.map(c => c.rootName).join('/'))
+          self.httpGet(url.toString(), res => {
             if (!res.data.error && res.data.status === 'IN_PROGRESS') {
               self.addProcessing(res.data);
             }

@@ -504,53 +504,68 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
 
   this.showContextMenu = function (item, $event) {
-    if (!self.selectedList.includes(item)) self.selectedList = [item];
-    const menu = [
-      self.selectedList.length > 1 ? null: {
-        label: 'Open',
-        icon: 'ti ti-share',
-        handler() {
-          self.dblClickNode(item);
+    $event.stopPropagation()
+    let menu = []
+    if (item) {
+      if (!self.selectedList.includes(item)) self.selectedList = [item];
+      menu = [
+        self.selectedList.length > 1 ? null : {
+          label: 'Open',
+          icon: 'ti ti-share',
+          handler() {
+            self.dblClickNode(item);
+          }
+        }, {
+          label: 'Download',
+          icon: 'ti ti-import',
+          handler() {
+            self.downloadFile(self.selectedList)
+          }
+        }, {
+          label: 'Copy',
+          icon: 'ti ti-files',
+          handler() {
+            self.copyOrCut('copy')
+          }
+        }, {
+          label: 'Cut',
+          icon: 'ti ti-cut',
+          handler() {
+            self.copyOrCut('cut')
+          }
+        }, !self.pasteList.length ? null : {
+          label: 'Paste',
+          icon: 'ti ti-clipboard',
+          handler() {
+            self.paste(item)
+          }
+        }, {
+          label: 'Delete',
+          icon: 'ti ti-close',
+          handler() {
+            self.removeNodes()
+          }
+        }, self.selectedList.length < 2 ? null : {
+          label: 'Bulk Edit',
+          icon: 'ti ti-menu-alt',
+          handler() {
+            self.bulkEdit(self.selectedList);
+          }
+        },
+      ];
+    } else {
+      menu = [
+        !self.pasteList.length ? null : {
+          label: 'Paste',
+          icon: 'ti ti-clipboard',
+          handler() {
+            self.paste(item)
+          }
         }
-      }, {
-        label: 'Download',
-        icon: 'ti ti-import',
-        handler() {
-          self.downloadFile(self.selectedList)
-        }
-      }, {
-        label: 'Copy',
-        icon: 'ti ti-files',
-        handler() {
-          self.copyOrCut('copy')
-        }
-      }, {
-        label: 'Cut',
-        icon: 'ti ti-cut',
-        handler() {
-          self.copyOrCut('cut')
-        }
-      }, !self.pasteList.length ? null : {
-        label: 'Paste',
-        icon: 'ti ti-clipboard',
-        handler() {
-          self.paste(item)
-        }
-      }, {
-        label: 'Delete',
-        icon: 'ti ti-close',
-        handler() {
-          self.removeNodes()
-        }
-      }, self.selectedList.length < 2 ? null : {
-        label: 'Bulk Edit',
-        icon: 'ti ti-menu-alt',
-        handler() {
-          self.bulkEdit(self.selectedList);
-        }
-      },
-    ].filter(v => v);
-    Vue.showContextMenu($event, menu);
+      ];
+    }
+    menu = menu.filter(v => v);
+    menu.length && Vue.showContextMenu($event, menu);
   }
 
   this.getDownloadLink = function (items) {
@@ -780,7 +795,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     switch (self.pasteList.action) {
       case 'copy':
         async.eachSeries(self.pasteList, (file, next) => {
-          const paths = [...self.currentPath, !folder.rootIsFile && folder].filter(p => p)
+          const paths = [...self.currentPath, folder && !folder.rootIsFile].filter(p => p)
           const url = new URL(self.copyUrl)
           url.searchParams.set('from', file.path)
           url.searchParams.set('dest', self.rootFolder + paths.map(c => c.rootName).join('/'))

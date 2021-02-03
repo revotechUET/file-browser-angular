@@ -129,7 +129,7 @@
         </div>
     </div>
     <div class="main-content">
-        <div class="list-file">
+        <div class="list-file" wi-right-click="self.showContextMenu(null, $event)">
             <wi-table-resizeable headers="self.headerArray" on-table-init="self.tableInit"
                 on-header-width-changed="self.changeWidth" default-widths="[300,200,250,100,150]">
                 <div class="table-row" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"

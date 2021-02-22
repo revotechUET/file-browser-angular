@@ -79,23 +79,16 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       }
     }
     this.getSelections = function (mdkey) {
-      let selections = [];
-      switch(mdkey) {
-        case 'datatype': 
-          selections = utils.getSelections()['datatypes'];
-          break;
-        // case 'well': 
-        //   // selections = wells.map(w => w.properties.name);
-        //   selections = self.wellsSelection ? self.wellsSelection.map(w => w.name) : [];
-        //   // selections = JSON.parse(fileExplorerCtrl.wiSession.getData('wells')).map(w => w.properties.name);
-        //   selections.unshift('');
-        //   break;
+      switch (mdkey) {
+        case 'datatype':
+          return utils.getSelections()['datatypes'];
         default:
           const taxonomies = $scope.$root.taxonomies[self.mapKey[mdkey].label];
-          selections = taxonomies.map(t => t.item);
-          break;
+          if (taxonomies) {
+            return taxonomies.map(t => t.item);
+          }
+          return null
       }
-      return selections;
     }
     try {
       self.customMdSource = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);

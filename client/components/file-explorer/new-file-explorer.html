@@ -108,7 +108,7 @@
             <div class="search-box">
                 <input style="width: 150px; background: #f4f4f4; padding: 4px 10px; margin-right: 20px" type='text'
                     ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}" size='10'
-                    placeholder="[Search]" ng-disabled="self.searching || self.modeFilter === 'custom search'">
+                    placeholder="[Search]" ng-disabled="self.searching || self.modeFilter !== 'simple search' || self.modeFilter !== 'none'">
                 <div style="margin-right: 20px;  cursor: pointer;" class="ti ti-close"
                     ng-click="self.clearSearch()" title="{{self.searching?'Stop':'Clear'}}"
                     ng-style="{color: self.filter != '' ? '#c00' : '#eee'}"></div>

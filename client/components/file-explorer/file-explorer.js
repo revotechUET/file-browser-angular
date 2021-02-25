@@ -713,6 +713,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       folder: '/'
     }
     self.httpPost(self.searchUrl, searchPayload, res => {
+      self.filter = '[Related]';
       self.fileList = res.data.data;
       self.modeFilter = 'related';
     });

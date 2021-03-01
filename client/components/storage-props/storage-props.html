@@ -47,7 +47,7 @@
 							title="{{md.value}}">
 					</select>
 					<input ng-switch-when="taxonomies" class="form-control props-value"
-						ng-model="md.value" autocomplete source="md.selections"
+						ng-model="md.value" wi-autocomplete source="md.selections"
 						ng-readonly="{{md.readonly}}"
 						sp-enter="$event.currentTarget.blur();"
 						ng-blur="self.updateMetaData(md.name, md.value)">
@@ -61,7 +61,7 @@
 					<div ng-switch-when="wilink" style="display: flex; flex: 1;">
 						<span class="{{md.value.icon}}" title="{{md.value.type}}"
 								style="margin-right: 10px;"></span>
-						<input type="text" ng-model="md.value.name" autocomplete source="md.selections"
+						<input type="text" ng-model="md.value.name" wi-autocomplete source="md.selections"
 								class="form-control props-value"
 								title="{{md.value.name}}"
 								ng-readonly="md.readonly"

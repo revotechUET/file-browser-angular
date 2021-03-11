@@ -243,6 +243,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.getFolderSizeUrl = self.url + GETSIZE_PATH;
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
 		  self.getMetadataUrl = self.url + '/action/info';
+      self.createSyncSession = self.url + '/file-explorer/create-sync-session';
     }
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
@@ -1423,9 +1424,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.previewMetadata = function (metadata, title) {
 		metadataDialog(ModalService, metadata, title);
   }
-  this.copyDirectoryKey = async function () {
-    await navigator.clipboard.writeText(self.storageDatabase.directory);
-    window.toastr.success("Workspace key copied");
+  this.copySyncKey = function (path = '/') {
+    self.httpPost(self.createSyncSession, { path }, async function (res) {
+      await navigator.clipboard.writeText(self.storageDatabase.directory + '/' + res.data.syncKey + path);
+      window.toastr.success("Workspace key copied");
+    });
   }
 }
 

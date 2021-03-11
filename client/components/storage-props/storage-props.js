@@ -350,10 +350,9 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		self.metaData[newName] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
-	this.copyLocation = async function(value) {
+	this.copyLocation = function(value) {
 		wiSession.putData('location', JSON.stringify({ option: 'single', value: value }));
-		await navigator.clipboard.writeText(self.storageDatabase.directory + value);
-    window.toastr.success("Location copied");
+		self.copySyncKey && self.copySyncKey(value);
 	}
 	function setValue (key) {
 		self.fields['Information'].forEach(md => {
@@ -477,6 +476,7 @@ app.component(componentName, {
 		apiUrl: '<',
 		storageDatabase: '<',
 		viewOnly: '<',
+		copySyncKey: '<',
 	}
 });
 app.directive('spEnter', ['$parse', function ($parse) {

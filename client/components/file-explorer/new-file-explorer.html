@@ -54,7 +54,7 @@
                   class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
             </div>
             <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
-            <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
+            <div class="button-fn ti ti-harddrives" style="margin-right: 10px;" ng-click="self.copyDirectoryKey()"></div>
             <div class="button-fn ti ti-angle-right" style="margin-right: 10px; font-size: 9px;"></div>
             <div class="button-fn" ng-if="self.currentPath.length > 0" style="margin-right: 10px;"
                 ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">{{'Home'}}

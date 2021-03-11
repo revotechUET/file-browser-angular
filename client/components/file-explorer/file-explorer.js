@@ -786,7 +786,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.multiLocationCopied = function (items) {
     let locations = JSON.parse(wiSession.getData('location'));
     let _locations = items.map(item => item.metaData.location);
-    if(locations && locations.value && locations.value.length == _locations.length
+    if(locations && Array.isArray(locations.value) && locations.value.length == _locations.length
         && !locations.value.some(l => !_locations.includes(l))) return true;
 		else return false;
   }
@@ -1422,6 +1422,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.previewMetadata = function (metadata, title) {
 		metadataDialog(ModalService, metadata, title);
+  }
+  this.copyDirectoryKey = async function () {
+    await navigator.clipboard.writeText(self.storageDatabase.directory);
+    window.toastr.success("Workspace key copied");
   }
 }
 

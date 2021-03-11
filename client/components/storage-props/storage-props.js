@@ -350,8 +350,10 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		self.metaData[newName] = value;
     	if(self.updateMetadatFunc) self.updateMetadatFunc(self.metaData);
 	}
-	this.copyLocation = function(value) {
-		wiSession.putData('location', JSON.stringify({option: 'single', value: value}));
+	this.copyLocation = async function(value) {
+		wiSession.putData('location', JSON.stringify({ option: 'single', value: value }));
+		await navigator.clipboard.writeText(value);
+    window.toastr.success("Location copied");
 	}
 	function setValue (key) {
 		self.fields['Information'].forEach(md => {

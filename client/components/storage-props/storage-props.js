@@ -352,7 +352,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	}
 	this.copyLocation = async function(value) {
 		wiSession.putData('location', JSON.stringify({ option: 'single', value: value }));
-		await navigator.clipboard.writeText(value);
+		await navigator.clipboard.writeText(self.storageDatabase.directory + value);
     window.toastr.success("Location copied");
 	}
 	function setValue (key) {

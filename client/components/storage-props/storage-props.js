@@ -352,7 +352,6 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	}
 	this.copyLocation = function(value) {
 		wiSession.putData('location', JSON.stringify({ option: 'single', value: value }));
-		self.copySyncKey && self.copySyncKey(value);
 	}
 	function setValue (key) {
 		self.fields['Information'].forEach(md => {
@@ -476,7 +475,6 @@ app.component(componentName, {
 		apiUrl: '<',
 		storageDatabase: '<',
 		viewOnly: '<',
-		copySyncKey: '<',
 	}
 });
 app.directive('spEnter', ['$parse', function ($parse) {

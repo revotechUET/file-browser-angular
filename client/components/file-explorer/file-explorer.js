@@ -553,6 +553,13 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             self.bulkEdit(self.selectedList);
           }
         },
+        !item.rootIsFile && {
+          label: 'Copy Sync Key',
+          icon: 'ti ti-key',
+          handler() {
+            self.copySyncKey(item.path);
+          }
+        },
       ];
     } else {
       menu = [
@@ -560,7 +567,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           label: 'Paste',
           icon: 'ti ti-clipboard',
           handler() {
-            self.paste(item)
+            self.paste()
+          }
+        },
+        {
+          label: 'Copy Sync Key',
+          icon: 'ti ti-key',
+          handler() {
+            self.copySyncKey();
           }
         }
       ];
@@ -1427,7 +1441,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.copySyncKey = function (path = '/') {
     self.httpPost(self.createSyncSession, { path }, async function (res) {
       await navigator.clipboard.writeText(self.storageDatabase.directory + '/' + res.data.syncKey + path);
-      window.toastr.success("Workspace key copied");
+      window.toastr.success("Sync key copied");
     });
   }
 }

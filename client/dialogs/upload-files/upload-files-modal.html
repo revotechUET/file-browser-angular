@@ -7,8 +7,7 @@
             </div>
             <div class="modal-body">
                 <div class="form-horizontal">
-                    <div class="form-group" ng-show="self.processing" style="overflow: auto; max-height: 200px;">
-                        <img style="width:16px;height:16px" src="https://python.i2g.cloud/assets/spinner.gif">
+                    <div ng-show="self.processing" style="overflow: auto; max-height: 200px;">
                         <i>Your files/folders are uploading: </i> <i ng-repeat="f in self.processingName track by $index">{{f.name}},&nbsp;</i>
                     </div>
                     <div class="form-group" ng-show="!self.processing && !self.uploadFolderList.length">
@@ -43,7 +42,7 @@
                                             style="margin-top: -3px;"
                                             class="fa fa-check btn btn-sm btn-warning pull-right"
                                             ng-click="self.ignoreWarning(index, 'folder')" ng-show="uploadFolder.warning && !uploadFolder.ignoreWarning"
-                                            title="Ignore warning">
+                                            title="Accept warning">
                                     </button>
                                     <span class="item-index">Folder {{index + 1}}.&nbsp;&nbsp;&nbsp;</span>
                                     <p class="list-group-item-heading"
@@ -51,7 +50,7 @@
                                         {{uploadFolder.path}}&nbsp;&nbsp;&nbsp;
                                         <b ng-show="uploadFolder.isDone"
                                            style="color: forestgreen">Done</b>
-                                        <b ng-show="uploadFolder.warning && !uploadFolder.ignoreWarning" class="text-warning">{{uploadFolder.warning}}</b>
+                                        <b ng-show="uploadFolder.warning && !uploadFolder.ignoreWarning" class="text-danger">{{uploadFolder.warning}}</b>
                                     </p>
                                 </li>
                             </ul>
@@ -72,7 +71,7 @@
                                     <button style="margin-top: -3px;"
                                             class="fa fa-check btn btn-sm btn-warning pull-right"
                                             ng-click="self.ignoreWarning(index)" ng-show="uploadFile.warning && !uploadFile.ignoreWarning"
-                                            title="Ignore warning">
+                                            title="Accept warning">
                                     </button>
                                     <div style="padding: 0 0.5em; max-height: 20%; overflow-y: auto;"
                                          ng-show="uploadFile.uploadingProgress">
@@ -94,30 +93,15 @@
                                         <span class="name">{{uploadFile.name}}</span>&nbsp;&nbsp;&nbsp;
                                         <b ng-show="uploadFile.existed"
                                            style="color: red">Existed</b>
-                                        <b ng-show="uploadFile.warning && !uploadFile.ignoreWarning" class="text-warning">{{uploadFile.warning}}</b>
+                                        <b ng-show="uploadFile.warning && !uploadFile.ignoreWarning" class="text-danger">{{uploadFile.warning}}</b>
                                     </div>
                                 </li>
                             </ul>
                         </div>
-                        <div class="list-actions pull-right">
-                            <span ng-if="self.getWarnings().length > 0">
-                                <button class="btn btn-sm btn-default"
-                                        ng-click="self.cancelUpload()">
-                                    <i class="fa fa-arrow-left"></i>&nbsp;Back
-                                </button>
-                                <button class="btn btn-sm btn-warning"
-                                        ng-click="self.ignoreWarningAllFiles()">
-                                    <i class="fa fa-check"></i>&nbsp;Ignore all warnings
-                                </button>
-                            </span>
-                            <button class="btn btn-sm btn-success"
-                                    ng-click="self.overwriteAllFiles()"
-                                    ng-if="self.getExistedFiles().length > 0">
-                                <i class="fa fa-refresh"></i>&nbsp;Overwrite all
-                            </button>
+                        <div class="list-actions pull-right"
+                            ng-if="!self.processing && self.uploadFileList.length">
                             <button class="btn btn-sm btn-primary"
-                                    ng-click="self.removeAll()"
-                                    ng-if="!self.processing">
+                                    ng-click="self.removeAll()">
                                 <i class="ti-brush-alt"></i>&nbsp;Clear
                             </button>
                         </div>
@@ -146,7 +130,22 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" ng-click="self.uploadFiles()" class="btn btn-default">
+                <span ng-if="self.getWarnings().length > 0">
+                    <button class="btn btn-default"
+                            ng-click="self.cancelUpload()">
+                        <i class="fa fa-arrow-left"></i>&nbsp;Back
+                    </button>
+                    <button class="btn btn-warning"
+                            ng-click="self.ignoreWarningAllFiles()">
+                        <i class="fa fa-check"></i>&nbsp;Accept all
+                    </button>
+                </span>
+                <button class="btn btn-success"
+                        ng-click="self.overwriteAllFiles()"
+                        ng-if="self.getExistedFiles().length > 0">
+                    <i class="fa fa-refresh"></i>&nbsp;Overwrite all
+                </button>
+                <button type="button" ng-click="self.uploadFiles()" class="btn btn-default" ng-hide="self.processing">
                     <span class="ok-16x16"></span>&nbsp;Upload
                 </button>
                 <button type="button" ng-click="self.closeModal()" class="btn btn-default">

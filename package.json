@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@revotechuet/misc-component-vue": "^1.2.1",
+    "@revotechuet/misc-component-vue": "^1.2.2-61c4f39.0",
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",

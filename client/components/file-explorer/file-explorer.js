@@ -244,6 +244,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
 		  self.getMetadataUrl = self.url + '/action/info';
       self.createSyncSession = self.url + '/file-explorer/create-sync-session';
+      self.elasticSearchUrl = self.url + '/search/elasticsearch';
     }
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
@@ -901,37 +902,119 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     newFolderDialog(ModalService, self);
   };
 
+  function extractObject(obj, result, filteredAttrs=[]) {
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        extractObject(item, result, filteredAttrs)
+      }
+
+      return;
+    }
+
+    if (typeof obj === 'object') {
+      for (const key in obj) {
+        const type = typeof obj[key];
+
+        if (
+          filteredAttrs.includes(key)
+          && ['string', 'number', 'boolean', 'object', 'bigint'].includes(type)
+        ) {
+          if (result.hasOwnProperty(key)) {
+            result[key].push(obj[key]);
+          } else {
+            result[key] = [obj[key]];
+          }
+        }
+
+        if (type === 'object') {
+          extractObject(obj[key], result, filteredAttrs)
+        }
+      }
+    }
+  }
+
+  function elasticSearch(payload) {
+    const childrenObj = {};
+    const requestPayload = {};
+
+    requestPayload.folder = payload.folder || '/';
+
+    extractObject(payload, childrenObj, ['children']);
+    if (!childrenObj.children) {
+      return;
+    }
+
+    if (childrenObj.children.length > 1) {
+      childrenObj.children.shift();
+    }
+
+    requestPayload.content = childrenObj.children.reduce((obj, children) => {
+      for (const child of children) {
+        for (const key in child) {
+          if (obj.hasOwnProperty(key)) {
+            obj[key].push(child[key]);
+            continue;
+          }
+
+          obj[key] = [child[key]];
+        }
+      }
+
+      return obj;
+    }, {});
+
+    if (requestPayload.content.type) {
+      requestPayload.content.datatype = requestPayload.content.type;
+    }
+    requestPayload.content.type = payload.content.type || 'all';
+
+    const EOL = '***eol***';
+
+    self.httpPost(self.elasticSearchUrl, requestPayload, res => {
+      let fileList = res.data.substring(0, res.data.length - EOL.length);
+      fileList = JSON.parse(fileList);
+
+      self.fileList = fileList;
+    })
+  }
+
   self.searching = false;
   function doSearch(payload) {
     if (self.searching) return;
     self.searching = true;
-    if (self.searchMode === 'stream') {
-      self.fileList = [];
-      let result = '';
-      const EOL = '***eol***';
-      self.abortSearch = self.httpPostStreaming(self.searchStreamingUrl, payload,
-        res => {
-        if (!self.searching) return;
-        result += res;
-        const lines = result.split(EOL)
-        if (lines.length > 1) {
-          result = result.slice(result.indexOf(EOL) + EOL.length);
-          const line = lines[0];
-          try {
-            const files = JSON.parse(line);
-            self.fileList.push(...files);
-            $scope.$digest();
-          } catch (error) {
-            console.log(line);
+
+    switch (self.searchMode) {
+      case 'stream':
+        self.fileList = [];
+        let result = '';
+        const EOL = '***eol***';
+        self.abortSearch = self.httpPostStreaming(self.searchStreamingUrl, payload,
+          res => {
+          if (!self.searching) return;
+          result += res;
+          const lines = result.split(EOL)
+          if (lines.length > 1) {
+            result = result.slice(result.indexOf(EOL) + EOL.length);
+            const line = lines[0];
+            try {
+              const files = JSON.parse(line);
+              self.fileList.push(...files);
+              $scope.$digest();
+            } catch (error) {
+              console.log(line);
+            }
           }
-        }
-      }, () => {
-          self.searching = false;
-      });
-    } else {
-      self.httpPost(self.searchUrl, payload, res => {
-        self.fileList = res.data.data;
-      });
+        }, () => {
+            self.searching = false;
+        });
+        break;
+      case 'elastic':
+        elasticSearch(payload)
+        break;
+      default:
+        self.httpPost(self.searchUrl, payload, res => {
+          self.fileList = res.data.data;
+        });
     }
   }
   this.search = function () {

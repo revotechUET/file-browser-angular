@@ -795,7 +795,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (self.requesting) return;
     if (index == -999) {
       // refresh
-      await self.goToPath(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))
+      await self.goToPath(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'), false)
       if (self.selectedItem) {
         const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
         self.clickNode(item);

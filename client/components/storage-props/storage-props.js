@@ -60,7 +60,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		}
 		//self.loadingFolderSize = false;
 		if (changeObj.metaData) {
-			if (self.metaData && self.metaData.size) {
+			if (self.isFolder && self.metaData && self.metaData.size) {
 				self.folderSize = formatBytes(self.metaData.size, 3);
 			}
 			self.fields = self.getMDObj();

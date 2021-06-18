@@ -5,6 +5,12 @@
  */
 
 /**
+  * vue-class-component v7.0.1
+  * (c) 2015-present Evan You
+  * @license MIT
+  */
+
+/**
  * @licstart The following is the entire license notice for the
  * Javascript code in this page
  *

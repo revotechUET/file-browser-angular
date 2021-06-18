@@ -1,13 +1,13 @@
 {
   "name": "@revotechuet/file-explorer",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "",
   "main": "./dist/file-explorer-module.js",
   "files": [
     "dist/*"
   ],
   "scripts": {
-    "build:prod": "webpack --mode=production",
+    "build": "webpack --mode=production",
     "build:dev": "webpack --mode=development",
     "start": "webpack -w --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,76 +1,91 @@
 <div ng-show="self.isDatabase" class="outside" style="align-items: center;justify-content: center;">
     <div style="display: flex; flex-direction: column; position: relative;">
         <div>
-            <div class="project-normal-32x32" style="transform: scale(2) translateX(26px); position: absolute; bottom: 80px;"> </div>
+            <div class="project-normal-32x32"
+                style="transform: scale(2) translateX(26px); position: absolute; bottom: 80px;"> </div>
         </div>
         <div style="display: flex; flex-direction: column; align-items: center;">
             <div style="font-size: 20px; font-weight: bold;">
                 DRAG & DROP
             </div>
             <div>
-            workspace here
+                workspace here
             </div>
-    </div>
+        </div>
     </div>
 </div>
 <div class="outside">
     <div class="toolbar">
-        <div class="left">
-            <div ng-if="!self.hidePdbFeaturesPanel" class="left" style="margin-left: 0;">
-              <!-- Refresh - -->
-              <div title="Refresh" class="button-fn ti ti-reload" ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='none'"></div>
-              <!-- Upload -  -->
-              <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
-              <!-- download -  -->
-              <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)" ng-class="{inactive: self.selectedList.length === 0}"></div>
-              <!-- open -  -->
-              <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])" ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
-              <!-- newfolder -  -->
-              <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"></div>
-              <!-- delete -  -->
-              <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()" ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
-              <!-- copy -  -->
-              <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"  ng-class="{inactive: false}"></div>
-              <!-- cut -  -->
-              <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: false}"></div>
-              <!-- paste -  -->
-              <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()" ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
-              <!-- bulkvedit -  -->
-              <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)" ng-class="{inactive: self.selectedList.length <= 1}"></div>
-              <!-- CopyLocation -->
-             <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
-                  ng-click="self.copyMultiLocation(self.selectedList)"
-                  ng-class="{inactive: self.selectedList.length <= 1, 'copied': self.multiLocationCopied(self.selectedList)}"></div>
+        <div ng-if="!self.hidePdbFeaturesPanel" class="left">
+            <div title="Back" class="button-fn ti ti-arrow-left"
+                ng-class="{inactive: self.requesting || self.historyIndex < 1}" ng-click="self.goBack()"></div>
+            <div title="Forward" class="button-fn ti ti-arrow-right"
+                ng-class="{inactive: self.requesting || self.historyIndex >= self.history.length - 1}"
+                ng-click="self.goForward()"></div>
+            <div title="Refresh" class="button-fn ti ti-reload"
+                ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='none'">
+            </div>
+            <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
 
-              <!--<div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"-->
-                  <!--style="transform: rotate(-90deg);"-->
-                  <!--ng-click="self.importFilesToInventory(self.selectedList)"></div>-->
-              <!--<div title="Import ZoneSet" ng-if="!self.hideImportToInventory" class="button-fn import-zoneset-16x16"-->
-                  <!--ng-click="self.importZoneSet(self.selectedList)"></div>-->
-              <!--<div title="Import MarkerSet" ng-if="!self.hideImportToInventory" class="button-fn import-markerset-16x16"-->
-                  <!--ng-click="self.importMarkerSet(self.selectedList)"></div>-->
-              <div title="Submit to company database"
-                  ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"
-                  class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
+            <!-- Upload -  -->
+            <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
+            <!-- download -  -->
+            <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)"
+                ng-class="{inactive: self.selectedList.length === 0}"></div>
+            <!-- open -  -->
+            <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])"
+                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+            <!-- newfolder -  -->
+            <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"></div>
+            <!-- delete -  -->
+            <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()"
+                ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
+            <!-- copy -  -->
+            <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"
+                ng-class="{inactive: false}"></div>
+            <!-- cut -  -->
+            <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: false}">
             </div>
-            <div title="Your Project" style=" border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
-            <div class="button-fn ti ti-harddrives" style="margin-right: 10px;"></div>
-            <div class="button-fn ti ti-angle-right" style="margin-right: 10px; font-size: 9px;"></div>
-            <div class="button-fn" ng-if="self.currentPath.length > 0" style="margin-right: 10px;"
-                ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">{{'Home'}}
+            <!-- paste -  -->
+            <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()"
+                ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
+            <!-- bulkvedit -  -->
+            <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)"
+                ng-class="{inactive: self.selectedList.length <= 1}"></div>
+            <!-- CopyLocation -->
+            <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
+                ng-click="self.copyMultiLocation(self.selectedList)"
+                ng-class="{inactive: self.selectedList.length <= 1, 'copied': self.multiLocationCopied(self.selectedList)}">
             </div>
-            <div class="button-fn" ng-if="self.currentPath.length < 1" style="margin-right: 10px;"
-                ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">{{'Home'}}
+
+            <!--<div title="Import To Inventory" ng-if="!self.hideImportToInventory" class="button-fn ti ti-import"-->
+            <!--style="transform: rotate(-90deg);"-->
+            <!--ng-click="self.importFilesToInventory(self.selectedList)"></div>-->
+            <!--<div title="Import ZoneSet" ng-if="!self.hideImportToInventory" class="button-fn import-zoneset-16x16"-->
+            <!--ng-click="self.importZoneSet(self.selectedList)"></div>-->
+            <!--<div title="Import MarkerSet" ng-if="!self.hideImportToInventory" class="button-fn import-markerset-16x16"-->
+            <!--ng-click="self.importMarkerSet(self.selectedList)"></div>-->
+            <div title="Submit to company database"
+                ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"
+                class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
+        </div>
+        <div class="path-list">
+            <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
+            <div class="ti ti-harddrives" style="margin-right: 8px;"></div>
+            <div class="ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
+            <div class="button-fn" style="margin-right: 8px;"
+                ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">
+                {{'Home'}}
             </div>
-            <div ng-repeat="(key, dir) in self.currentPath track by key" ng-class="{'active':$last}"
-                style="display: flex; align-items: center; margin-left: -10px; margin-right: 10px;">
-                <div class="button-fn ti ti-angle-right" style="margin: 0 10px; font-size: 9px;"></div>
-                <div ng-if="!$last" ng-click="self.goTo(key); self.filter=''; self.modeFilter='none'" style="cursor: pointer;">
+            <div ng-repeat="(key, dir) in self.currentPath.slice(0,-1) track by key" class="path-item">
+                <div class="button-fn ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
+                <div ng-click="self.goTo(key); self.filter=''; self.modeFilter='none'" style="cursor: pointer;">
                     {{dir.rootName | strLimit : 8}}
                 </div>
-                <div ng-if="$last" style="color: #000;">
-                    {{dir.rootName | strLimit : 12}}
-                </div>
+            </div>
+            <div ng-if="self.currentPath.length" style="color: #000;" class="path-item active">
+                <div class="button-fn ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
+                {{self.currentPath.slice(-1)[0].rootName | strLimit : 12}}
             </div>
         </div>
         <div class="processing" ng-show="self.processing.length" tabindex="0">
@@ -94,12 +109,13 @@
                         <span class="action ti ti-close" ng-click="self.removeProcessing(item)"></span>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar" ng-class="{'progress-bar-danger': item.status==='ERROR', 'progress-bar-success': item.status==='SUCCESS'}"
+                        <div class="progress-bar"
+                            ng-class="{'progress-bar-danger': item.status==='ERROR', 'progress-bar-success': item.status==='SUCCESS'}"
                             ng-style="{width: item.percentage + '%'}"></div>
                     </div>
-<!--                    <div>-->
-<!--                        x-->
-<!--                    </div>-->
+                    <!--                    <div>-->
+                    <!--                        x-->
+                    <!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -108,12 +124,13 @@
             <div class="search-box">
                 <input style="width: 150px; background: #f4f4f4; padding: 4px 10px; margin-right: 20px" type='text'
                     ng-change="self.search()" ng-model='self.filter' ng-model-options="{updateOn: 'change'}" size='10'
-                    placeholder="[Search]" ng-disabled="self.searching || (self.modeFilter !== 'simple search' && self.modeFilter !== 'none')">
-                <div style="margin-right: 20px;  cursor: pointer;" class="ti ti-close"
-                    ng-click="self.clearSearch()" title="{{self.searching?'Stop':'Clear'}}"
-                    ng-style="{color: self.filter != '' ? '#c00' : '#eee'}"></div>
-                <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()" ng-disabled="self.searching"
-                    style="margin-right: 0;"></div>
+                    placeholder="[Search]"
+                    ng-disabled="self.searching || (self.modeFilter !== 'simple search' && self.modeFilter !== 'none')">
+                <div style="margin-right: 20px;  cursor: pointer;" class="ti ti-close" ng-click="self.clearSearch()"
+                    title="{{self.searching?'Stop':'Clear'}}" ng-style="{color: self.filter != '' ? '#c00' : '#eee'}">
+                </div>
+                <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()"
+                    ng-disabled="self.searching" style="margin-right: 0;"></div>
             </div>
             <div class="split margin"></div>
             <div class="filter-mode" ng-class="{highlightBg: self.modeFilter!='none'}">
@@ -130,11 +147,13 @@
     </div>
     <div class="main-content">
         <div class="list-file" wi-right-click="self.showContextMenu(null, $event)">
-            <wi-table-resizeable headers="self.headerArray" on-table-init="self.tableInit"
-                on-header-width-changed="self.changeWidth" default-widths="[300,200,250,100,150]">
-                <div class="table-row" ng-repeat="item in self.fileList | orderBy:self.propOrder:self.reverse"
-                    ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)" wi-right-click="self.showContextMenu(item, $event)"
-                    ng-class="{selected: self.isSelected(item)}">
+            <wi-table-resizeable headers="self.headerArray" on-table-init="self.tableInit" order-header="self.propOrder"
+                order-reverse="self.reverse" on-header-width-changed="self.changeWidth"
+                default-widths="[300,200,250,100,150]">
+                <div class="table-row"
+                    ng-repeat="item in self.fileList | orderBy:self.getOrderItem:false:self.orderFn"
+                    ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
+                    wi-right-click="self.showContextMenu(item, $event)" ng-class="{selected: self.isSelected(item)}">
                     <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}"
                         style="position: relative;">
                         <i class="fa fa-check-circle" aria-hidden="true"
@@ -155,10 +174,10 @@
                         {{item.metaData.datatype}}</div>
                     <div ng-style='{"width": self.widthArray[3]}' title="{{item.size | humanReadableFileSize}}"
                         class="size">
-                        <span ng-if="item.rootIsFile">
+                        <span ng-if="item.size || item.rootIsFile">
                             {{item.size | humanReadableFileSize}}
                         </span>
-                        <span ng-if="!item.rootIsFile">
+                        <span ng-if="!item.size && !item.rootIsFile">
                             --
                         </span>
                     </div>
@@ -176,9 +195,8 @@
                 <div class="date">Date modified</div>
             </div> -->
         </div>
-        <side-bar my-default-width="350" collapsed="false" orientation="w"
-          class="sidebar-properties"
-          ng-if="!self.hideMetadataPanel">
+        <side-bar my-default-width="342" collapsed="false" orientation="w" class="sidebar-properties"
+            ng-if="!self.hideMetadataPanel">
             <div ng-if="!self.selectedItem.metaData" class="no-file-select" style=" opacity: 0.5; ">
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="-101 -21 682 682.66669"
@@ -211,15 +229,10 @@
             <div class="right-panel">
                 <storage-props meta-data="self.selectedItem.metaData" update-metadat-func="self.updateMetaData"
                     enable-associate="true" revision="self.selectedItem.revision" hide-associate="self.hideAssociate"
-                    is-folder = "!self.selectedItem.rootIsFile"
-                    get-size="self.getSize"
-                    api-url = "self.url"
-                    storage-database = "self.storageDatabase"
-                    remove-revision-func="self.removeRevision" restore-revision-func="self.restoreVersion"
-                    readonly-values="self.readonlyValues"
-                    dblclick-revision-func="self.dblClickNode"
-                    item="self.selectedItem"
-                >
+                    is-folder="!self.selectedItem.rootIsFile" get-size="self.getSize" api-url="self.url"
+                    storage-database="self.storageDatabase" remove-revision-func="self.removeRevision"
+                    restore-revision-func="self.restoreVersion" readonly-values="self.readonlyValues"
+                    dblclick-revision-func="self.dblClickNode" item="self.selectedItem">
                 </storage-props>
             </div>
         </side-bar>

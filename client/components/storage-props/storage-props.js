@@ -18,6 +18,7 @@ Controller.$inject = ['$scope', '$filter', 'ModalService', 'wiSession', '$timeou
 const PROCESSING_STATUS = '/action/status?key=';
 
 function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
+	window.storageProps = this;
 	let self = this;
 	const toastr = window.__toastr || window.toastr;
 	//this.getSizeKey = null;
@@ -59,7 +60,10 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		}
 		//self.loadingFolderSize = false;
 		if (changeObj.metaData) {
- 			self.fields = self.getMDObj();
+			if (self.metaData && self.metaData.size) {
+				self.folderSize = formatBytes(self.metaData.size, 3);
+			}
+			self.fields = self.getMDObj();
 		}
 
 	};
@@ -187,7 +191,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		}
 		if(mdKey == 'associate') value = self.metaData;
 		let readonly = (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false;
-		return mdProps = {
+		return {
 			name: mdKey,
 			label: configObj.translation || mdKey,
 			type: configObj.typeSpec || 'text',
@@ -222,13 +226,6 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		self.checkFolderSizeProcess = setTimeout(() => {});
 		self.getSize().then((rs)=>{
 			let key = rs.key;
-			// $timeout(()=>{
-			// 	self.folderSize = formatBytes(rs, 3);
-			// 	self.loadingFolderSize = false;
-			// });
-
-			//trigger check key
-
 			let triggerFn = ()=>{
 				self.httpGet(self.statusUrl + key, (rs)=>{
 					rs = rs.data;
@@ -237,13 +234,15 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 						self.checkFolderSizeProcess = setTimeout(triggerFn, 2000);
 					} else {
 						if (rs.info) {
-							self.folderSize = formatBytes(rs.info , 3);
+							self.folderSize = formatBytes(rs.info, 3);
+							self.item.size = +rs.info;
+							self.item.metaData.size = +rs.info;
 							self.checkFolderSizeProcess = null;
 						}
 					}
 				}, { silent: true })
 			}
-			self.checkFolderSizeProcess = setTimeout(triggerFn, 1500);
+			self.checkFolderSizeProcess = setTimeout(triggerFn, 500);
 		})
 	}
 

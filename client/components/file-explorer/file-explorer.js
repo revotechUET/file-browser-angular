@@ -65,7 +65,28 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   let _toastr = window.__toastr || window.toastr;
   window.fileBrowser = self;
   self.widthArray = [];
-  self.headerArray = ['Name', 'CODB Status', 'Data type', 'Size', 'Data modified'];
+  self.headerArray = [
+    {
+      label: 'Name',
+      key: 'rootName',
+    },
+    {
+      label: 'CODB Status',
+      key: 'codbStatus'
+    },
+    {
+      label: 'Data type',
+      key: 'metaData.datatype'
+    },
+    {
+      label: 'Size',
+      key: 'size'
+    },
+    {
+      label: 'Data modified',
+      key: 'modifiedDate'
+    }
+  ];
   self.fileTypeList = [
     {
       type: 'svg',
@@ -188,6 +209,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.wiSession = wiSession;
   self.imgResource = {};
   self.currentPath = [];
+  self.history = [];
+  self.historyIndex = -1;
   self.selectedList = [];
   self.selectedItem = {};
   self.pasteList = [];
@@ -202,7 +225,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   self.getSize = null;
 
   this.$onInit = function () {
-    if(typeof self.setContainer === 'function') self.setContainer(self);
+    if (typeof self.setContainer === 'function') self.setContainer(self);
     self.rootFolder = self.rootFolder || '/';
 
     let searchQuery = {
@@ -212,7 +235,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           {
             operator: "or",
             children: [
-              {name: ""}
+              { name: "" }
             ]
           }
         ]
@@ -242,7 +265,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.cancelUrl = self.url + CANCEL_PROCESS;
       self.getFolderSizeUrl = self.url + GETSIZE_PATH;
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
-		  self.getMetadataUrl = self.url + '/action/info';
+      self.getMetadataUrl = self.url + '/action/info';
       self.createSyncSession = self.url + '/file-explorer/create-sync-session';
     }
     updateUrls();
@@ -252,12 +275,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         if (self.linkedFile) {
           //self.goToByPath(self.linkedFile);
         } else {
-          self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder), result => {
-            if (result) {
-              const data = result.data.data;
-              self.fileList = [...data.files, ...data.folders];
-            }
-          });
+          self.goToPath(self.rootFolder);
         }
         self.processingKey = 'PROCESSING-' + self.storageDatabase.directory;
         self.processing = JSON.parse(localStorage.getItem(self.processingKey)) || [];
@@ -365,6 +383,27 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.reverse = (self.propOrder === propOrder) ? !self.reverse : false;
     self.propOrder = propOrder;
   };
+  this.getOrderItem = function (item) {
+    return item
+    // ['rootIsFile',self.reverse?'-':'+'+self.propOrder]
+  }
+  this.orderFn = function (i1, i2) {
+    if (i1.value.rootIsFile !== i2.value.rootIsFile) {
+      return i1.value.rootIsFile ? 1 : -1
+    }
+    const v1 = _.get(i1.value, self.propOrder, '');
+    const v2 = _.get(i2.value, self.propOrder, '');
+    const order = self.reverse ? -1 : 1;
+    switch (typeof v1) {
+      case 'string':
+        return v1.localeCompare(v2) * order;
+      case 'number':
+        return (v1 - v2) * order;
+      default:
+        console.trace(typeof v1, 'order type not handled')
+        return 0;
+    }
+  }
 
   this.isSelected = function (item) {
     return self.selectedList.indexOf(item) !== -1;
@@ -384,8 +423,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (self.selectedItem !== item) {
       self.selectedItem = item;
       self.getSize = (() => {
-        return new Promise((res,rej)=>{
-          self.httpGet(self.getFolderSizeUrl + encodeURIComponent(item.path), result=>{
+        return new Promise((res, rej) => {
+          self.httpGet(self.getFolderSizeUrl + encodeURIComponent(item.path), result => {
             res(result.data);
           }, { silent: true });
         });
@@ -431,36 +470,54 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.clickNodeFn && self.clickNodeFn(self.selectedList);
   };
 
-  this.dblClickNode = function (item) {
+  this.goToPath = async function (path, history = true) {
+    return new Promise((res, rej) => {
+      self.httpGet(self.exploreUrl + encodeURIComponent(path), (result, err) => {
+        if (!result || err) {
+          return rej(err)
+        }
+        const data = result.data.data;
+        self.fileList = [...data.folders, ...data.files];
+        self.currentPath.length = 0;
+        path.split("/").filter(v => v).map((name, idx) => {
+          self.currentPath.push({ rootName: name, displayName: name });
+        })
+        if (history) {
+          self.historyIndex++;
+          self.history.splice(self.historyIndex, self.history.length, path);
+        }
+        res(data);
+        !$scope.$root.$$phase && $scope.$digest();
+      })
+    })
+  }
+  this.dblClickNode = async function (item) {
     if (!item)
       return;
     if (!item.rootIsFile) {
       if (self.requesting) return;
       self.selectedList = [];
-      self.httpGet(self.exploreUrl + encodeURIComponent(item.path), result => {
-        let data = result.data.data;
-        self.fileList = [...data.files, ...data.folders];
-        self.currentPath.length = 0;
-        item.path.slice(1, item.path.length - 1).split("/").map((name, idx) => {
-          self.currentPath.push({rootName: name, displayName: name});
-        })
-        //self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
-        self.filter = '';
-        self.modeFilter = 'none';
-      })
-
+      await self.goToPath(item.path);
+      // self.currentPath.length = 0;
+      // item.path.slice(1, item.path.length - 1).split("/").map((name, idx) => {
+      //   self.currentPath.push({ rootName: name, displayName: name });
+      // })
+      //self.currentPath.push({rootName: item.rootName, displayName: item.displayName});
+      self.filter = '';
+      self.modeFilter = 'none';
+      $scope.$digest();
     } else {
       if (self.disablePreview) return;
       self.filter = '';
       self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/check-in-cache?file_path=${encodeURIComponent(item.path)}`,
-        {item}, result => {
+        { item }, result => {
           // if (result.data.notCached) {
           //   _toastr ? _toastr.info(`File is being converted for next fast preview`)
           //     : console.info(`File is being converted for next fast preview`);
           // }
           self.httpPost(`${self.previewUrl}/filepreview?file_path=${encodeURIComponent(item.path)}`,
-            {item}, result => {
+            { item }, result => {
               if (result.data.isNotReadable) {
                 _toastr ? _toastr.error(`Previewing "${item.rootName}" is not available`)
                   : console.error(`Previewing "${item.rootName}" is not available`);
@@ -469,7 +526,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                   _toastr ? _toastr.error(`"${item.rootName}" exceeds the maximum file size that we can preview`)
                     : console.error(`"${item.rootName}" exceeds the maximum file size that we can preview`);
                 } else {
-                  let data = {title: item.rootName};
+                  let data = { title: item.rootName };
                   data.fileContent = result.data;
                   pdfViewerDialog(ModalService, self, data, item);
 
@@ -498,11 +555,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                   // }
                 }
               }
-            }, {service: "WI_FILE_PREVIEW"})
-        }, {service: "WI_FILE_PREVIEW"})
+            }, { service: "WI_FILE_PREVIEW" })
+        }, { service: "WI_FILE_PREVIEW" })
     }
     self.afterDblClick && self.afterDblClick(item);
   };
+  this.openFolder = this.dblClickNode
 
   this.showContextMenu = function (item, $event) {
     $event.stopPropagation()
@@ -700,20 +758,20 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       //     url.revokeObjectURL(anchor.href);
       // }, 1};
     })
-    .catch(err => {
-      console.error("file browser error", err);
-      if (err.data.code === 401) location.reload();
-    });
+      .catch(err => {
+        console.error("file browser error", err);
+        if (err.data.code === 401) location.reload();
+      });
   };
   this.goToByPath = function (path) {
     if (!path) return;
     let children = [];
-    if (typeof path === 'string') children = [{location: path}];
+    if (typeof path === 'string') children = [{ location: path }];
     if (Array.isArray(path)) {
       let pathsCP = angular.copy(path);
       _.remove(pathsCP, t => !t);
       children = pathsCP.map(p => {
-        return {location: p}
+        return { location: p }
       });
     }
     let searchPayload = {
@@ -733,34 +791,34 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.modeFilter = 'related';
     });
   }
-  this.goTo = function (index, callback) {
+  this.goTo = async function (index, callback) {
     if (self.requesting) return;
     if (index == -999) {
       // refresh
-      self.httpGet(self.exploreUrl + encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/')), result => {
-        let data = result.data.data;
-        self.fileList = [...data.files, ...data.folders];
-        if (self.selectedItem) {
-          const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
-          self.clickNode(item);
-        }
-        callback && callback();
-      })
+      await self.goToPath(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))
+      if (self.selectedItem) {
+        const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
+        self.clickNode(item);
+      }
+      callback && callback();
       self.httpGet(`${self.previewUrl}/refresh-cache`, result => {
         //console.log(result.data)
-      }, {service: "WI_FILE_PREVIEW"})
+      }, { service: "WI_FILE_PREVIEW" })
     } else {
       self.selectedList = [];
-      self.currentPath = self.currentPath.slice(0, index + 1);
-      let newPath = self.rootFolder + self.currentPath.map(c => c.rootName).join('/');
-      self.httpGet(self.exploreUrl + encodeURIComponent(newPath), result => {
-        let data = result.data.data;
-        self.fileList = [...data.files, ...data.folders];
-        callback && callback(self.fileList);
-      })
+      const newPath = self.rootFolder + self.currentPath.slice(0, index + 1).map(c => c.rootName).join('/');
+      await self.goToPath(newPath)
+      callback && callback(self.fileList);
     }
   };
-
+  this.goBack = function () {
+    if (self.requesting || self.historyIndex < 1) return;
+    self.goToPath(self.history[--self.historyIndex], false);
+  }
+  this.goForward = function () {
+    if (self.requesting || self.historyIndex >= self.history.length - 1) return;
+    self.goToPath(self.history[++self.historyIndex], false);
+  }
 
   this.removeNodes = function () {
     if (!self.selectedList)
@@ -796,14 +854,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.copyMultiLocation = function (items) {
     let locations = items.map(item => item.metaData.location);
-    wiSession.putData('location', JSON.stringify({option: 'multi', value: locations}));
+    wiSession.putData('location', JSON.stringify({ option: 'multi', value: locations }));
   }
   this.multiLocationCopied = function (items) {
     let locations = JSON.parse(wiSession.getData('location'));
     let _locations = items.map(item => item.metaData.location);
-    if(locations && Array.isArray(locations.value) && locations.value.length == _locations.length
-        && !locations.value.some(l => !_locations.includes(l))) return true;
-		else return false;
+    if (locations && Array.isArray(locations.value) && locations.value.length == _locations.length
+      && !locations.value.some(l => !_locations.includes(l))) return true;
+    else return false;
   }
   this.paste = function (folder) {
     if (!(self.pasteList))
@@ -911,23 +969,23 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       const EOL = '***eol***';
       self.abortSearch = self.httpPostStreaming(self.searchStreamingUrl, payload,
         res => {
-        if (!self.searching) return;
-        result += res;
-        const lines = result.split(EOL)
-        if (lines.length > 1) {
-          result = result.slice(result.indexOf(EOL) + EOL.length);
-          const line = lines[0];
-          try {
-            const files = JSON.parse(line);
-            self.fileList.push(...files);
-            $scope.$digest();
-          } catch (error) {
-            console.log(line);
+          if (!self.searching) return;
+          result += res;
+          const lines = result.split(EOL)
+          if (lines.length > 1) {
+            result = result.slice(result.indexOf(EOL) + EOL.length);
+            const line = lines[0];
+            try {
+              const files = JSON.parse(line);
+              self.fileList.push(...files);
+              $scope.$digest();
+            } catch (error) {
+              console.log(line);
+            }
           }
-        }
-      }, () => {
+        }, () => {
           self.searching = false;
-      });
+        });
     } else {
       self.httpPost(self.searchUrl, payload, res => {
         self.fileList = res.data.data;
@@ -942,7 +1000,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           {
             operator: "or",
             children: [
-              {name: ""}
+              { name: "" }
             ]
           }
         ]
@@ -955,7 +1013,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
         content: {
           conditions: {
-            children: [{name: self.filter}],
+            children: [{ name: self.filter }],
             operator: "or"
           },
           type: "all",
@@ -1129,10 +1187,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     return crypted;
   // }
   this.saveObject = function (payload, cb) {
-    if (typeof(payload.metaData.name) == 'string' && !utils.validateNodeName(payload.metaData.name)) {
-        toastr.error("a file/folder can't contain any of the following characters / \\ : * ? \" < > | ");
-        self.goTo(-999);
-        return;
+    if (typeof (payload.metaData.name) == 'string' && !utils.validateNodeName(payload.metaData.name)) {
+      toastr.error("a file/folder can't contain any of the following characters / \\ : * ? \" < > | ");
+      self.goTo(-999);
+      return;
     }
 
     self.httpPost(self.updateMetaDataUrl, payload, (res) => {
@@ -1187,7 +1245,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     delete window.fileBrowser;
 
   }
-  this.importCSV = function(items) {
+  this.importCSV = function (items) {
     wiDialog.csvImportDialog();
   }
   // this.importFilesToInventory = function(items) {
@@ -1218,39 +1276,39 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     }
   //   }
   // }
-  this.importFilesToInventory = function(items) {
-      if (items.length === 0) return;
-      self.requesting = true;
-      if(items.length == 1) {
-        if(items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
-          importCurves(items[0]);
-        }else {
-          self.requesting = false;
-          __toastr.error("Only accept file las, dlis, csv", "Error");
-        }
-      }else {
-        let isAllLas = true;
-        for(let i in items) {
-          if(items[i].rootName.split('.').length > 1 && items[i].rootName.split('.').pop() != 'las') {
-            isAllLas = false;
-            break;
-          }
-        }
-        if(isAllLas) {
-          items.forEach(item => {
-            importCurves(item);
-          });
-        }else {
-          self.requesting = false;
-          __toastr.error("Only accept multiple file las", "Error");
+  this.importFilesToInventory = function (items) {
+    if (items.length === 0) return;
+    self.requesting = true;
+    if (items.length == 1) {
+      if (items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
+        importCurves(items[0]);
+      } else {
+        self.requesting = false;
+        __toastr.error("Only accept file las, dlis, csv", "Error");
+      }
+    } else {
+      let isAllLas = true;
+      for (let i in items) {
+        if (items[i].rootName.split('.').length > 1 && items[i].rootName.split('.').pop() != 'las') {
+          isAllLas = false;
+          break;
         }
       }
+      if (isAllLas) {
+        items.forEach(item => {
+          importCurves(item);
+        });
+      } else {
+        self.requesting = false;
+        __toastr.error("Only accept multiple file las", "Error");
+      }
+    }
   }
   function importCurves(fileToDownload) {
     downloadFileToUpload(fileToDownload)
-    .then((file) => {
-      if(file.name.split('.').length > 1) {
-          switch(file.name.split('.').pop()) {
+      .then((file) => {
+        if (file.name.split('.').length > 1) {
+          switch (file.name.split('.').pop()) {
             case 'las': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportLAS, UPLOAD_FILES, { silent: true });
               break;
             case 'dlis': wiApi.uploadFilesToInventory({ file: [file], override: true }, callbackImportDLIS, UPLOAD_DLIS, { silent: true });
@@ -1260,37 +1318,37 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             default: break;
           }
         }
-    })
-    .catch((err) => {
-      __toastr.error("Something went wrong", "Error");
-    });
+      })
+      .catch((err) => {
+        __toastr.error("Something went wrong", "Error");
+      });
   }
-  this.importZoneSet = function(items) {
-    if(items.length === 0 ) return;
+  this.importZoneSet = function (items) {
+    if (items.length === 0) return;
     self.requesting = true;
     downloadFileToUpload(items[0])
-    .then(file => {
-      if(file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
-        self.requesting = true;
-        wiDialog.importZoneSet(file, self.idProject, callBackImport);
-      }else {
-        __toastr.error("Only accept file csv", "Error");
-      }
-    });
+      .then(file => {
+        if (file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
+          self.requesting = true;
+          wiDialog.importZoneSet(file, self.idProject, callBackImport);
+        } else {
+          __toastr.error("Only accept file csv", "Error");
+        }
+      });
     console.log("import zone set");
   }
-  this.importMarkerSet = function(items) {
-    if(items.length === 0 ) return;
+  this.importMarkerSet = function (items) {
+    if (items.length === 0) return;
     self.requesting = true;
     downloadFileToUpload(items[0])
-    .then(file => {
-      if(file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
-        self.requesting = true;
-        wiDialog.importMarkerSet(file, self.idProject, callBackImport);
-      }else {
-        __toastr.error("Only accept file csv", "Error");
-      }
-    });
+      .then(file => {
+        if (file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
+          self.requesting = true;
+          wiDialog.importMarkerSet(file, self.idProject, callBackImport);
+        } else {
+          __toastr.error("Only accept file csv", "Error");
+        }
+      });
     console.log("import marker set");
   }
   function callBackImport(data) {
@@ -1365,11 +1423,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         return resolve(file);
 
       })
-      .catch(err => {
-        console.error("file browser error", err);
-        if (err.data.code === 401) location.reload();
-        return reject()
-      });
+        .catch(err => {
+          console.error("file browser error", err);
+          if (err.data.code === 401) location.reload();
+          return reject()
+        });
     });
   }
   function callbackImportLAS(response) {
@@ -1400,43 +1458,43 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
   }
 
-  this.checkFileExisted = function(file, metaDataRequest, sv) {
+  this.checkFileExisted = function (file, metaDataRequest, sv) {
     return new Promise(res => {
-      self.httpGet(self.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), function(result) {
+      self.httpGet(self.checkFileExistedUrl + encodeURIComponent(JSON.stringify(metaDataRequest)), function (result) {
         if ((result.data && result.data.code && result.data.code === 409) && !file.overwrite) {
           return res(true);
-        }else {
+        } else {
           return res(false);
         }
-      }, {service: sv});
+      }, { service: sv });
     })
   }
-  this.uploadFile = function(file, path, metaDataRequest) {
+  this.uploadFile = function (file, path, metaDataRequest) {
     let uploadUrl = self.uploadUrl + encodeURIComponent((path).replace('//', '/')) + '&metaData=' + encodeURIComponent(JSON.stringify(metaDataRequest)) + '&overwrite=' + file.overwrite;
     let uploadingObject = Upload.upload({
-        url: uploadUrl,
-        headers: {
+      url: uploadUrl,
+      headers: {
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
         'Storage-Database': JSON.stringify(self.storageDatabase),
         'Service': "WI_PROJECT_STORAGE"
-        },
-        data: {
+      },
+      data: {
         'upload-file': file
-        }
+      }
     });
     uploadingObject.then(resp => {
-        console.log("Upload success");
-        __toastr.success("Upload success");
+      console.log("Upload success");
+      __toastr.success("Upload success");
     })
-    .catch(err => {
+      .catch(err => {
         console.log("Upload terminated", err.message);
         __toastr.error("Upload error");
-    });
+      });
   }
   this.previewMetadata = function (metadata, title) {
-		metadataDialog(ModalService, metadata, title);
+    metadataDialog(ModalService, metadata, title);
   }
   this.copySyncKey = function (path = '/') {
     self.httpPost(self.createSyncSession, { path }, async function (res) {

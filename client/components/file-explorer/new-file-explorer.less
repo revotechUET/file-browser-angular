@@ -19,7 +19,7 @@ file-explorer {
         flex-direction: column;
         height        : 100%;
         background: #fff;
-        
+
         .toolbar {
             background     : #fff;
             overflow       : overlay hidden;
@@ -42,10 +42,25 @@ file-explorer {
             .left {
                 display    : flex;
                 color      : #0067c7;
-                margin-left: 15px;
+                margin-left: 20px;
                 align-items: center;
                 font-weight: bold;
                 white-space: nowrap;
+            }
+            .path-list {
+                display    : flex;
+                color      : #0067c7;
+                align-items: center;
+                font-weight: bold;
+                white-space: nowrap;
+                flex: 0 1 80%;
+                overflow: overlay;
+                .path-item {
+                    display: flex;
+                    align-items: center;
+                    margin-right: 8px;
+                    font-size: 12px;
+                }
             }
 
             .processing {
@@ -119,10 +134,11 @@ file-explorer {
             }
 
             .right {
+                flex: 1;
                 display        : flex;
                 border-radius  : 2px;
                 color          : #000;
-                margin-right   : 15px;
+                margin-right   : 20px;
                 align-items    : center;
                 justify-content: space-between;
                 background     : rgba(255, 255, 255, 0.329);
@@ -130,7 +146,6 @@ file-explorer {
                 .filter-mode {
                     display       : flex;
                     align-items   : center;
-                    padding       : 5px 10px;
                     color         : #000;
                     text-transform: uppercase;
                     font-size     : 11px;
@@ -187,8 +202,8 @@ file-explorer {
 
             .sidebar-properties {
                 border-left: 1px solid #c5c5c5;
-                position   : absolute;
-                right      : 5px;
+                // position   : absolute;
+                // right      : 5px;
                 height     : 100%;
             }
 
@@ -232,7 +247,7 @@ file-explorer {
                 border-right    : 1px solid #f4f4f4;
                 border-left     : 1px solid #f4f4f4;
                 padding         : 10px 13px;
-                transition: all ease-in 0.1s;
+                // transition: all ease-in 0.1s;
                 // margin-right : 15px;
             }
 
@@ -245,7 +260,7 @@ file-explorer {
                 padding         : 10px;
                 // direction       : rtl;
                 text-align      : end;
-                transition: all ease-in 0.1s;
+                // transition: all ease-in 0.1s;
 
                 // margin-right : 15px;
             }
@@ -257,7 +272,7 @@ file-explorer {
                 overflow        : hidden;
                 border-right    : 1px solid #f4f4f4;
                 padding         : 10px;
-                transition: all ease-in 0.1s;
+                // transition: all ease-in 0.1s;
 
                 // margin-right : 15px;
             }
@@ -269,7 +284,7 @@ file-explorer {
                 overflow        : hidden;
                 border-right    : 1px solid #f4f4f4;
                 padding         : 10px;
-                transition: all ease-in 0.1s;
+                // transition: all ease-in 0.1s;
 
 
             }
@@ -311,7 +326,7 @@ file-explorer {
         height                   : 3px;
         background               : #2196F3;
         position                 : absolute;
-        transition               : 3s all ease-out;
+        // transition               : 3s all ease-out;
         animation-name           : loading-interminate;
         animation-duration       : 3s;
         animation-iteration-count: infinite;

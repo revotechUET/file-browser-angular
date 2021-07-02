@@ -70,12 +70,15 @@
                 class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
         </div>
         <div class="path-list">
-            <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
-            <div class="ti ti-harddrives" style="margin-right: 8px;"></div>
+            <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px; text-decoration-line: none;"></div>
+            <button class="ti btn-link" style="margin-right: 8px; padding: 0;" title="{{'View ' + self.dustbinMode?'dustbin':'storage'}}"
+                ng-class="self.dustbinMode?'ti-archive':'ti-harddrive'"
+                ng-disabled="self.requesting"
+                ng-click="self.dustbinMode=!self.dustbinMode"></button>
             <div class="ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
             <div class="button-fn" style="margin-right: 8px;"
                 ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">
-                {{'Home'}}
+                {{self.dustbinMode?'Dustbin':'Home'}}
             </div>
             <div ng-repeat="(key, dir) in self.currentPath.slice(0,-1) track by key" class="path-item">
                 <div class="button-fn ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>

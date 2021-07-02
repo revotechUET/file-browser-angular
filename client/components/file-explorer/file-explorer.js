@@ -223,6 +223,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
   self.modeFilter = 'none';
   self.getSize = null;
+  self.storageDatabaseString = '';
+  self.dustbinMode = false;
 
   this.$onInit = function () {
     if (typeof self.setContainer === 'function') self.setContainer(self);
@@ -270,7 +272,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     }
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
-    $scope.$watch(() => JSON.stringify(self.storageDatabase) + self.url, () => {
+    $scope.$watch(() => {
+      self.storageDatabaseString = JSON.stringify({...self.storageDatabase, mode: self.dustbinMode ? 'DUSTBIN' : 'DEFAULT'});
+      return self.storageDatabaseString + self.url
+    }, () => {
       if (self.storageDatabase && self.url) {
         if (self.linkedFile) {
           //self.goToByPath(self.linkedFile);
@@ -647,7 +652,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (!item || !item.rootIsFile)
       return '';
 
-    return self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}&storage_database=${JSON.stringify(self.storageDatabase)}`;
+    return self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}&storage_database=${self.storageDatabaseString}`;
   }
 
   this.getDownloadFileName = function (items) {
@@ -672,7 +677,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     //
     // const a = document.createElement('a');
     // a.download = item.rootName || 'untitled';
-    // a.href = self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}&storage_database=${JSON.stringify(self.storageDatabase)}`;
+    // a.href = self.downloadUrl + encodeURIComponent(item.path) + `&token=${window.localStorage.getItem('token')}&storage_database=${self.storageDatabaseString}`;
     // a.style.display = 'none';
     // document.body.appendChild(a);
     // a.click();
@@ -690,7 +695,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       method: 'POST',
       headers: {
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Storage-Database': self.storageDatabaseString,
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Service': 'WI_PROJECT_STORAGE'
@@ -1066,7 +1071,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         'Access-Control-Allow-Credentials': 'true',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Storage-Database': self.storageDatabaseString,
         'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
       }
     };
@@ -1101,7 +1106,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Storage-Database': self.storageDatabaseString,
         'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
       },
       data: payload
@@ -1137,7 +1142,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Storage-Database': self.storageDatabaseString,
         'Service': (options || {}).service || 'WI_PROJECT_STORAGE'
       },
       body: JSON.stringify({ ...payload, uuid }),
@@ -1361,7 +1366,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     method: 'POST',
   //     headers: {
   //       'Authorization': window.localStorage.getItem('token'),
-  //       'Storage-Database': JSON.stringify(self.storageDatabase),
+  //       'Storage-Database': self.storageDatabaseString,
   //       'Content-Type': 'application/json',
   //       'Referrer-Policy': 'no-referrer',
   //       'Service': 'WI_PROJECT_STORAGE'
@@ -1402,7 +1407,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         method: 'POST',
         headers: {
           'Authorization': window.localStorage.getItem('token'),
-          'Storage-Database': JSON.stringify(self.storageDatabase),
+          'Storage-Database': self.storageDatabaseString,
           'Content-Type': 'application/json',
           'Referrer-Policy': 'no-referrer',
           'Service': 'WI_PROJECT_STORAGE'
@@ -1477,7 +1482,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         'Content-Type': 'application/json',
         'Referrer-Policy': 'no-referrer',
         'Authorization': window.localStorage.getItem('token'),
-        'Storage-Database': JSON.stringify(self.storageDatabase),
+        'Storage-Database': self.storageDatabaseString,
         'Service': "WI_PROJECT_STORAGE"
       },
       data: {

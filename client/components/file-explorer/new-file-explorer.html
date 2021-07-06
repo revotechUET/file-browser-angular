@@ -39,19 +39,19 @@
             <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"></div>
             <!-- delete -  -->
             <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()"
-                ng-class="{inactive: !(self.selectedList.length > 0)}"></div>
+                ng-class="{inactive: self.selectedList.length < 1 || self.dustbinMode}"></div>
             <!-- copy -  -->
             <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"
-                ng-class="{inactive: false}"></div>
+                ng-class="{inactive: self.dustbinMode}"></div>
             <!-- cut -  -->
-            <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: false}">
+            <div title="Cut" class="button-fn ti ti-cut" ng-click="self.copyOrCut('cut')" ng-class="{inactive: self.dustbinMode}">
             </div>
             <!-- paste -  -->
             <div title="Paste" class="button-fn ti ti-clipboard" ng-click="self.paste()"
-                ng-class="{inactive: !(self.pasteList.length > 0)}"></div>
+                ng-class="{inactive: self.pasteList.length < 1 || self.dustbinMode}"></div>
             <!-- bulkvedit -  -->
             <div title="Bulk Edit" class="button-fn ti ti-menu-alt" ng-click="self.bulkEdit(self.selectedList)"
-                ng-class="{inactive: self.selectedList.length <= 1}"></div>
+                ng-class="{inactive: self.selectedList.length <= 1 || self.dustbinMode}"></div>
             <!-- CopyLocation -->
             <div title="Copy Location" class="button-fn ti ti-layers-alt" ng-hide="self.hideAssociate"
                 ng-click="self.copyMultiLocation(self.selectedList)"
@@ -71,23 +71,23 @@
         </div>
         <div class="path-list">
             <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px; text-decoration-line: none;"></div>
-            <button class="ti btn-link" style="margin-right: 8px; padding: 0;" title="{{'View ' + self.dustbinMode?'dustbin':'storage'}}"
+            <button class="ti" style="margin-right: 8px; padding: 0;" title="{{self.dustbinMode?'View storage':'View dustbin'}}"
                 ng-class="self.dustbinMode?'ti-archive':'ti-harddrive'"
                 ng-disabled="self.requesting"
-                ng-click="self.dustbinMode=!self.dustbinMode"></button>
+                ng-click="self.switchStorageMode()"></button>
             <div class="ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
             <div class="button-fn" style="margin-right: 8px;"
                 ng-click="self.goTo(-1); self.filter='';self.modeFilter='none'">
                 {{self.dustbinMode?'Dustbin':'Home'}}
             </div>
             <div ng-repeat="(key, dir) in self.currentPath.slice(0,-1) track by key" class="path-item">
-                <div class="button-fn ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
+                <div class="ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
                 <div ng-click="self.goTo(key); self.filter=''; self.modeFilter='none'" style="cursor: pointer;">
                     {{dir.rootName | strLimit : 8}}
                 </div>
             </div>
             <div ng-if="self.currentPath.length" style="color: #000;" class="path-item active">
-                <div class="button-fn ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
+                <div class="ti ti-angle-right" style="margin-right: 8px; font-size: 9px;"></div>
                 {{self.currentPath.slice(-1)[0].rootName | strLimit : 12}}
             </div>
         </div>

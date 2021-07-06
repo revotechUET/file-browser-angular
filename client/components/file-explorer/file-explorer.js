@@ -273,7 +273,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
     $scope.$watch(() => {
-      self.storageDatabaseString = JSON.stringify({...self.storageDatabase, mode: self.dustbinMode ? 'DUSTBIN' : 'DEFAULT'});
+      self.storageDatabaseString = JSON.stringify({ ...self.storageDatabase, mode: self.dustbinMode ? 'DUSTBIN' : 'DEFAULT' });
       return self.storageDatabaseString + self.url
     }, () => {
       if (self.storageDatabase && self.url) {
@@ -474,8 +474,18 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     self.selectedList = [item];
     self.clickNodeFn && self.clickNodeFn(self.selectedList);
   };
-
+  this.clearHistory = function () {
+    self.history = [];
+    self.historyIndex = -1;
+  }
+  this.getCurrentPathString = function () {
+    return self.rootFolder + self.currentPath.map(c => c.rootName).join('/')
+  }
   this.goToPath = async function (path, history = true) {
+    if (history) {
+      self.historyIndex++;
+      self.history.splice(self.historyIndex, self.history.length, path);
+    }
     return new Promise((res, rej) => {
       self.httpGet(self.exploreUrl + encodeURIComponent(path), (result, err) => {
         if (!result || err) {
@@ -487,10 +497,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         path.split("/").filter(v => v).map((name, idx) => {
           self.currentPath.push({ rootName: name, displayName: name });
         })
-        if (history) {
-          self.historyIndex++;
-          self.history.splice(self.historyIndex, self.history.length, path);
-        }
         res(data);
         !$scope.$root.$$phase && $scope.$digest();
       })
@@ -513,8 +519,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       $scope.$digest();
     } else {
       if (self.disablePreview) return;
+      if (item.size === 0) {
+        _toastr && _toastr.warning(`File is empty`)
+        return;
+      }
       self.filter = '';
-      self.selectedList.push(item);
+      // self.selectedList.push(item);
       self.httpPost(`${self.previewUrl}/check-in-cache?file_path=${encodeURIComponent(item.path)}`,
         { item }, result => {
           // if (result.data.notCached) {
@@ -800,7 +810,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     if (self.requesting) return;
     if (index == -999) {
       // refresh
-      await self.goToPath(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'), false)
+      await self.goToPath(self.getCurrentPathString(), false)
       if (self.selectedItem) {
         const item = self.fileList.find(f => f.rootName === self.selectedItem.rootName);
         self.clickNode(item);
@@ -896,7 +906,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       case 'cut':
         async.eachSeries(self.pasteList, (file, next) => {
           let from = `from=${encodeURIComponent(file.path)}&`;
-          let dest = `dest=${encodeURIComponent(self.rootFolder + self.currentPath.map(c => c.rootName).join('/'))}`;
+          let dest = `dest=${encodeURIComponent(self.getCurrentPathString())}`;
 
           self.httpGet(`${self.moveUrl + from + dest}`, res => {
             if (!res.data.error && res.data.status === 'IN_PROGRESS') {
@@ -1015,7 +1025,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     };
     if (self.filter != '') {
       let payload = {
-        folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
+        folder: self.getCurrentPathString(),
         content: {
           conditions: {
             children: [{ name: self.filter }],
@@ -1040,7 +1050,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         self.modeFilter = 'advanced search';
         self.filter = '[Advanced search]';
         let payload = {
-          folder: self.rootFolder + self.currentPath.map(c => c.rootName).join('/'),
+          folder: self.getCurrentPathString(),
           content: self.searchQuery
         };
         doSearch(payload);
@@ -1501,11 +1511,16 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.previewMetadata = function (metadata, title) {
     metadataDialog(ModalService, metadata, title);
   }
-  this.copySyncKey = function (path = '/') {
+  this.copySyncKey = function (path) {
+    if (!path) path = self.getCurrentPathString();
     self.httpPost(self.createSyncSession, { path }, async function (res) {
       await navigator.clipboard.writeText(self.storageDatabase.directory + '/' + res.data.syncKey + path);
       window.toastr.success("Sync key copied");
     });
+  }
+  this.switchStorageMode = function () {
+    self.dustbinMode = !self.dustbinMode;
+    self.clearHistory();
   }
 }
 

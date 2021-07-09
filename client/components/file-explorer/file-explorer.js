@@ -1514,8 +1514,18 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.copySyncKey = function (path) {
     if (!path) path = self.getCurrentPathString();
     self.httpPost(self.createSyncSession, { path }, async function (res) {
-      await navigator.clipboard.writeText(self.storageDatabase.directory + '/' + res.data.syncKey + path);
-      window.toastr.success("Sync key copied");
+      const syncKey = self.storageDatabase.directory + '/' + res.data.syncKey + path;
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(syncKey);
+        window.toastr.success("Sync key copied");
+      } else {
+        wiDialog.confirmDialog('Sync key', `<span style="word-break:break-all;">${syncKey}</span>`, null, [
+          {
+            title: 'Close',
+            onClick: wiModal => wiModal.close(),
+          }
+        ])
+      }
     });
   }
   this.switchStorageMode = function () {

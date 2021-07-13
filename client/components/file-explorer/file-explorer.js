@@ -1519,7 +1519,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         await navigator.clipboard.writeText(syncKey);
         window.toastr.success("Sync key copied");
       } else {
-        wiDialog.confirmDialog('Sync key', `<span style="word-break:break-all;">${syncKey}</span>`, null, [
+        wiDialog.confirmDialog('Sync key', `<span style="word-break:break-all;user-select:all;">${syncKey}</span>`, null, [
           {
             title: 'Close',
             onClick: wiModal => wiModal.close(),

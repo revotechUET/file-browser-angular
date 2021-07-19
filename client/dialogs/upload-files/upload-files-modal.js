@@ -4,7 +4,7 @@ const utils = require('../../js/utils');
 require('./upload-files-modal.css');
 const getType = require('../../js/utils').getType;
 
-module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
+module.exports = function (ModalService, Upload, fileExplorerCtrl, callback, files, filesInFolders) {
   modalController.$inject = ['$scope', 'close'];
 
   function modalController($scope, close) {
@@ -41,6 +41,15 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback) {
     //   delete self.metaData4All.well;
     //   delete self.metaData4All.welltype;
     // }
+    this.$onInit = function () {
+      if (files && files.length) {
+        this.addForUpload(files);
+      }
+      if (filesInFolders && filesInFolders.length) {
+        this.folderPicked(filesInFolders);
+      }
+    }
+
     this.addForUpload = function ($files, isFolderUpload) {
       if (!$files || !$files.length) return;
       const validFiles = $files.filter(f => utils.validateNodeName(f.name));

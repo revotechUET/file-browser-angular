@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Vue, VueContextMenu } from "@revotechuet/misc-component-vue";
+import { Vue, VueContextMenu, WiDroppable } from "@revotechuet/misc-component-vue";
 
 Vue.use(VueContextMenu);
 
@@ -61,6 +61,9 @@ const GETSIZE_PATH = '/action/estimate-folder-size?dir='
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
+  Object.assign($scope, {
+    WiDroppable,
+  });
   let self = this;
   let _toastr = window.__toastr || window.toastr;
   window.fileBrowser = self;
@@ -1531,6 +1534,29 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.switchStorageMode = function () {
     self.dustbinMode = !self.dustbinMode;
     self.clearHistory();
+  }
+
+  async function getFilesInFolder(item, path = '') {
+    if (item.isFile) return new Promise(res => {
+      item.file(file => {
+        Object.defineProperty(file, 'webkitRelativePath', { value: path + file.name })
+        res([file]);
+      });
+    });
+    const entries = await new Promise(res => item.createReader().readEntries(res));
+    const files = await Promise.all(entries.map(e => getFilesInFolder(e, path + item.name + '/')));
+    return files.flat();
+  }
+  this.getFilesDrop = async function (event) {
+    const items = Array.from(event.dataTransfer.items).map(i => i.webkitGetAsEntry());
+    const files = Array.from(event.dataTransfer.files).filter((f, i) => items[i].isFile);
+    const folders = items.filter(i => i.isDirectory);
+    const filesInFolders = (await Promise.all(folders.map(f => getFilesInFolder(f)))).flat();
+    return [files, filesInFolders];
+  }
+  this.onDrop = async function (event) {
+    const [files, filesInFolders] = await self.getFilesDrop(event);
+    uploadFileDialog(ModalService, Upload, self, null, files, filesInFolders);
   }
 }
 

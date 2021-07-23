@@ -212,7 +212,7 @@ exports.validateKey = function(key) {
     return validateSpecialCharacter(key) && validateUnicodeCharacter(key);
 }
 function validateSpecialCharacter(str) {
-    // return true; // tmp disable validate
+    return true; // tmp disable validate
     return !(/[\\/:*?<>|{}^%`\[\]~#&$@=;+,]/.test(str));
 }
 function validateUnicodeCharacter(str) {

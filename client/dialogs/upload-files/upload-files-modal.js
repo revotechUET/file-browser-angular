@@ -186,9 +186,8 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback, fil
         url.searchParams.append('name', folder.name)
         url.searchParams.append('metaData', JSON.stringify(folder.metaData))
 
-        fileExplorerCtrl.httpGet(url.toString(), res => {
-          console.log(res);
-          folder.isDone = true;
+        fileExplorerCtrl.httpGet(url.toString(), (res, err) => {
+          if (!err) folder.isDone = true;
           next();
         }, { silent: true });
       }, (err) => {
@@ -230,9 +229,6 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback, fil
       self.uploadFiles();
     }
     this.cancelUpload = function () {
-      self.uploadFileList.forEach(f => {
-        f.warning = '';
-      });
       self.processing = false;
       self.processingFolder = false;
       self.selectedFile = self.bakSelectedFile;
@@ -294,21 +290,22 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback, fil
                     // console.log(resp);
                     next();
                   }, err => {
-                    console.log('Error status: ' + err);
                   }, event => {
                     let percentage = event.loaded / event.total * 100;
                     if (event.type === "load") {
-                      file.uploadingProgress.status = "Uploaded ...";
+                      file.uploadingProgress.status = "Uploaded";
                       self.processingName.splice(self.processingName.findIndex(f => _.isEqual(f, file)), 1);
                     }
                     file.uploadingProgress = {
                       progress: percentage,
-                      status: "Uploading ..."
+                      status: "Uploading..."
                     };
                     !$scope.$$phase && $scope.$digest();
                   });
                   file.uploadingObject.catch(err => {
-                    console.log("Upload terminated", err.message);
+                    file.uploadingProgress = null;
+                    toastr.error(err.data && err.data.message || 'Error connecting to server');
+                    console.log("Upload terminated", err);
                   });
                 }
               });
@@ -338,7 +335,11 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback, fil
       self.metaData4All.moreInfo[''] = '';
     };
     this.typeSelect = 'file';
-    self.selectRow = function(uploadRow, index, type) {
+    self.selectRow = function (uploadRow, index, type) {
+      if (self.selectedFile === uploadRow) {
+        self.selectedFile = null;
+        return;
+      }
       self.typeSelect = type;
       self.selectedFile = uploadRow;
     }

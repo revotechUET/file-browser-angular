@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Vue, VueContextMenu, WiDroppable } from "@revotechuet/misc-component-vue";
-
-Vue.use(VueContextMenu);
+import { Vue, WiContextMenu, WiDroppable } from "@revotechuet/misc-component-vue";
 
 // Load css
 require('./new-file-explorer.less');
@@ -57,12 +55,17 @@ const UPLOAD_DLIS = '/upload/dlis';
 const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
 const PROCESSING_STATUS = '/action/status?key=';
 const CANCEL_PROCESS = '/action/cancel?key=';
-const GETSIZE_PATH = '/action/estimate-folder-size?dir='
+const GETSIZE_PATH = '/action/estimate-folder-size?dir=';
+const GET_QUICK_OBJECTS = '/objects';
+const NEW_QUICK_OBJECT = '/new-row';
+const DELETE_QUICK_OBJECT = '/delete';
+
 Controller.$inject = ['$scope', '$timeout', '$filter', '$element', '$http', 'ModalService', 'Upload', 'wiSession', 'wiApi', 'wiDialog'];
 
 function Controller($scope, $timeout, $filter, $element, $http, ModalService, Upload, wiSession, wiApi, wiDialog) {
   Object.assign($scope, {
     WiDroppable,
+    WiContextMenu,
   });
   let self = this;
   let _toastr = window.__toastr || window.toastr;
@@ -228,6 +231,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   self.getSize = null;
   self.storageDatabaseString = '';
   self.dustbinMode = false;
+  this.bookmarks = [];
 
   this.$onInit = function () {
     if (typeof self.setContainer === 'function') self.setContainer(self);
@@ -272,13 +276,16 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
       self.getMetadataUrl = self.url + '/action/info';
       self.createSyncSession = self.url + '/file-explorer/create-sync-session';
+      self.getQuickObjectUrl = self.quickObjectUrl + GET_QUICK_OBJECTS;
+      self.newQuickObjectUrl = self.quickObjectUrl + NEW_QUICK_OBJECT;
+      self.deleteQuickObjectUrl = self.quickObjectUrl + DELETE_QUICK_OBJECT;
     }
     updateUrls();
     $scope.$watch(() => self.url, updateUrls);
     $scope.$watch(() => {
       self.storageDatabaseString = JSON.stringify({ ...self.storageDatabase, mode: self.dustbinMode ? 'DUSTBIN' : 'DEFAULT' });
       return self.storageDatabaseString + self.url
-    }, () => {
+    }, async () => {
       if (self.storageDatabase && self.url) {
         if (self.linkedFile) {
           //self.goToByPath(self.linkedFile);
@@ -287,6 +294,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         }
         self.processingKey = 'PROCESSING-' + self.storageDatabase.directory;
         self.processing = JSON.parse(localStorage.getItem(self.processingKey)) || [];
+
+        self.bookmarks = await self.getBookmarks();
       } else {
         self.fileList = [];
       }
@@ -371,7 +380,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.goTo(-999)
     })
   };
-  this.setIconFile = function (name) {
+  this.getIconFile = function (name) {
     let found = self.fileTypeList.find(f => f.type === getFileExtension(name))
     return found ? found.class : "file-icon-16x16";
   }
@@ -417,10 +426,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     return self.selectedList.indexOf(item) !== -1;
   };
 
-  function getFileListOrder(fileList, propOrder, reverse) {
-    if (!fileList) return;
-    let orderBy = $filter('orderBy');
-    return orderBy(fileList, propOrder, reverse);
+  function getFileListOrder(fileList, ...args) {
+    if (!fileList) return fileList;
+    return $filter('orderBy')(fileList, ...args);
   };
   this.clickNode = function (item, $event) {
     if (!item) {
@@ -443,7 +451,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     let indexInSelectedList = self.selectedList.indexOf(item);
 
     if ($event && $event.shiftKey) {
-      let list = getFileListOrder(self.fileList, self.propOrder, self.reverse);
+      let list = getFileListOrder(self.fileList, self.getOrderItem, false, self.orderFn);
       let indexInList = list.indexOf(item);
       let lastSelected = self.selectedList[0];
       let i = list.indexOf(lastSelected);
@@ -547,6 +555,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
                   let data = { title: item.rootName };
                   data.fileContent = result.data;
                   pdfViewerDialog(ModalService, self, data, item);
+                  self.addRecentFile(item);
 
                   // data.fileContent = resource;
                   // switch (true) {
@@ -580,6 +589,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
   this.openFolder = this.dblClickNode
 
+  function vueContextMenu(event, menu) {
+    self.contextMenu.$root.contextMenuEventBus.$emit('show', { pos: { x: event.pageX, y: event.pageY }, menu });
+  }
   this.showContextMenu = function (item, $event) {
     $event.stopPropagation()
     let menu = []
@@ -598,7 +610,26 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           handler() {
             self.downloadFile(self.selectedList)
           }
-        }, {
+        },
+        self.selectedList.length === 1 && !item.rootIsFile &&
+        (self.bookmarks.some(i => i.path === item.path) ?
+          {
+            label: 'Remove bookmark',
+            icon: 'ti ti-star',
+            handler() {
+              self.removeBookmark(item)
+            }
+          } :
+          {
+            label: 'Bookmark',
+            icon: 'ti ti-star',
+            handler() {
+              self.addBookmark(item)
+            }
+          }
+        ),
+        { split: true },
+        {
           label: 'Copy',
           icon: 'ti ti-files',
           handler() {
@@ -630,6 +661,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           }
         },
         !item.rootIsFile && {
+          split: true,
+        },
+        !item.rootIsFile && {
           label: 'Copy Sync Key',
           icon: 'ti ti-key',
           handler() {
@@ -656,7 +690,101 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       ];
     }
     menu = menu.filter(v => v);
-    menu.length && Vue.showContextMenu($event, menu);
+    menu.length && vueContextMenu($event, menu);
+  }
+
+  this.getBookmarks = function () {
+    return new Promise((resolve, reject) => {
+      const url = new URL(self.getQuickObjectUrl);
+      url.searchParams.set('linkType', 'favorite');
+      url.searchParams.set('username', window.localStorage.getItem('username'));
+      url.searchParams.set('storage_location', self.storageDatabase.directory);
+      this.httpGet(url.toString(), (res, err) => {
+        if (err || !res || !res.data) reject(err);
+        else resolve(res.data);
+      });
+    })
+  }
+  this.showBookmarks = async function ($event) {
+    const bookmarks = await self.getBookmarks();
+    self.bookmarks = bookmarks;
+    const menu = bookmarks.map(i => {
+      return {
+        label: i.path.split('/').filter(s => s).slice(-1)[0],
+        tooltip: i.path,
+        icon: 'folder-icon-16x16',
+        handler() {
+          self.goToPath(i.path);
+        }
+      }
+    })
+    if (menu.length) vueContextMenu($event, menu);
+    else _toastr.info('No bookmarks');
+  }
+
+  this.showRecentFiles = function ($event) {
+    const url = new URL(self.getQuickObjectUrl);
+    url.searchParams.set('linkType', 'recent');
+    url.searchParams.set('username', window.localStorage.getItem('username'));
+    url.searchParams.set('storage_location', self.storageDatabase.directory);
+    self.httpGet(url.toString(), (res, err) => {
+      if (err) return;
+      const files = res.data;
+      const menu = files.map(i => {
+        const name = i.path.split('/').filter(s => s).slice(-1)[0]
+        return {
+          label: name,
+          tooltip: i.path,
+          icon: self.getIconFile(name),
+          async handler() {
+            const dirPath = i.path.slice(0, i.path.lastIndexOf('/') + 1);
+            if (dirPath !== self.getCurrentPathString()) {
+              await self.goToPath(dirPath);
+            }
+            const item = self.fileList.find(f => f.rootIsFile && f.path === i.path);
+            self.clickNode(item);
+            !$scope.$root.$$phase && $scope.$digest();
+          }
+        }
+      });
+      if (menu.length) vueContextMenu($event, menu);
+      else _toastr.info('No recent files');
+    });
+  }
+
+  this.addBookmark = function (item) {
+    self.httpPost(self.newQuickObjectUrl, {
+      linkType: 'favorite',
+      username: window.localStorage.getItem('username'),
+      storage_location: self.storageDatabase.directory,
+      path: item.path,
+      objectType: item.rootIsFile ? 'file' : 'folder',
+    }, async (res, err) => {
+      self.bookmarks = await self.getBookmarks();
+    })
+  }
+
+  this.removeBookmark = async function (item) {
+    const obj = self.bookmarks.find(b => b.path === item.path);
+    if (!obj) {
+      self.bookmarks = await self.getBookmarks();
+      return;
+    }
+    self.httpPost(self.deleteQuickObjectUrl, obj, async (res, err) => {
+      if (err) return;
+      self.bookmarks = await self.getBookmarks();
+    })
+  }
+
+  this.addRecentFile = function (item) {
+    self.httpPost(self.newQuickObjectUrl, {
+      linkType: 'recent',
+      username: window.localStorage.getItem('username'),
+      storage_location: self.storageDatabase.directory,
+      path: item.path,
+      objectType: item.rootIsFile ? 'file' : 'folder',
+    }, (res, err) => {
+    })
   }
 
   this.getDownloadLink = function (items) {
@@ -1098,10 +1226,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       cb(result);
     }, err => {
       console.error("file browser error", err);
-      if (error.data && err.data.code === 401) location.reload();
+      if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
         self.requesting = false;
-        toastr.error('Error connecting to server');
+        toastr.error(err.data && err.data.message || 'Error connecting to server');
       }
       cb(null, err);
     });
@@ -1137,7 +1265,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
         self.requesting = false;
-        toastr.error('Error connecting to server');
+        toastr.error(err.data && err.data.message || 'Error connecting to server');
       }
     })
   };
@@ -1584,6 +1712,7 @@ app.component(componentName, {
     url: '@',
     previewUrl: '@',
     rawDataUrl: '@',
+    quickObjectUrl: '@',
     storageDatabase: '<',
     linkedFile: '@',
     idProject: '<',

@@ -1,6 +1,6 @@
 {
   "name": "@revotechuet/file-explorer",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "",
   "main": "./dist/file-explorer-module.js",
   "files": [
@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@revotechuet/misc-component-vue": "^1.2.2-61c4f39.0",
+    "@revotechuet/misc-component-vue": "1.2.3-f50b5b8.1",
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",

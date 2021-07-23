@@ -58,11 +58,10 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       }
       let queryStr = `dest=${encodeURIComponent(fileExplorerCtrl.rootFolder + fileExplorerCtrl.currentPath.map(c => c.rootName).join('/'))}&name=${encodeURIComponent(self.folderName)}&metaData=${encodeURIComponent(JSON.stringify(data))}`;
 
-      fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, res => {
-        if (!res.data.error) {
-          close(null);
-          fileExplorerCtrl.goTo(-999);
-        }
+      fileExplorerCtrl.httpGet(self.newFolderUrl + queryStr, (res, err) => {
+        if (err) return;
+        close(null);
+        fileExplorerCtrl.goTo(-999);
       })
     };
     self.updateMetaData = function (metaData) {

@@ -25,7 +25,7 @@
             <div title="Refresh" class="button-fn ti ti-reload"
                 ng-click="self.goTo(-999); self.filter=''; self.propOrder='rootName'; self.reverse=false; self.modeFilter='none'">
             </div>
-            <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px;"></div>
+            <div class="split"></div>
 
             <!-- Upload -  -->
             <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
@@ -68,9 +68,15 @@
             <div title="Submit to company database"
                 ng-show="self.selectedList.length !== 0 && !self.hideImportToInventory"
                 class="button-fn ti ti-check-box" ng-click="self.submitToCompanyDatabase(self.selectedList)"></div>
+            <div class="split"></div>
+
+            <div title="Bookmarks" class="button-fn ti ti-star" ng-click="self.showBookmarks($event)"
+                ng-class="{inactive: !self.storageDatabase}"></div>
+            <div title="Recent files" class="button-fn ti ti-time" ng-click="self.showRecentFiles($event)"
+                ng-class="{inactive: !self.storageDatabase}"></div>
         </div>
         <div class="path-list">
-            <div style="border-right: 1px solid #e8e8e8; height: 40px; margin-right: 20px; text-decoration-line: none;"></div>
+            <div class="split"></div>
             <button class="ti" style="margin-right: 8px; padding: 0;" title="{{self.dustbinMode?'View storage':'View dustbin'}}"
                 ng-class="self.dustbinMode?'ti-archive':'ti-harddrive'"
                 ng-disabled="self.requesting"
@@ -166,7 +172,7 @@
                             style="margin-right: 5px; margin-bottom: -4px;"></i>
                         <!-- <i class="folder-icon-16x16" ng-show="!item.rootIsFile && item.metaData.issyncfolder === 'false'"
                            style="margin-right: 5px; margin-bottom: -4px;"></i> -->
-                        <i ng-show="item.rootIsFile" class="{{self.setIconFile(item.metaData.name)}}"
+                        <i ng-show="item.rootIsFile" class="{{self.getIconFile(item.metaData.name)}}"
                             style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
@@ -253,4 +259,5 @@
             dropEffect: 'copy',
         }"
     />
+    <vue-component root="WiContextMenu" container="self" ref="contextMenu"/>
 </div>

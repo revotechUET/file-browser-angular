@@ -40,6 +40,8 @@ const UPLOAD_PATH = '/upload?location=';
 const DOWNLOAD_PATH = '/download?file_path=';
 const DOWNLOAD_PATH_POST = '/download';
 const REMOVE_PATH = '/action/remove?file_path=';
+const REMOVE_DUSTBIN = '/action/remove';
+const RESTORE_DUSTBIN = '/action/restore-dustbin'
 const COPY_PATH = '/action/copy?';
 const MOVE_PATH = '/action/move?';
 const NEW_FOLDER_PATH = '/action/create-folder?';
@@ -259,6 +261,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.uploadUrl = self.url + UPLOAD_PATH;
       self.downloadUrl = self.url + DOWNLOAD_PATH;
       self.removeUrl = self.url + REMOVE_PATH;
+      self.removeDustbin = self.url + REMOVE_DUSTBIN;
+      self.restoreDustbin = self.url + RESTORE_DUSTBIN;
       self.copyUrl = self.url + COPY_PATH;
       self.moveUrl = self.url + MOVE_PATH;
       self.newFolderUrl = self.url + NEW_FOLDER_PATH;
@@ -514,6 +518,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     })
   }
   this.dblClickNode = async function (item) {
+    if (self.dustbinMode) return _toastr.error("This action is not allowed on dustbin mode")
     if (!item)
       return;
     if (!item.rootIsFile) {
@@ -595,99 +600,115 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.showContextMenu = function (item, $event) {
     $event.stopPropagation()
     let menu = []
-    if (item) {
-      if (!self.selectedList.includes(item)) self.selectedList = [item];
-      menu = [
-        self.selectedList.length > 1 ? null : {
-          label: 'Open',
-          icon: 'ti ti-share',
-          handler() {
-            self.dblClickNode(item);
-          }
-        }, {
-          label: 'Download',
-          icon: 'ti ti-import',
-          handler() {
-            self.downloadFile(self.selectedList)
-          }
-        },
-        self.selectedList.length === 1 && !item.rootIsFile &&
-        (self.bookmarks.some(i => i.path === item.path) ?
-          {
-            label: 'Remove bookmark',
-            icon: 'ti ti-star',
-            handler() {
-              self.removeBookmark(item)
-            }
-          } :
-          {
-            label: 'Bookmark',
-            icon: 'ti ti-star',
-            handler() {
-              self.addBookmark(item)
-            }
-          }
-        ),
-        { split: true },
-        {
-          label: 'Copy',
-          icon: 'ti ti-files',
-          handler() {
-            self.copyOrCut('copy')
-          }
-        }, {
-          label: 'Cut',
-          icon: 'ti ti-cut',
-          handler() {
-            self.copyOrCut('cut')
-          }
-        }, !self.pasteList.length ? null : {
-          label: 'Paste',
-          icon: 'ti ti-clipboard',
-          handler() {
-            self.paste(item)
-          }
-        }, {
-          label: 'Delete',
-          icon: 'ti ti-close',
-          handler() {
-            self.removeNodes()
-          }
-        }, self.selectedList.length < 2 ? null : {
-          label: 'Bulk Edit',
-          icon: 'ti ti-menu-alt',
-          handler() {
-            self.bulkEdit(self.selectedList);
-          }
-        },
-        !item.rootIsFile && {
-          split: true,
-        },
-        !item.rootIsFile && {
-          label: 'Copy Sync Key',
-          icon: 'ti ti-key',
-          handler() {
-            self.copySyncKey(item.path);
-          }
-        },
-      ];
-    } else {
-      menu = [
-        !self.pasteList.length ? null : {
-          label: 'Paste',
-          icon: 'ti ti-clipboard',
-          handler() {
-            self.paste()
-          }
-        },
-        {
-          label: 'Copy Sync Key',
-          icon: 'ti ti-key',
-          handler() {
-            self.copySyncKey();
-          }
+    if(self.dustbinMode) {
+      menu = [{
+        label: 'Restore',
+        icon: 'ti ti-share-alt',
+        handler() {
+          self.restoreDustbinItem();
         }
-      ];
+      }, {
+        label: 'Delete permanently',
+        icon: 'ti ti-close',
+        handler() {
+          self.removeNodes()
+        }
+      }]
+    } else {
+      if (item) {
+        if (!self.selectedList.includes(item)) self.selectedList = [item];
+        menu = [
+          self.selectedList.length > 1 ? null : {
+            label: 'Open',
+            icon: 'ti ti-share',
+            handler() {
+              self.dblClickNode(item);
+            }
+          }, {
+            label: 'Download',
+            icon: 'ti ti-import',
+            handler() {
+              self.downloadFile(self.selectedList)
+            }
+          },
+          self.selectedList.length === 1 && !item.rootIsFile &&
+          (self.bookmarks.some(i => i.path === item.path) ?
+            {
+              label: 'Remove bookmark',
+              icon: 'ti ti-star',
+              handler() {
+                self.removeBookmark(item)
+              }
+            } :
+            {
+              label: 'Bookmark',
+              icon: 'ti ti-star',
+              handler() {
+                self.addBookmark(item)
+              }
+            }
+          ),
+          { split: true },
+          {
+            label: 'Copy',
+            icon: 'ti ti-files',
+            handler() {
+              self.copyOrCut('copy')
+            }
+          }, {
+            label: 'Cut',
+            icon: 'ti ti-cut',
+            handler() {
+              self.copyOrCut('cut')
+            }
+          }, !self.pasteList.length ? null : {
+            label: 'Paste',
+            icon: 'ti ti-clipboard',
+            handler() {
+              self.paste(item)
+            }
+          }, {
+            label: 'Delete',
+            icon: 'ti ti-close',
+            handler() {
+              self.removeNodes()
+            }
+          }, self.selectedList.length < 2 ? null : {
+            label: 'Bulk Edit',
+            icon: 'ti ti-menu-alt',
+            handler() {
+              self.bulkEdit(self.selectedList);
+            }
+          },
+          !item.rootIsFile && {
+            split: true,
+          },
+          !item.rootIsFile && {
+            label: 'Copy Sync Key',
+            icon: 'ti ti-key',
+            handler() {
+              self.copySyncKey(item.path);
+            }
+          },
+        ];
+      } else {
+        menu = [
+          !self.pasteList.length ? null : {
+            label: 'Paste',
+            icon: 'ti ti-clipboard',
+            handler() {
+              self.paste()
+            }
+          },
+          {
+            label: 'Copy Sync Key',
+            icon: 'ti ti-key',
+            handler() {
+              self.copySyncKey();
+            }
+          }
+        ];
+      }
     }
     menu = menu.filter(v => v);
     menu.length && vueContextMenu($event, menu);
@@ -831,6 +852,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
 
+
     $http({
       url: self.url + DOWNLOAD_PATH_POST,
       method: 'POST',
@@ -973,10 +995,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     wiDialog.confirmDialog("Delete Confirmation", mess, function (ret) {
       if (ret) {
         async.each(self.selectedList, (node, next) => {
-          self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
-            console.log(result);
+          // self.httpGet(self.removeUrl + encodeURIComponent(node.path), result => {
+          //   console.log(result);
+          //   next();
+          // });
+          self.httpPost(self.removeDustbin, {metaData: {...node.metaData, realpath: node.path}}, res => {
+            console.log(res)
             next();
-          })
+          });
         }, err => {
           if (!err) {
             self.goTo(-999);
@@ -985,6 +1011,40 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
   };
+  
+  this.restoreDustbinItem = async function () {
+    if(!self.selectedList) return;
+    console.log("Restore ", self.selectedList)
+    async.each(self.selectedList, (node, next) => {
+      wiDialog.promptDialog({
+        title: "Restore object to " + node.metaData.realpath,
+        inputName: "Restore item name",
+        input: function getName(key) {
+            let resp = "";
+            if (key.endsWith("/")) {
+                resp =  key.split("/").slice(-2)[0];
+            } else {
+                resp = key.substring(key.lastIndexOf("/") + 1);
+                if(resp.lastIndexOf(".") !== -1){
+                  resp = resp.substring(0, resp.lastIndexOf('.'))
+                }
+            }
+            return resp.substring(13,resp.length);
+          } (node.path)
+      }, function(newName){
+        console.log("====new name ", newName)
+        self.httpPost(self.restoreDustbin, {newName: newName, metaData: {...node.metaData}}, res => {
+          console.log(res)
+          next();
+        });
+      })
+    }, err => {
+      if (!err) {
+        self.goTo(-999);
+      }
+    })
+  }
+
   this.bulkEdit = function (items) {
     bulkEditDialog(ModalService, function (res) {
       if (res) {
@@ -1309,7 +1369,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
         self.requesting = false;
-        toastr.error('Error connecting to server');
+        toastr.error(err.data && err.data.message || 'Error connecting to server');
       }
     });
     return () => {
@@ -1661,6 +1721,17 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.switchStorageMode = function () {
     self.dustbinMode = !self.dustbinMode;
+    if (self.dustbinMode) {
+      this.headerArray[1] = {
+        label: 'Deleted',
+        key: 'deletedTime'
+      }
+    } else {
+      this.headerArray[1] = {
+        label: 'CODB Status',
+        key: 'codbStatus'
+      }
+    }
     self.clearHistory();
   }
 

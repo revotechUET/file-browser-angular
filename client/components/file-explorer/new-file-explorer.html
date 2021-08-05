@@ -28,18 +28,19 @@
             <div class="split"></div>
 
             <!-- Upload -  -->
-            <div title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
+            <div ng-class="{inactive: self.dustbinMode}" title="Upload" class="button-fn ti ti-export" ng-click="self.uploadFiles()"></div>
             <!-- download -  -->
             <div title="Download" class="button-fn ti ti-import" ng-click="self.downloadFile(self.selectedList)"
-                ng-class="{inactive: self.selectedList.length === 0}"></div>
+                ng-class="{inactive: self.selectedList.length === 0 || self.dustbinMode}"></div>
             <!-- open -  -->
             <div title="Open" class="button-fn ti ti-share" ng-click="self.dblClickNode(self.selectedList[0])"
-                ng-class="{inactive: !(self.selectedList.length == 1)}"></div>
+                ng-class="{inactive: !(self.selectedList.length == 1) || self.dustbinMode}"></div>
             <!-- newfolder -  -->
-            <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"></div>
+            <div title="New Folder" class="button-fn ti ti-plus" ng-click="self.newFolder()"
+                ng-class="{inactive: self.dustbinMode}"></div>
             <!-- delete -  -->
             <div title="Delete" class="button-fn ti ti-close" ng-click="self.removeNodes()"
-                ng-class="{inactive: self.selectedList.length < 1 || self.dustbinMode}"></div>
+                ng-class="{inactive: self.selectedList.length < 1 }"></div>
             <!-- copy -  -->
             <div title="Copy" class="button-fn ti ti-files" ng-click="self.copyOrCut('copy')"
                 ng-class="{inactive: self.dustbinMode}"></div>
@@ -176,9 +177,11 @@
                             style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
-                    <div ng-style='{"width": self.widthArray[1]}' title="{{item.codbStatus}}" class="data-type">
-                        {{item.codbStatus}}
+                    
+                    <div ng-style='{"width": self.widthArray[1]}' title="{{self.dustbinMode ? deletedTime : item.codbStatus}}" class="data-type">
+                        {{self.dustbinMode ?  (+item.metaData.name.substring(0,13) | formatDate) : item.codbStatus}}
                     </div>
+
                     <div ng-style='{"width": self.widthArray[2]}' title="{{item.metaData.datatype}}" class="data-type">
                         {{item.metaData.datatype}}</div>
                     <div ng-style='{"width": self.widthArray[3]}' title="{{item.size | humanReadableFileSize}}"
@@ -241,7 +244,7 @@
                     is-folder="!self.selectedItem.rootIsFile" get-size="self.getSize" api-url="self.url"
                     storage-database="self.storageDatabase" remove-revision-func="self.removeRevision"
                     restore-revision-func="self.restoreVersion" readonly-values="self.readonlyValues"
-                    dblclick-revision-func="self.dblClickNode" item="self.selectedItem">
+                    dblclick-revision-func="self.dblClickNode" item="self.selectedItem" dustbin-mode="self.dustbinMode">
                 </storage-props>
             </div>
         </side-bar>

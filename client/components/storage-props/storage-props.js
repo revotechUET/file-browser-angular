@@ -191,6 +191,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 		}
 		if(mdKey == 'associate') value = self.metaData;
 		let readonly = (configObj.option == 'readonly' || self.readonlyValues.find(k => k==mdKey)) ? true : false;
+		readonly = self.dustbinMode ? true : readonly
 		return {
 			name: mdKey,
 			label: configObj.translation || mdKey,
@@ -474,6 +475,7 @@ app.component(componentName, {
 		apiUrl: '<',
 		storageDatabase: '<',
 		viewOnly: '<',
+		dustbinMode: '<'
 	}
 });
 app.directive('spEnter', ['$parse', function ($parse) {

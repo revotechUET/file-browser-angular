@@ -306,6 +306,16 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
     self.requesting = true;
 
+		const unwatch = $scope.$watch(() => $scope.$root.taxonomies, () => {
+			if (!$scope.$root.taxonomies) return;
+			unwatch();
+			const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
+				if (!Array.isArray($scope.$root.taxonomies[key])) return obj;
+				obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
+				return obj;
+			}, {});
+			utils.setSelections(taxonomies);
+		});
     //#region processing status
     const refreshDebounced = _.debounce(() => self.goTo(-999), 1000);
     let updating = false;
@@ -1011,7 +1021,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       }
     });
   };
-  
+
   this.restoreDustbinItem = async function () {
     if(!self.selectedList) return;
     console.log("Restore ", self.selectedList)

@@ -11,10 +11,15 @@ module.exports = function (ModalService, metadata, callback) {
     self.warning = '';
     self.name = '';
     self.value = '';
+    self.valueAutocomplete = [];
     try {
-      self.autocompleteSource = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);
+      self.nameAutocomplete = $scope.$root.taxonomies['Custom Metadata'].map(i => i.item);
     } catch (e) {}
     let fixKeys = ['name', 'type', 'size', 'location', 'author', 'uploaded', 'modifided', 'source', 'parameter', 'quality', 'relatesto'];
+    this.nameChanged = function () {
+      self.warning = '';
+      self.valueAutocomplete = ($scope.$root.taxonomies.metadataValue[_.camelCase(self.name)] || []);
+    }
     this.onOk = function () {
       if(!utils.validateKey(self.name)) {
         self.warning = "A key can't contain any of the following characters / \\ : * ? \" < > | ";

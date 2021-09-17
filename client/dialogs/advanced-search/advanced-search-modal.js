@@ -44,7 +44,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
       "name" : {
         type: 'text',
         label: "File Name"
-      }, 
+      },
       "type" : {
         type: 'text',
         label: "File Type"
@@ -81,13 +81,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     this.getSelections = function (mdkey) {
       switch (mdkey) {
         case 'datatype':
-          return utils.getSelections()['datatypes'];
+          return utils.getSelections()[mdkey];
         default:
-          const taxonomies = $scope.$root.taxonomies[self.mapKey[mdkey].label];
-          if (taxonomies) {
-            return taxonomies.map(t => t.item);
-          }
-          return null
+          return utils.getSelections()[self.mapKey[mdkey].label];
       }
     }
     try {
@@ -203,12 +199,12 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     }
     this.countMDRow = function (key) {
       if(key == 'custom') {
-        if (self.customArr && self.customArr.length) 
+        if (self.customArr && self.customArr.length)
           return self.customArr.length;
         else return 0;
       } else {
         let metadata = self.conditions.find(c => c.mdtype == key);
-        if (metadata && metadata.children && metadata.children.length) 
+        if (metadata && metadata.children && metadata.children.length)
           return metadata.children.length;
         else return 0;
       }
@@ -259,7 +255,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
                           rObj[mdtype].from = new Date(item[mdtype].from).getTime();
                           rObj[mdtype].to = new Date(item[mdtype].from).getTime();
                         } else {}
-                      } 
+                      }
                       else rObj[condition.mdtype] = item[condition.mdtype];
                       if (rObj != {}) children.push(rObj);
                     };
@@ -396,7 +392,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         inputName: "Configuration Name",
         input: self.loadedFilter ? self.loadedFilter.name:""
       }
-      // 
+      //
       let cacheConditions = Object.assign([], self.conditions);
       cacheConditions.forEach(md => {
         if(md.mdtype === "uploaded") {

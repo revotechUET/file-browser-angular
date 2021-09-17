@@ -1,7 +1,7 @@
 const constants = require('./constants');
 
-exports.getConfigProps = function() {
-	return {
+exports.getConfigProps = function () {
+    return {
         "name": {
             "translation": "Name",
             "option": "use",
@@ -119,7 +119,7 @@ exports.getConfigProps = function() {
         "relatesto": {
             "translation": "Relates to",
             // "option": "use",
-            "option" : "notuse",
+            "option": "notuse",
             "section": "Information",
             "typeSpec": "wilink",
             "refSpec": null,
@@ -160,55 +160,58 @@ exports.getConfigProps = function() {
     };
 }
 
-exports.getSelections = function () {
-	return {
-  		"datatypes" : [
-	  		"",
-			"Biostratigraphy",
-			"Borehole Seismic",
-			"Checkshot",
-			"Drilling Reports (Drilling Programs, Final Drilling Reports, Final Completion Reports)",
-			"DST (Drill Stem Test)",
-			"Image Logs",
-			"Mud Logging (Gas Data, Mud Log, Oil show, etc.)",
-			"Perforation",
-			"Pressure Logs",
-			"Production (Data, Forecast, Reports, etc.)",
-			"PVT (Lab Data, Modeling, Reports, Analysis, etc.)",
-			"Well Intervention (Interpretation Reports, Planning, Daily Reports, Log Data, Analysis, etc.)",
-            "Basin Modeling (Geochemical, Petroleum System)",
-            "Conventional Logs",
-            "Core Samples",
-            "Cuttings Samples",
-            "Deposition Environment and Sequence Stratigraphy",
-            "Directional Surveys",
-            "Drilling Data (Mudweight, ROP, SPP, Torque, etc.)",
-            "Dynamic Model",
-            "Exploration Potential Reports",
-            "FDP",
-            "Geology Reports (SOR, Well Proposals, Well Evaluation Reports, Geological Final Well Reports)",
-            "Geomechanics",
-            "Geophysics",
-            "Interpreted Logs",
-            "Lithology",
-            "Material Balance",
-            "Petrography",
-            "Petrophysics",
-            "RAR",
-            "Static Model",
-            "Study Reports",
-            "Well Model",
-            "Well Paths",
-            "Well Test (Records, Interpretation, etc.)",
-            "Others",
-	  	].sort((a, b) => a.localeCompare(b))
-	};
+let selections = {
+    "datatypes": [
+        "",
+        "Biostratigraphy",
+        "Borehole Seismic",
+        "Checkshot",
+        "Drilling Reports (Drilling Programs, Final Drilling Reports, Final Completion Reports)",
+        "DST (Drill Stem Test)",
+        "Image Logs",
+        "Mud Logging (Gas Data, Mud Log, Oil show, etc.)",
+        "Perforation",
+        "Pressure Logs",
+        "Production (Data, Forecast, Reports, etc.)",
+        "PVT (Lab Data, Modeling, Reports, Analysis, etc.)",
+        "Well Intervention (Interpretation Reports, Planning, Daily Reports, Log Data, Analysis, etc.)",
+        "Basin Modeling (Geochemical, Petroleum System)",
+        "Conventional Logs",
+        "Core Samples",
+        "Cuttings Samples",
+        "Deposition Environment and Sequence Stratigraphy",
+        "Directional Surveys",
+        "Drilling Data (Mudweight, ROP, SPP, Torque, etc.)",
+        "Dynamic Model",
+        "Exploration Potential Reports",
+        "FDP",
+        "Geology Reports (SOR, Well Proposals, Well Evaluation Reports, Geological Final Well Reports)",
+        "Geomechanics",
+        "Geophysics",
+        "Interpreted Logs",
+        "Lithology",
+        "Material Balance",
+        "Petrography",
+        "Petrophysics",
+        "RAR",
+        "Static Model",
+        "Study Reports",
+        "Well Model",
+        "Well Paths",
+        "Well Test (Records, Interpretation, etc.)",
+        "Others",
+    ].sort((a, b) => a.localeCompare(b))
 }
-
-exports.validateNodeName = function(name) {
+exports.getSelections = function () {
+    return selections;
+}
+exports.setSelections = function (val) {
+    Object.assign(selections, val)
+}
+exports.validateNodeName = function (name) {
     return validateSpecialCharacter(name);
 }
-exports.validateKey = function(key) {
+exports.validateKey = function (key) {
     return validateSpecialCharacter(key) && validateUnicodeCharacter(key);
 }
 function validateSpecialCharacter(str) {
@@ -238,7 +241,7 @@ function isFolder(fileName) {
     return !fileName.includes(".");
 }
 
-function formatBytes(a,b) {if(0==a) return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]}
+function formatBytes(a, b) { if (0 == a) return "0 Bytes"; var c = 1024, d = b || 2, e = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"], f = Math.floor(Math.log(a) / Math.log(c)); return parseFloat((a / Math.pow(c, f)).toFixed(d)) + " " + e[f] }
 
 exports.checkMetadata = function (metadata) {
     const arr = [];
@@ -246,12 +249,12 @@ exports.checkMetadata = function (metadata) {
     if (!metadata.field) arr.push('Field');
     if (!metadata.datatype) arr.push('Data Type');
     // if (window.explorertree) {
-        try {
-            const well = JSON.parse(metadata.well);
-            if (!well.name) arr.push('Well');
-        } catch (error) {
-            arr.push('Well');
-        }
+    try {
+        const well = JSON.parse(metadata.well);
+        if (!well.name) arr.push('Well');
+    } catch (error) {
+        arr.push('Well');
+    }
     // }
     if (arr.length) return arr.join(', ') + ' shoud not be empty!';
     return '';

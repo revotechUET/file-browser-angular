@@ -37,16 +37,8 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	this.$onInit = function () {
 		self.statusUrl = self.apiUrl + PROCESSING_STATUS;
 		self.getMetadataUrl = self.apiUrl + '/action/info';
-		const unwatch = $scope.$watch(() => $scope.$root.taxonomies, () => {
-			if (!$scope.$root.taxonomies) return;
-			unwatch();
-			const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
-				obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
-				return obj;
-			}, {});
-			self.selections = { ...utils.getSelections(), ...taxonomies };
- 			self.fields = self.getMDObj();
-		});
+		self.selections = utils.getSelections();
+		 self.fields = self.getMDObj();
 	};
 	this.fields = [];
 	this.wells = [];

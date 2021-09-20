@@ -81,7 +81,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     this.getSelections = function (mdkey) {
       switch (mdkey) {
         case 'datatype':
-          return utils.getSelections()[mdkey];
+          return utils.getSelections()['datatypes'];
         default:
           return utils.getSelections()[self.mapKey[mdkey].label];
       }

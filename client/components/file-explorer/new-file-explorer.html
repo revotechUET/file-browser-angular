@@ -140,6 +140,8 @@
                     title="{{self.searching?'Stop':'Clear'}}" ng-style="{color: self.filter != '' ? '#c00' : '#eee'}">
                 </div>
                 <div class="button-fn ti ti-settings" title="Advanced search" ng-click="self.advancedSearch()"
+                    ng-disabled="self.searching"></div>
+                <div class="button-fn ti ti-info" title="Index search" ng-click="self.indexSearch()"
                     ng-disabled="self.searching" style="margin-right: 0;"></div>
             </div>
             <div class="split margin"></div>
@@ -177,7 +179,7 @@
                             style="margin-right: 5px; margin-bottom: -4px;"></i>
                         {{item.rootName}}
                     </div>
-                    
+
                     <div ng-style='{"width": self.widthArray[1]}' title="{{self.dustbinMode ? deletedTime : item.codbStatus}}" class="data-type">
                         {{self.dustbinMode ?  (+item.metaData.name.substring(0,13) | formatDate) : item.codbStatus}}
                     </div>

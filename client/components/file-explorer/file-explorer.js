@@ -48,6 +48,7 @@ const NEW_FOLDER_PATH = '/action/create-folder?';
 const SEARCH_PATH = '/search';
 const SEARCH_STREAM_PATH = '/search/streaming';
 const SEARCH_STREAM_CANCEL_PATH = '/search/streaming/cancel';
+const INDEX_SEARCH_PATH = '/search/elasticsearch';
 const UPDATE_META_DATA = '/action/update-meta-data';
 const CHECK_OBJECT_EXISTS = '/upload/is-existed?metaData=';
 const RESTORE_REVISION = '/action/restore';
@@ -255,6 +256,22 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       subFolders: "included"
     }
     self.searchQuery = searchQuery;
+    let indexSearchQuery = {
+      conditions: {
+        operator: "and",
+        children: [
+          {
+            operator: "or",
+            children: [
+              { name: "" }
+            ]
+          }
+        ]
+      },
+      type: "all",
+      subFolders: "included"
+    }
+    self.indexSearchQuery = indexSearchQuery;
     function updateUrls() {
       self.rawDataUrl = self.url + RAW_DATA_PATH;
       self.exploreUrl = self.url + EXPLORE_PATH;
@@ -269,6 +286,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.searchUrl = self.url + SEARCH_PATH;
       self.searchStreamingUrl = self.url + SEARCH_STREAM_PATH;
       self.searchStreamingCancelUrl = self.url + SEARCH_STREAM_CANCEL_PATH;
+      self.indexSearchUrl = self.url + INDEX_SEARCH_PATH;
       self.updateMetaDataUrl = self.url + UPDATE_META_DATA;
       self.checkFileExistedUrl = self.url + CHECK_OBJECT_EXISTS;
       self.restoreRevisionUrl = self.url + RESTORE_REVISION;
@@ -1176,14 +1194,14 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
 
   self.searching = false;
-  function doSearch(payload) {
+  function doSearch(payload, url) {
     if (self.searching) return;
     self.searching = true;
     if (self.searchMode === 'stream') {
       self.fileList = [];
       let result = '';
       const EOL = '***eol***';
-      self.abortSearch = self.httpPostStreaming(self.searchStreamingUrl, payload,
+      self.abortSearch = self.httpPostStreaming(url || self.searchStreamingUrl, payload,
         res => {
           if (!self.searching) return;
           result += res;
@@ -1203,7 +1221,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           self.searching = false;
         });
     } else {
-      self.httpPost(self.searchUrl, payload, res => {
+      self.httpPost(url || self.searchUrl, payload, res => {
         self.fileList = res.data.data;
       });
     }
@@ -1257,6 +1275,20 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         doSearch(payload);
       }
     });
+  }
+  this.indexSearch = function () {
+    if (self.searching) return;
+    advancedSearchDialog(ModalService, self, function (isSearching) {
+      if (isSearching) {
+        self.modeFilter = 'index search';
+        self.filter = '[Index search]';
+        const payload = {
+          folder: self.getCurrentPathString(),
+          content: self.indexSearchQuery
+        };
+        doSearch(payload, self.indexSearchUrl);
+      }
+    }, 'index');
   }
   this.clearSearch = function () {
     if (self.searching) {

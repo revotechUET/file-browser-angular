@@ -23,7 +23,7 @@
                                 ng-class="{'actived': self.searchQuery.type === 'folder'}">
                                 <div>Folder</div>
                             </div>
-                            
+
                             <!-- <span></span>
                             <div ng-click="self.subFolders = !self.subFolders" ng-class="{'actived': self.subFolders}">
                                 <div>Sub-Folders</div>
@@ -31,10 +31,10 @@
                             -->
                         </div>
                     </div>
-                   
+
                 </div>
                 <div style="display: flex; flex-wrap: wrap;">
-                    <div class="btn-item" ng-repeat="(key, value) in self.mapKey">
+                    <div class="btn-item" ng-repeat="(key, value) in self.mapKey track by key">
                         <div ng-click="self.insertMetaDataKey(key)" ng-class="{'has-item' : self.countMDRow(key)}">
                             {{value.label}}
                         </div>
@@ -50,7 +50,7 @@
                 </div>
                 <div class="data-key-area">
                   <form name="conditionsForm">
-                    <div ng-repeat="md in self.conditions" ng-class="{'selected-item': self.rowSelected(md)}">
+                    <div ng-repeat="md in self.conditions track by $index" ng-class="{'selected-item': self.rowSelected(md)}">
                         <div ng-repeat="child in md.children track by $index">
                             <div class="form-group">
                                 <label class="col-sm-2" ng-if="$index == 0">{{self.getLabel(md)}}</label>
@@ -138,8 +138,8 @@
                 </div>
             </div>
             <div class="wi-modal-footer">
-                <div class="btn-footer" ng-hide="self.hideActionFilter" ng-click="self.loadFilter()">Load</div>
-                <div class="btn-footer" ng-hide="self.hideActionFilter" ng-click="self.saveFilter()">Save</div>
+                <div class="btn-footer" ng-hide="self.hideActionFilter && mode!=='advanced'" ng-click="self.loadFilter()">Load</div>
+                <div class="btn-footer" ng-hide="self.hideActionFilter && mode!=='advanced'" ng-click="self.saveFilter()">Save</div>
                 <div class="btn-footer" ng-click="self.applySearch()">Apply</div>
                 <div class="btn-footer ok-btn" ng-click="self.okSearch()">Ok</div>
                 <div class="btn-footer close-btn" ng-click="self.closeModal()">Close</div>

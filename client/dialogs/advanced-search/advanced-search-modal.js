@@ -2,7 +2,13 @@ const helper = require('../dialog-helper');
 require('./advanced-search-modal.less');
 const utils = require('../../js/utils');
 
-module.exports = function (ModalService, fileExplorerCtrl, callback) {
+/**
+ * @param {Function} ModalService
+ * @param {Function} fileExplorerCtrl
+ * @param {Function} callback
+ * @param {('advanced'|'index')} [mode='advanced']
+ */
+module.exports = function (ModalService, fileExplorerCtrl, callback, mode = 'advanced') {
   modalController.$inject = ['$scope', 'close', 'wiApi', 'wiDialog', '$timeout'];
 
   function modalController($scope, close, wiApi, wiDialog, $timeout) {
@@ -91,7 +97,9 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
     } catch (e) {}
     // this.datatypes = utils.getSelections()['datatypes'];
     this.warning = '';
-    this.searchQuery = angular.copy(fileExplorerCtrl.searchQuery);
+    this.mode = mode;
+    const searchQueryKey = mode === 'advanced' ? 'searchQuery' : 'indexSearchQuery';
+    this.searchQuery = angular.copy(fileExplorerCtrl[searchQueryKey]);
     this.customArr = [];
     this.conditions = getTableConditions(this.searchQuery);
     this.subFolders = this.searchQuery.subFolders == 'included' ? true : false;
@@ -239,38 +247,67 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
           children: children
         });
       })
-      function getChildren (condition) {
-        let children = [];
-        condition.children
-                  .forEach(item => {
-                    let rObj = {};
-                    let mdtype = condition.mdtype;
-                    if(item[mdtype] && item[mdtype] != '') {
-                      if(condition.inputtype == 'date') {
-                        rObj[mdtype] = {};
-                        if((item[mdtype].from != '') && (item[mdtype].to != '')) {
-                          rObj[mdtype].from = new Date(item[mdtype].from).getTime();
-                          rObj[mdtype].to = new Date(item[mdtype].to).getTime();
-                        } else if ((item[mdtype].from != '') && (item[mdtype].to == '')) {
-                          rObj[mdtype].from = new Date(item[mdtype].from).getTime();
-                          rObj[mdtype].to = new Date(item[mdtype].from).getTime();
-                        } else {}
-                      }
-                      else rObj[condition.mdtype] = item[condition.mdtype];
-                      if (rObj != {}) children.push(rObj);
-                    };
-                  });
-        return children;
-      };
       return searchQuery;
+    }
+    function getChildren (condition) {
+      let children = [];
+      condition.children
+                .forEach(item => {
+                  let rObj = {};
+                  let mdtype = condition.mdtype;
+                  if(item[mdtype] && item[mdtype] != '') {
+                    if(condition.inputtype == 'date') {
+                      rObj[mdtype] = {};
+                      if((item[mdtype].from != '') && (item[mdtype].to != '')) {
+                        rObj[mdtype].from = new Date(item[mdtype].from).getTime();
+                        rObj[mdtype].to = new Date(item[mdtype].to).getTime();
+                      } else if ((item[mdtype].from != '') && (item[mdtype].to == '')) {
+                        rObj[mdtype].from = new Date(item[mdtype].from).getTime();
+                        rObj[mdtype].to = new Date(item[mdtype].from).getTime();
+                      } else {}
+                    }
+                    else rObj[condition.mdtype] = item[condition.mdtype];
+                    if (rObj != {}) children.push(rObj);
+                  };
+                });
+      return children;
     };
+    function conditionsToIndexSearchQuery (conditions, customArr) {
+      const searchQuery = {
+        type: self.searchQuery.type,
+        subFolders: (self.subFolders) ? 'included' : 'excluded',
+        conditions: conditionsToSearchQuery(conditions, customArr).conditions,
+      };
+      conditions.forEach(function (c) {
+        if (c.children && c.children.length) {
+          const children = getChildren(c)
+          if (children.length) {
+            searchQuery[c.mdtype] = children.map(_c => _c[c.mdtype])
+          }
+        }
+      });
+      // get custom fields to search
+      const keys = _.uniq(customArr.map(item => item.key)).filter(k => k != '');
+      keys.forEach(field => {
+        const children = [];
+        for (let i = 0; i < customArr.length; i++) {
+          if (customArr[i].key == field) children.push({ [field]: customArr[i].value })
+        }
+        if (children.length) {
+          searchQuery[key] = children.map(c => c[key])
+        }
+      })
+      return searchQuery;
+    }
     function onSearch() {
       let newCustomArr = angular.copy(self.customArr);
       newCustomArr.forEach(custom => {
           custom.key = encodeURI(custom.key.toLowerCase());
       })
       self.searchQuery.subFolders = (self.subFolders) ? 'included' : 'excluded';
-      fileExplorerCtrl.searchQuery = conditionsToSearchQuery(self.conditions, newCustomArr);
+      fileExplorerCtrl[searchQueryKey] = mode === 'advanced' ?
+        conditionsToSearchQuery(self.conditions, newCustomArr) :
+        conditionsToIndexSearchQuery(self.conditions, newCustomArr);
     }
     this.applySearch = function () {
       change2Submitted();
@@ -354,15 +391,7 @@ module.exports = function (ModalService, fileExplorerCtrl, callback) {
         }
         wiDialog.promptListDialog(config, function(selectItem) {
           console.log(selectItem);
-          /*
-          fileExplorerCtrl.searchQuery = JSON.parse(selectItem).query;
-          self.conditions = JSON.parse(selectItem).conditions;
-          self.customArr = JSON.parse(selectItem).customArr;
-          self.searchQuery = JSON.parse(selectItem).searchQuery;
-          self.subFolders = JSON.parse(selectItem).subFolders;
-          */
           const parsedContent = JSON.parse(selectItem.content);
-          fileExplorerCtrl.searchQuery = parsedContent.query;
           parsedContent.conditions.forEach(md => {
             if(md.mdtype === "uploaded") {
               md.children.forEach(c => {

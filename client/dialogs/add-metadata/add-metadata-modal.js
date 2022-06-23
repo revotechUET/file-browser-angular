@@ -18,7 +18,7 @@ module.exports = function (ModalService, metadata, callback) {
     let fixKeys = ['name', 'type', 'size', 'location', 'author', 'uploaded', 'modifided', 'source', 'parameter', 'quality', 'relatesto'];
     this.nameChanged = function () {
       self.warning = '';
-      self.valueAutocomplete = ($scope.$root.taxonomies.metadataValue[_.camelCase(self.name)] || []);
+      self.valueAutocomplete = ($scope.$root.taxonomies.metadataValue && $scope.$root.taxonomies.metadataValue[_.camelCase(self.name)] || []);
     }
     this.onOk = function () {
       if(!utils.validateKey(self.name)) {

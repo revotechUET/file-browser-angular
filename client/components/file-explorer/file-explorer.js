@@ -80,6 +80,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       key: 'rootName',
     },
     {
+      label: 'Well Name',
+      key: 'wellName'
+    },
+    {
       label: 'CODB Status',
       key: 'codbStatus'
     },
@@ -535,7 +539,13 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           return rej(err)
         }
         const data = result.data.data;
-        self.fileList = [...data.folders, ...data.files];
+        self.fileList = [...data.folders, ...data.files].map(item => {
+          try {
+            item.wellName = JSON.parse(item.metaData.well).name;
+          } catch (error) {
+          }
+          return item
+        });
         self.currentPath.length = 0;
         path.split("/").filter(v => v).map((name, idx) => {
           self.currentPath.push({ rootName: name, displayName: name });

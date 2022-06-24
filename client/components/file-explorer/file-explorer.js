@@ -528,6 +528,15 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.getCurrentPathString = function () {
     return self.rootFolder + self.currentPath.map(c => c.rootName).join('/')
   }
+  function withWellName(items) {
+    return items.map(item => {
+      try {
+        item.wellName = JSON.parse(item.metaData.well).name;
+      } catch (error) {
+      }
+      return item
+    })
+  }
   this.goToPath = async function (path, history = true) {
     if (history) {
       self.historyIndex++;
@@ -539,13 +548,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           return rej(err)
         }
         const data = result.data.data;
-        self.fileList = [...data.folders, ...data.files].map(item => {
-          try {
-            item.wellName = JSON.parse(item.metaData.well).name;
-          } catch (error) {
-          }
-          return item
-        });
+        self.fileList = withWellName([...data.folders, ...data.files])
         self.currentPath.length = 0;
         path.split("/").filter(v => v).map((name, idx) => {
           self.currentPath.push({ rootName: name, displayName: name });
@@ -1220,7 +1223,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
             result = result.slice(result.indexOf(EOL) + EOL.length);
             const line = lines[0];
             try {
-              const files = JSON.parse(line);
+              const files = withWellName(JSON.parse(line))
               self.fileList.push(...files);
               $scope.$digest();
             } catch (error) {
@@ -1232,7 +1235,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         });
     } else {
       self.httpPost(url || self.searchUrl, payload, res => {
-        self.fileList = res.data.data;
+        self.fileList = withWellName(res.data.data)
       });
     }
   }

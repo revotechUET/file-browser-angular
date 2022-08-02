@@ -9,7 +9,7 @@
                 <div style="display: flex;border-bottom: 2px solid #f5f5f5;
                 margin-bottom: 20px;">
                     <div class="search-for">
-                        <div>Search for:</div>
+                        <!-- <div>Search for:</div> -->
                         <div class="item-list">
                             <div ng-click="self.searchQuery.type = 'all'"
                                 ng-class="{'actived': self.searchQuery.type === 'all'}">
@@ -34,13 +34,13 @@
 
                 </div>
                 <div style="display: flex; flex-wrap: wrap;">
-                    <div class="btn-item" ng-repeat="(key, value) in self.mapKey track by key">
+                    <div class="btn-item" ng-repeat="(key, value) in self.mapKey track by key" ng-if="!value.hide">
                         <div ng-click="self.insertMetaDataKey(key)" ng-class="{'has-item' : self.countMDRow(key)}">
                             {{value.label}}
                         </div>
                         <span ng-if="self.countMDRow(key)">{{self.countMDRow(key)}}</span>
                     </div>
-                    <div class="btn-item">
+                    <div class="btn-item" ng-if="self.mode === 'advanced'">
                         <div ng-click="self.insertMetaDataKey('custom')"
                             ng-class="{'has-item' : self.countMDRow('custom')}">
                             Custom

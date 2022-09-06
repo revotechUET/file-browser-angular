@@ -217,8 +217,8 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 	this.estimateFolderSize = function() {
 		//console.log(self.getSize);
 		self.checkFolderSizeProcess = setTimeout(() => {});
-		self.getSize().then((rs)=>{
-			let key = rs.key;
+		self.getSize().then(([sizeRs, countChild])=>{
+			let key = sizeRs.key;
 			let triggerFn = ()=>{
 				self.httpGet(self.statusUrl + key, (rs)=>{
 					rs = rs.data;
@@ -227,7 +227,7 @@ function Controller($scope, $filter, ModalService, wiSession, $timeout, $http) {
 						self.checkFolderSizeProcess = setTimeout(triggerFn, 2000);
 					} else {
 						if (rs.info) {
-							self.folderSize = formatBytes(rs.info, 3);
+							self.folderSize = `${formatBytes(rs.info, 3)} | ${countChild.total_files} files | ${countChild.total_folder} folders`;
 							self.item.size = +rs.info;
 							self.item.metaData.size = +rs.info;
 							self.checkFolderSizeProcess = null;

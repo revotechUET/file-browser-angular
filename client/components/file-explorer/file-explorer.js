@@ -59,6 +59,7 @@ const SUBMIT_TO_COMPANY_DB = '/submit/submit-files';
 const PROCESSING_STATUS = '/action/status?key=';
 const CANCEL_PROCESS = '/action/cancel?key=';
 const GETSIZE_PATH = '/action/estimate-folder-size?dir=';
+const COUNTCHILDS_PATH = '/action/count-childs?dir=';
 const GET_QUICK_OBJECTS = '/objects';
 const NEW_QUICK_OBJECT = '/new-row';
 const DELETE_QUICK_OBJECT = '/delete';
@@ -299,6 +300,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.statusUrl = self.url + PROCESSING_STATUS;
       self.cancelUrl = self.url + CANCEL_PROCESS;
       self.getFolderSizeUrl = self.url + GETSIZE_PATH;
+      self.countChildsUrl = self.url + COUNTCHILDS_PATH;
       self.checkPermissionUrl = self.url + '/action/get-permission?permission=';
       self.getMetadataUrl = self.url + '/action/info';
       self.createSyncSession = self.url + '/file-explorer/create-sync-session';
@@ -477,7 +479,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       self.getSize = (() => {
         return new Promise((res, rej) => {
           self.httpGet(self.getFolderSizeUrl + encodeURIComponent(item.path), result => {
-            res(result.data);
+            self.httpGet(self.countChildsUrl + encodeURIComponent(item.path), result2 => {
+              res([result.data, result2.data]);
+            })
           }, { silent: true });
         });
       })

@@ -1795,6 +1795,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
 
   async function getFilesInFolder(item, path = '') {
+    if (!item) return []
     if (item.isFile) return new Promise(res => {
       item.file(file => {
         Object.defineProperty(file, 'webkitRelativePath', { value: path + file.name })
@@ -1806,7 +1807,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     return files.flat();
   }
   this.getFilesDrop = async function (event) {
-    const items = Array.from(event.dataTransfer.items).map(i => i.webkitGetAsEntry());
+    const items = Array.from(event.dataTransfer.items).map(i => i.webkitGetAsEntry()).filter(v => v);
     const files = Array.from(event.dataTransfer.files).filter((f, i) => items[i].isFile);
     const folders = items.filter(i => i.isDirectory);
     const filesInFolders = (await Promise.all(folders.map(f => getFilesInFolder(f)))).flat();

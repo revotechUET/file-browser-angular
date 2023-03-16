@@ -1,15 +1,15 @@
 let path = require('path');
-//let webpack = require('webpack');
 
 const OUTPUT = path.join(__dirname, 'dist');
-// const OUTPUT = path.join(__dirname, '../i2g-data-administrator/dist/bower_components/file-explorer/dist');
 
-module.exports = {
-    // mode: "development",
-    entry: [
-        './client/components/file-explorer/file-explorer.js'
-        ,'./node_modules/pdfjs-dist/build/pdf.worker.entry.js',
-    ],
+/**
+ * @type {import('webpack').Configuration}
+ */
+const common = {
+    mode: "development",
+    entry: {
+        'file-explorer-module': './client/components/file-explorer/file-explorer.js'
+    },
     output: {
         path: OUTPUT,
         filename: 'file-explorer-module.js',
@@ -31,19 +31,33 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-    ],
-    resolve: {
-        // alias: {
-        //     'vue$': 'vue/dist/vue.esm.js',
-        // }
-    }
 };
-// webpack.config.js
-// module.exports = (env, argv) => {
-//     const config = Object.assign({}, generalConfig, {
-//         mode: argv.mode,
-//         devtool: argv.devtool
-//     });
-//     return config;
-// };
+
+/**
+ * @type {import('webpack').Configuration[]}
+ */
+module.exports = [
+    {
+        ...common,
+        output: {
+            ...common.output,
+            filename: '[name].js',
+            library: {
+                type: 'umd',
+            },
+        },
+    },
+    {
+        ...common,
+        output: {
+            ...common.output,
+            filename: '[name].mjs',
+            library: {
+                type: 'module',
+            },
+        },
+        experiments: {
+            outputModule: true,
+        },
+    },
+]

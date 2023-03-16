@@ -1,6 +1,7 @@
+import { WiContextMenu, WiDroppable } from "@revotechuet/misc-component-vue";
 import { v4 as uuidv4 } from 'uuid';
-import { Vue, WiContextMenu, WiDroppable } from "@revotechuet/misc-component-vue";
 
+require('pdfjs-dist/build/pdf.worker.entry.js');
 // Load css
 require('./new-file-explorer.less');
 
@@ -73,7 +74,6 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   });
   let self = this;
   let _toastr = window.__toastr || window.toastr;
-  window.fileBrowser = self;
   self.widthArray = [];
   self.headerArray = [
     {
@@ -330,16 +330,16 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
     self.requesting = true;
 
-		const unwatch = $scope.$watch(() => $scope.$root.taxonomies, () => {
-			if (!$scope.$root.taxonomies) return;
-			unwatch();
-			const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
-				if (!Array.isArray($scope.$root.taxonomies[key])) return obj;
-				obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
-				return obj;
-			}, {});
-			utils.setSelections(taxonomies);
-		});
+    const unwatch = $scope.$watch(() => $scope.$root.taxonomies, () => {
+      if (!$scope.$root.taxonomies) return;
+      unwatch();
+      const taxonomies = Object.keys($scope.$root.taxonomies).reduce((obj, key) => {
+        if (!Array.isArray($scope.$root.taxonomies[key])) return obj;
+        obj[key] = $scope.$root.taxonomies[key].map(i => i.item);
+        return obj;
+      }, {});
+      utils.setSelections(taxonomies);
+    });
     //#region processing status
     const refreshDebounced = _.debounce(() => self.goTo(-999), 1000);
     let updating = false;
@@ -645,7 +645,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   this.showContextMenu = function (item, $event) {
     $event.stopPropagation()
     let menu = []
-    if(self.dustbinMode) {
+    if (self.dustbinMode) {
       menu = [{
         label: 'Restore',
         icon: 'ti ti-share-alt',
@@ -1044,7 +1044,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           //   console.log(result);
           //   next();
           // });
-          self.httpPost(self.removeDustbin, {metaData: {...node.metaData, realpath: node.path}}, res => {
+          self.httpPost(self.removeDustbin, { metaData: { ...node.metaData, realpath: node.path } }, res => {
             console.log(res)
             next();
           });
@@ -1058,27 +1058,27 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   };
 
   this.restoreDustbinItem = async function () {
-    if(!self.selectedList) return;
+    if (!self.selectedList) return;
     console.log("Restore ", self.selectedList)
     async.each(self.selectedList, (node, next) => {
       wiDialog.promptDialog({
         title: "Restore object to " + node.metaData.realpath,
         inputName: "Restore item name",
         input: function getName(key) {
-            let resp = "";
-            if (key.endsWith("/")) {
-                resp =  key.split("/").slice(-2)[0];
-            } else {
-                resp = key.substring(key.lastIndexOf("/") + 1);
-                if(resp.lastIndexOf(".") !== -1){
-                  resp = resp.substring(0, resp.lastIndexOf('.'))
-                }
+          let resp = "";
+          if (key.endsWith("/")) {
+            resp = key.split("/").slice(-2)[0];
+          } else {
+            resp = key.substring(key.lastIndexOf("/") + 1);
+            if (resp.lastIndexOf(".") !== -1) {
+              resp = resp.substring(0, resp.lastIndexOf('.'))
             }
-            return resp.substring(13,resp.length);
-          } (node.path)
-      }, function(newName){
+          }
+          return resp.substring(13, resp.length);
+        }(node.path)
+      }, function (newName) {
         console.log("====new name ", newName)
-        self.httpPost(self.restoreDustbin, {newName: newName, metaData: {...node.metaData}}, res => {
+        self.httpPost(self.restoreDustbin, { newName: newName, metaData: { ...node.metaData } }, res => {
           console.log(res)
           next();
         });

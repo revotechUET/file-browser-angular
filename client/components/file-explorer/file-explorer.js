@@ -1,4 +1,4 @@
-import { WiContextMenu, WiDroppable } from "@revotechuet/misc-component-vue";
+import { WiContextMenu, WiDroppable, ngVue } from "@revotechuet/misc-component-vue";
 import { v4 as uuidv4 } from 'uuid';
 
 require('pdfjs-dist/build/pdf.worker.entry.js');
@@ -228,6 +228,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   self.selectedList = [];
   self.selectedItem = {};
   self.pasteList = [];
+  self.requestingCount = 0;
   self.requesting = false;
   self.rootFolder = self.rootFolder || '/';
   self.filter = '';
@@ -327,6 +328,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       } else {
         self.fileList = [];
       }
+    });
+    $scope.$watch(() => self.requestingCount, (newVal, oldVal) => {
+      self.requesting = newVal > 0;
     });
     self.requesting = true;
 
@@ -877,7 +881,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       const res = await new Promise(resolve => this.httpGet(self.checkPermissionUrl + 'download', resolve));
       if (res.data.error) return;
     }
-    self.requesting = true;
+    self.requestingCount++;
     // // let item = Array.isArray(items) ? items[0] : items;
     // // if (!item || !item.rootIsFile)
     // //     return;
@@ -927,7 +931,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       document.body.appendChild(a);
       a.click();
       a.parentNode.removeChild(a);
-      self.requesting = false;
+      self.requestingCount--;
       // check for a filename
       // let filename = Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
       // // let fileName = xhr.getResponseHeader('File-Name');
@@ -1320,7 +1324,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.httpGet = function (url, cb, options = {}) {
     if (!options.silent) {
-      self.requesting = true;
+      self.requestingCount++;
     }
     let reqOptions = {
       method: 'GET',
@@ -1337,7 +1341,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     };
     $http(reqOptions).then(result => {
       if (!options.silent) {
-        self.requesting = false;
+        self.requestingCount--;
         if (result.data && result.data.error) {
           toastr.error(result.data.message || 'Unknown error');
         }
@@ -1347,7 +1351,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       console.error("file browser error", err);
       if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
-        self.requesting = false;
+        self.requestingCount--;
         toastr.error(err.data && err.data.message || 'Error connecting to server');
       }
       cb(null, err);
@@ -1356,9 +1360,8 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
   this.httpPost = function (url, payload, cb, options = {}) {
     if (!options.silent) {
-      self.requesting = true;
+      self.requestingCount++;
     }
-    //self.requesting = !self.requesting;
     let reqOptions = {
       method: 'POST',
       url: url,
@@ -1373,7 +1376,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     };
     $http(reqOptions).then(result => {
       if (!options.silent) {
-        self.requesting = false;
+        self.requestingCount--;
         if (result.data && result.data.error) {
           toastr.error(result.data.message || 'Unknown error');
         }
@@ -1383,7 +1386,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       console.error("file browser request", err);
       if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
-        self.requesting = false;
+        self.requestingCount--;
         toastr.error(err.data && err.data.message || 'Error connecting to server');
       }
     })
@@ -1391,7 +1394,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
 
   this.httpPostStreaming = function (url, payload, chunkCb, doneCb, options = {}) {
     if (!options.silent) {
-      self.requesting = true;
+      self.requestingCount++;
     }
     const uuid = uuidv4();
     const abortController = new AbortController();
@@ -1412,7 +1415,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       function readChunk({ value, done }) {
         if (done) {
           if (!options.silent) {
-            self.requesting = false;
+            self.requestingCount--;
           }
           doneCb && doneCb();
           $scope.$digest();
@@ -1427,7 +1430,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
       console.error("file browser request", err);
       if (err.data && err.data.code === 401) location.reload();
       if (!options.silent) {
-        self.requesting = false;
+        self.requestingCount--;
         toastr.error(err.data && err.data.message || 'Error connecting to server');
       }
     });
@@ -1515,12 +1518,12 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   // this.importFilesToInventory = function(items) {
   //   if (items.length === 0) return;
-  //   self.requesting = true;
+  //   self.requestingCount++;
   //   if(items.length == 1) {
   //     if(items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
   //       downloadFileToUpload(items[0]);
   //     }else {
-  //       self.requesting = false;
+  //       self.requestingCount--;
   //       __toastr.error("Only accept file las, dlis, csv", "Error");
   //     }
   //   }else {
@@ -1536,19 +1539,19 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //         downloadFileToUpload(item);
   //       });
   //     }else {
-  //       self.requesting = false;
+  //       self.requestingCount--;
   //       __toastr.error("Only accept multiple file las", "Error");
   //     }
   //   }
   // }
   this.importFilesToInventory = function (items) {
     if (items.length === 0) return;
-    self.requesting = true;
+    self.requestingCount++;
     if (items.length == 1) {
       if (items[0].rootName.split('.').length > 1 && (items[0].rootName.split('.').pop() == 'las' || items[0].rootName.split('.').pop() == 'dlis' || items[0].rootName.split('.').pop() == 'csv')) {
         importCurves(items[0]);
       } else {
-        self.requesting = false;
+        self.requestingCount--;
         __toastr.error("Only accept file las, dlis, csv", "Error");
       }
     } else {
@@ -1564,7 +1567,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
           importCurves(item);
         });
       } else {
-        self.requesting = false;
+        self.requestingCount--;
         __toastr.error("Only accept multiple file las", "Error");
       }
     }
@@ -1590,11 +1593,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.importZoneSet = function (items) {
     if (items.length === 0) return;
-    self.requesting = true;
+    self.requestingCount++;
     downloadFileToUpload(items[0])
       .then(file => {
         if (file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
-          self.requesting = true;
+          self.requestingCount++;
           wiDialog.importZoneSet(file, self.idProject, callBackImport);
         } else {
           __toastr.error("Only accept file csv", "Error");
@@ -1604,11 +1607,11 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   }
   this.importMarkerSet = function (items) {
     if (items.length === 0) return;
-    self.requesting = true;
+    self.requestingCount++;
     downloadFileToUpload(items[0])
       .then(file => {
         if (file.name.split('.').length > 1 && file.name.split('.').pop() === 'csv') {
-          self.requesting = true;
+          self.requestingCount++;
           wiDialog.importMarkerSet(file, self.idProject, callBackImport);
         } else {
           __toastr.error("Only accept file csv", "Error");
@@ -1617,7 +1620,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     console.log("import marker set");
   }
   function callBackImport(data) {
-    self.requesting = false;
+    self.requestingCount--;
     console.log(data);
   }
   // function downloadFileToUpload(item) {
@@ -1640,7 +1643,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   //     let file = new Blob([response.data], {
   //       type: 'file'
   //     });
-  //     self.requesting = false;
+  //     self.requestingCount--;
   //     file.name = item.rootName;
   //     if(file.name.split('.').length > 1) {
   //       switch(file.name.split('.').pop()) {
@@ -1681,7 +1684,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         let file = new Blob([response.data], {
           type: 'file'
         });
-        self.requesting = false;
+        self.requestingCount--;
         // let fileName = "I2G_Download_" + Date.now() + '_' + Math.floor(Math.random() * 100000) + '.zip';
         file.name = item.rootName;
         console.log(file);
@@ -1831,7 +1834,8 @@ let app = angular.module(moduleName, [
   'wiApi',
   'angularModalService',
   'wiDialog',
-  'wiRightClick'
+  'wiRightClick',
+  ngVue,
 ]);
 
 app.component(componentName, {

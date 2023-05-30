@@ -1,6 +1,6 @@
 {
   "name": "@revotechuet/file-explorer",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "",
   "main": "./dist/file-explorer-module.js",
   "module": "./dist/file-explorer-module.mjs",

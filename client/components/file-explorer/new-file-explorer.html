@@ -163,7 +163,7 @@
                 order-reverse="self.reverse" on-header-width-changed="self.changeWidth"
                 default-widths="[300,200,250,100,150]">
                 <div class="table-row"
-                    ng-repeat="item in self.fileList | orderBy:self.getOrderItem:false:self.orderFn"
+                    ng-repeat="item in self.fileList | filter:self.filterFn | orderBy:self.getOrderItem:false:self.orderFn"
                     ng-click="self.clickNode(item, $event)" ng-dblclick="self.dblClickNode(item)"
                     wi-right-click="self.showContextMenu(item, $event)" ng-class="{selected: self.isSelected(item)}">
                     <div ng-style='{"width": self.widthArray[0]}' class="name-row" title="{{item.rootName}}"

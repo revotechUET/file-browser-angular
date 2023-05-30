@@ -241,6 +241,7 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
   self.storageDatabaseString = '';
   self.dustbinMode = false;
   this.bookmarks = [];
+  this.accepts = [];
 
   this.$onInit = function () {
     if (typeof self.setContainer === 'function') self.setContainer(self);
@@ -392,6 +393,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
     $processing.blur(() => $listProcessing.fadeOut(300));
     //#endregion
+    $scope.$watch(() => self.accept, () => {
+      self.accepts = self.accept ? self.accept.split(',').map(a => a.trim().toLowerCase()) : [];
+    })
   };
   this.submitToCompanyDatabase = async function (files) {
     const yes = await new Promise(res => wiDialog.confirmDialog('Confirmation', 'Do you want to submit folders/files to CODB?', res));
@@ -438,10 +442,10 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
     });
   }
 
-  this.orderBy = function (propOrder) {
-    self.reverse = (self.propOrder === propOrder) ? !self.reverse : false;
-    self.propOrder = propOrder;
-  };
+  // this.orderBy = function (propOrder) {
+  //   self.reverse = (self.propOrder === propOrder) ? !self.reverse : false;
+  //   self.propOrder = propOrder;
+  // };
   this.getOrderItem = function (item) {
     return item
     // ['rootIsFile',self.reverse?'-':'+'+self.propOrder]
@@ -462,6 +466,9 @@ function Controller($scope, $timeout, $filter, $element, $http, ModalService, Up
         console.trace(typeof v1, 'order type not handled')
         return 0;
     }
+  }
+  this.filterFn = function (item, index, array) {
+    return self.accepts.length ? item.rootIsFile ? self.accepts.some(a => item.rootName.toLowerCase().endsWith(a)) : true : true
   }
 
   this.isSelected = function (item) {
@@ -1865,6 +1872,7 @@ app.component(componentName, {
     checkPermission: '<',
     readonlyValues: '<',
     searchMode: '<',
+    accept: '<',
   }
 });
 

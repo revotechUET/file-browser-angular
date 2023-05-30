@@ -73,7 +73,9 @@ module.exports = function (ModalService, Upload, fileExplorerCtrl, callback, fil
         file.uploadingProgress = null;
         file.overwrite = false;
         file.existed = false;
-        file.type = getType(file.name);
+        if (Object.getOwnPropertyDescriptor(file, 'type')?.set) {
+          file.type = getType(file.name);
+        }
         file.metaData = {
           name: file.name,
           type: getType(file.name),

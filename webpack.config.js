@@ -31,6 +31,10 @@ const common = {
             },
         ],
     },
+    externals: {
+        angular: 'angular',
+        '@revotechuet/misc-component-vue': '@revotechuet/misc-component-vue',
+    },
 };
 
 /**
@@ -54,6 +58,10 @@ module.exports = [
             filename: '[name].mjs',
             library: {
                 type: 'module',
+            },
+            module: true,
+            environment: {
+                module: true,
             },
         },
         experiments: {

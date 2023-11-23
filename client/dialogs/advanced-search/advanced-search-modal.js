@@ -9,9 +9,9 @@ const utils = require('../../js/utils');
  * @param {('advanced'|'index')} [mode='advanced']
  */
 module.exports = function (ModalService, fileExplorerCtrl, callback, mode = 'advanced') {
-  modalController.$inject = ['$scope', 'close', 'wiApi', 'wiDialog', '$timeout'];
+  modalController.$inject = ['$scope', 'close', 'wiApi', 'wiDialog', 'wiSession', '$timeout'];
 
-  function modalController($scope, close, wiApi, wiDialog, $timeout) {
+  function modalController($scope, close, wiApi, wiDialog, wiSession, $timeout) {
     let self = this;
     let _toastr = window.__toastr || window.toastr;
     this.$onInit = function () {
